@@ -1,4 +1,4 @@
-import { StatusBar } from "expo-status-bar";
+
 import {
   Image,
   StyleSheet,
@@ -8,27 +8,44 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "../components/Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useFetch } from "../API/useFetch";
 
 export default function Login({ navigation }) {
   const [credentials, setCredentials] = useState({ phoneNo: 0, password: "" });
+    const [loggedData,setLoggedData] = useState({"Name": "", "Phone": 0, "id": 0, "role": "", "status": false});
+  const [data, callApi] = useFetch();
 
   const updateCredentials = (e) => {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
   const login = () => {
-    alert(credentials.password);
-    // navigation.navigate("Admin")
+    callApi("Users.json");
   };
+
+  //Gets data when you visit accounts
+  useEffect(() => {
+    if (!("fetch" in data)) {
+      for(const user in data){
+        const getNumber  = "0"+data[user].phone;
+        if(getNumber == credentials.phoneNo){
+            setLoggedData(data[user]);
+            console.log(loggedData);
+            navigation.navigate(`${data[user].role}`)
+        }
+      }
+    }
+  }, [data]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         {/* <Image source={PlaceholderImage} style={styles.image} /> */}
         <MaterialCommunityIcons name="greenhouse" size={140} color="#ad1457" />
+        
         <View style={styles.containerInput}>
           <Text style={{ fontSize: 30, marginVertical: 8 }}>
             Access your account
@@ -67,7 +84,6 @@ export default function Login({ navigation }) {
 
           <Button theme="primary" label="Login" onPress={login} />
         </View>
-        <StatusBar style="light" />
       </View>
     </TouchableWithoutFeedback>
   );
