@@ -1,38 +1,50 @@
 import React from "react";
-import { createStackNavigator } from "react-navigation-stack";
-import { createAppContainer } from "react-navigation";
-import Login from "./pages/Login";
-import Admin from "./pages/Admin";
-import { StatusBar } from "expo-status-bar";
-export default function App() {
-  const screens = {
-    Login: {
-      screen: Login,
-    },
-    Admin: {
-      screen: Admin,
-      navigationOptions: {
-        headerLeft: () => null,
-      },
-    },
-  };
 
-  const Stack = createStackNavigator(screens, {
-    defaultNavigationOptions: {
-      headerStyle: {
-        backgroundColor: "#ad1457",
-      },
-      headerTitleStyle: {
-        color: "white",
-      },
-    },
-  });
-  const Navigator = createAppContainer(Stack);
+import { StatusBar } from "expo-status-bar";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
+import { AuthContextProvider } from "./context/AuthContext";
+
+import Login from "./pages/Login";
+import Home from "./pages/Home";
+import User from "./pages/User";
+
+export default function App() {
+  const stack = createNativeStackNavigator();
 
   return (
-    <>
-      <Navigator />
-      <StatusBar style="light" />
-    </>
+    <AuthContextProvider>
+      <NavigationContainer>
+        <stack.Navigator>
+          <stack.Group
+            screenOptions={{
+              headerStyle: { backgroundColor: "#ad1457" },
+              headerTitleStyle: {
+                color: "white",
+              },
+            }}
+          >
+            <stack.Screen name="Login" component={Login} />
+            <stack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                headerBackVisible:false
+              }}
+            />
+            <stack.Screen
+              name="User"
+              component={User}
+              options={{
+                //headerBackVisible:false
+              }}
+            />
+          </stack.Group>
+        </stack.Navigator>
+
+        <StatusBar style="light" />
+      </NavigationContainer>
+    </AuthContextProvider>
   );
 }

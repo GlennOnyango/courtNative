@@ -1,10 +1,10 @@
 import { StyleSheet, View, Pressable, Text } from 'react-native';
 
-export default function Button({ label, /* @info The prop theme to detect the button variant. */ theme/* @end */,onPress }) {
+export default function Button({ label, /* @info The prop theme to detect the button variant. */ theme/* @end */,onPress,width }) {
   if (theme === "primary") {
     return (
       <View
-      style={[styles.buttonContainer, {  borderRadius: 18 }]}
+      style= {styles.buttonContainer}
       >
         <Pressable
           style={[styles.button, { backgroundColor: "#ad1457" }]}
@@ -27,12 +27,10 @@ export default function Button({ label, /* @info The prop theme to detect the bu
 
 const styles = StyleSheet.create({
     buttonContainer: {
-      width: 320,
-      height: 68,
-      marginHorizontal: 20,
+      width: "100%",
+      height: 60,
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 3,
     },
     button: {
       borderRadius: 10,
