@@ -18,7 +18,6 @@ export const AuthContextProvider = ({ children }) => {
   });
 
   const loginHandler = (formData) => {
-    console.log(formData);
     setUser(formData);
   };
 

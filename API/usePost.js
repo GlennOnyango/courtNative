@@ -1,23 +1,21 @@
 import { useState, useCallback } from "react";
+
 import { main_url } from "../constants";
 
-export const useFetch = (token) => {
-  const [data, setData] = useState({ fetch: 0 });
+export const usePost = (token) => {
+  const [data, setData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
   const callApi = useCallback((url, formData) => {
     setIsLoading(true);
-    const url_send = formData
-      ? `${main_url}${url}${formData}`
-      : `${main_url}${url}`;
+    const url_send =`${main_url}${url}`;
 
     const extra = {
-      headers: {
-        "Content-Type": "application/json",
-      },
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
     };
 
-    console.log(url_send);
     fetch(url_send, extra)
       .then((res) => {
         const isJson = res.headers
@@ -29,11 +27,12 @@ export const useFetch = (token) => {
           const error = (data && data.message) || res.status;
           return { error: error };
         }
-        setIsLoading(false);
 
         return data;
       })
       .then((data) => {
+        setIsLoading(false);
+
         setData(data);
       });
   }, []);

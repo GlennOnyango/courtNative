@@ -16,7 +16,6 @@ export default function Admin({ navigation }) {
   const ctx = React.useContext(AuthContext);
 
   React.useEffect(() => {
-    console.log(ctx.user);
     navigation.setOptions({
       title: `${ctx.user.role}`,
     });
@@ -84,7 +83,7 @@ export default function Admin({ navigation }) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button theme="primary" label="have complaint or need help1" />
+        <Button theme="primary" label="have complaint or need help" disbaled={true} />
       </View>
     </View>
   );
@@ -106,7 +105,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    padding:4,
+    paddingHorizontal:16
   },
   image: {
     width: "100%",

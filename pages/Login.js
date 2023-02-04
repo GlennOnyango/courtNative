@@ -6,16 +6,17 @@ import {
   TextInput,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect, useContext } from "react";
 import Button from "../components/Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFetch } from "../API/useFetch";
-
 import AuthContext from "../context/AuthContext";
 
 export default function Login({ navigation }) {
   const [credentials, setCredentials] = useState({ phoneNo: 0, password: "" });
+  const [error, setError] = useState(false);
   const [loggedData, setLoggedData] = useState({
     Name: "",
     Phone: 0,
@@ -37,12 +38,18 @@ export default function Login({ navigation }) {
   //Gets data when you visit accounts
   useEffect(() => {
     if (!("fetch" in data)) {
-      for (const user in data) {
-        const getNumber = "0" + data[user].phone;
-        if (getNumber == credentials.phoneNo) {
-          setLoggedData(data[user]);
-          navigation.navigate(`Home`);
+      if (credentials.phoneNo && credentials.password) {
+        if (!("fetch" in data)) {
+          for (const user in data) {
+            if (data[user][credentials.phoneNo]) {
+              setLoggedData({...data[user][credentials.phoneNo],id:user});
+              navigation.navigate(`Home`);
+            }
+          }
+          setError(true);
         }
+      } else {
+        setError(true);
       }
     }
   }, [data]);
@@ -51,51 +58,68 @@ export default function Login({ navigation }) {
     ctx.login(loggedData);
   }, [loggedData]);
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        {/* <Image source={PlaceholderImage} style={styles.image} /> */}
-        <MaterialCommunityIcons name="greenhouse" size={140} color="#ad1457" />
+    <ScrollView>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <MaterialCommunityIcons
+            name="greenhouse"
+            size={140}
+            color="#ad1457"
+          />
 
-        <View style={styles.containerInput}>
-          <Text style={{ fontSize: 30, marginVertical: 8 }}>
-            Access your account
-          </Text>
-          <View style={styles.containerGroup}>
-            <Text style={{ marginBottom: 5 }}>Phone number</Text>
+          <View style={styles.containerInput}>
+            <Text style={{ fontSize: 30, marginVertical: 8 }}>
+              Access your account
+            </Text>
 
-            <TextInput
-              style={styles.input}
-              placeholder="07XXXXXXX"
-              placeholderTextColor={"black"}
-              onChangeText={(newText) =>
-                updateCredentials({ type: "phoneNo", text: newText })
-              }
-              defaultValue={credentials.phoneNo}
-              inputMode={"tel"}
-              keyboardType={"phone-pad"}
-              maxLength={10}
-            />
+            {error && <Text style={{ color: "red" }}>Wrong credentials</Text>}
+
+            <View style={styles.containerGroup}>
+              <Text style={{ marginBottom: 5 }}>Phone number</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder="0724258876"
+                onChangeText={(newText) =>
+                  updateCredentials({ type: "phoneNo", text: newText })
+                }
+                defaultValue={credentials.phoneNo}
+                inputMode={"tel"}
+                keyboardType={"phone-pad"}
+                maxLength={10}
+              />
+            </View>
+
+            <View style={styles.containerGroup}>
+              <Text style={{ marginBottom: 5 }}>Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="*******"
+                placeholderTextColor={"black"}
+                onChangeText={(newText) =>
+                  updateCredentials({ type: "password", text: newText })
+                }
+                defaultValue={credentials.password}
+                textContentType={"password"}
+                secureTextEntry={true}
+              />
+            </View>
+
+            <View style={styles.containerGroup}>
+              <Button
+                theme="primary"
+                label="Login"
+                onPress={login}
+                disbaled={
+                  credentials.phoneNo.length > 0 &&
+                  credentials.password.length > 0
+                }
+              />
+            </View>
           </View>
-
-          <View style={styles.containerGroup}>
-            <Text style={{ marginBottom: 5 }}>Password</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="*******"
-              placeholderTextColor={"black"}
-              onChangeText={(newText) =>
-                updateCredentials({ type: "password", text: newText })
-              }
-              defaultValue={credentials.password}
-              textContentType={"password"}
-              secureTextEntry={true}
-            />
-          </View>
-
-          <Button theme="primary" label="Login" onPress={login} />
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }
 
@@ -114,7 +138,7 @@ const styles = StyleSheet.create({
   containerInput: {
     height: "auto",
     alignItems: "center",
-    justifyContent: "start",
+    justifyContent: "center",
     zIndex: 1,
     width: "100%",
     padding: 8,
@@ -132,5 +156,6 @@ const styles = StyleSheet.create({
     borderColor: "grey",
     borderStyle: "solid",
     borderRadius: 3,
+    paddingHorizontal: 8,
   },
 });

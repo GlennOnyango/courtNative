@@ -6,48 +6,80 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import { SelectList } from "react-native-dropdown-select-list";
 import AuthContext from "../context/AuthContext";
+import { usePost } from "../API/usePost";
+
+import * as SMS from "expo-sms";
+
+const Role = [
+  { key: "Admin", value: "Admin" },
+  { key: "Landlord", value: "Landlord" },
+  { key: "Tenant", value: "Tenant" },
+];
+
+const Status = [
+  { key: false, value: "false" },
+  { key: true, value: "true" },
+];
 
 export default function AddUser({ navigation }) {
   const ctx = React.useContext(AuthContext);
-  const [selectedRole, setSelectedRole] = React.useState("");
-
-  const [selectedStatus, setSelectedStatus] = React.useState("");
-
-  const [credentials, setCredentials] = React.useState({
-    phoneNo: 0,
-    password: "",
-  });
-
-  const updateCredentials = (e) => {
-    setCredentials({ ...credentials, [e.type]: e.text });
-  };
-  const login = () => {
-    callApi("Users.json");
-  };
-
+  const [data, callApi, isLoading] = usePost();
   const [user, setUser] = React.useState({
     Name: "",
     Phone: 0,
     id: 0,
+    password: "",
     role: "",
     status: false,
-    password: "",
+    needPasswordChange: true,
   });
 
-  const Role = [
-    { key: "Admin", value: "Admin" },
-    { key: "Landlord", value: "Landlord" },
-    { key: "Tenant", value: "Tenant" },
-  ];
+  const [activateBtn, setBtnActive] = useState();
 
-  const Status = [
-    { key: "false", value: "false" },
-    { key: "true", value: "true" },
-  ];
+  useEffect(() => {
+    setBtnActive(
+      user.Name.length > 0 && user.Phone.length > 9 && user.role.length > 0
+    );
+  }, [user]);
+
+  const addUser = (e) => {
+    setUser({ ...user, [e.type]: e.text });
+  };
+  const submitUser = () => {
+    const newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
+    console.log(newData);
+
+    callApi("Users.json", newData);
+  };
+
+  async function sendSMS(password) {
+    const isAvailable = await SMS.isAvailableAsync();
+    if (isAvailable) {
+      const { result } = await SMS.sendSMSAsync(
+        [user.Phone],
+        `Hey ${user.Name} you have been registered on Icourt. Your password is ${password}`
+      );
+      console.log(result.toString());
+    } else {
+      // misfortune... there's no SMS available on this device
+      console.log("cant send");
+    }
+  }
+
+  useEffect(() => {
+    if ("error" in data) {
+      console.log(data);
+    } else if ("name" in data) {
+      sendSMS(data.name);
+    } else {
+      //console.log(data);
+    }
+  }, [data]);
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -56,16 +88,13 @@ export default function AddUser({ navigation }) {
         <View
           style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
         >
-          <Text style={{ marginBottom: 5 }}>Phone number</Text>
+          <Text style={{ marginBottom: 5 }}>Full name</Text>
 
           <TextInput
             style={styles.input}
             placeholder="Glenn Tedd"
-            placeholderTextColor={"black"}
-            onChangeText={(newText) =>
-              updateCredentials({ type: "Name", text: newText })
-            }
-            defaultValue={credentials.phoneNo}
+            onChangeText={(newText) => addUser({ type: "Name", text: newText })}
+            defaultValue={user.phoneNo}
             inputMode={"text"}
             keyboardType={"default"}
             maxLength={10}
@@ -75,9 +104,27 @@ export default function AddUser({ navigation }) {
         <View
           style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
         >
+          <Text style={{ marginBottom: 5 }}>Phone number</Text>
+
+          <TextInput
+            style={styles.input}
+            placeholder="0723241223"
+            onChangeText={(newText) =>
+              addUser({ type: "Phone", text: newText })
+            }
+            defaultValue={user.Phone}
+            inputMode={"tel"}
+            keyboardType={"phone-pad"}
+            maxLength={10}
+          />
+        </View>
+
+        <View
+          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+        >
           <Text style={{ marginBottom: 5 }}>Role</Text>
           <SelectList
-            setSelected={(val) => setSelectedRole(val)}
+            setSelected={(val) => addUser({ type: "role", text: val })}
             data={Role}
             placeholder={"Select Role"}
             save="value"
@@ -89,56 +136,27 @@ export default function AddUser({ navigation }) {
         >
           <Text style={{ marginBottom: 5 }}>Status</Text>
           <SelectList
-            setSelected={(val) => setSelectedStatus(val)}
+            setSelected={(val) => addUser({ type: "status", text: val })}
             data={Status}
             style={styles.input}
             placeholder={"Status"}
-            save="value"
-          />
-        </View>
-
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <Text style={{ marginBottom: 5 }}>Phone number</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="07XXXXXXX"
-            placeholderTextColor={"black"}
-            onChangeText={(newText) =>
-              updateCredentials({ type: "phoneNo", text: newText })
-            }
-            defaultValue={credentials.phoneNo}
-            inputMode={"tel"}
-            keyboardType={"phone-pad"}
-            maxLength={10}
-          />
-        </View>
-
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <Text style={{ marginBottom: 5 }}>Password</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="*******"
-            placeholderTextColor={"black"}
-            onChangeText={(newText) =>
-              updateCredentials({ type: "password", text: newText })
-            }
-            defaultValue={credentials.password}
-            textContentType={"password"}
-            secureTextEntry={true}
+            save="key"
           />
         </View>
 
         <View style={styles.containerButtons}>
-        <Button theme="primary" label="submit"  onPress={login} />
-        <Button theme="primary" label="check users" onPress={login} />
+          <View style={{ width: "50%", padding: 8 }}>
+            <Button
+              theme="primary"
+              label="submit"
+              onPress={submitUser}
+              disbaled={activateBtn}
+            />
+          </View>
+          <View style={{ width: "50%", padding: 8 }}>
+            <Button theme="primary" label="check users" disbaled={true} />
+          </View>
         </View>
-
-        
       </View>
     </TouchableWithoutFeedback>
   );
@@ -151,10 +169,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  containerButtons:{
+  containerButtons: {
     flex: 1,
-    flexDirection:"row",
-    maxWidth:"100%",
+    flexDirection: "row",
+    maxWidth: "100%",
     justifyContent: "center",
     alignItems: "center",
   },
