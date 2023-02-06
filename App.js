@@ -9,6 +9,8 @@ import { AuthContextProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import User from "./pages/User";
+import GetUser from "./components/GetUser";
+import AddUser from "./components/AddUser";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -39,6 +41,14 @@ export default function App() {
               options={{
                 //headerBackVisible:false
               }}
+            />
+            <stack.Screen
+              name="AddUser"
+              component={AddUser}
+            />
+            <stack.Screen
+              name="GetUser"
+              component={GetUser}
             />
           </stack.Group>
         </stack.Navigator>

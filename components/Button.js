@@ -35,7 +35,7 @@ export default function Button({
 const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
-    height: 60,
+    height: "100%",
     alignItems: "center",
     justifyContent: "center",
   },

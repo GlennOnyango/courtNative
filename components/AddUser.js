@@ -5,12 +5,14 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   Keyboard,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Button from "./Button";
 import { SelectList } from "react-native-dropdown-select-list";
 import AuthContext from "../context/AuthContext";
 import { usePost } from "../API/usePost";
+import { useNavigation } from "@react-navigation/native";
 
 import * as SMS from "expo-sms";
 
@@ -20,13 +22,20 @@ const Role = [
   { key: "Tenant", value: "Tenant" },
 ];
 
+const Block = [
+  { key: "M81", value: "M81" },
+  { key: "M82", value: "M83" },
+  { key: "M83", value: "M83" },
+];
+
 const Status = [
   { key: false, value: "false" },
   { key: true, value: "true" },
 ];
 
-export default function AddUser({ navigation }) {
+export default function AddUser() {
   const ctx = React.useContext(AuthContext);
+  const navigation = useNavigation(); 
   const [data, callApi, isLoading] = usePost();
   const [user, setUser] = React.useState({
     Name: "",
@@ -35,6 +44,8 @@ export default function AddUser({ navigation }) {
     password: "",
     role: "",
     status: false,
+    block: "",
+    hse: "",
     needPasswordChange: true,
   });
 
@@ -51,10 +62,13 @@ export default function AddUser({ navigation }) {
   };
   const submitUser = () => {
     const newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
-    console.log(newData);
-
+   
     callApi("Users.json", newData);
   };
+
+  const moveUser = ()=>{
+    navigation.navigate('GetUser');
+  }
 
   async function sendSMS(password) {
     const isAvailable = await SMS.isAvailableAsync();
@@ -63,7 +77,9 @@ export default function AddUser({ navigation }) {
         [user.Phone],
         `Hey ${user.Name} you have been registered on Icourt. Your password is ${password}`
       );
-      console.log(result.toString());
+      if(result){
+        navigation.navigate(`GetUser`);
+      }
     } else {
       // misfortune... there's no SMS available on this device
       console.log("cant send");
@@ -81,84 +97,117 @@ export default function AddUser({ navigation }) {
   }, [data]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <Text style={{ fontSize: 30, marginVertical: 8 }}>Add User</Text>
+    <ScrollView>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Text style={{ fontSize: 30, marginVertical: 8 }}>Add User</Text>
 
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <Text style={{ marginBottom: 5 }}>Full name</Text>
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <Text style={{ marginBottom: 5 }}>Full name</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Glenn Tedd"
-            onChangeText={(newText) => addUser({ type: "Name", text: newText })}
-            defaultValue={user.phoneNo}
-            inputMode={"text"}
-            keyboardType={"default"}
-            maxLength={10}
-          />
-        </View>
-
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <Text style={{ marginBottom: 5 }}>Phone number</Text>
-
-          <TextInput
-            style={styles.input}
-            placeholder="0723241223"
-            onChangeText={(newText) =>
-              addUser({ type: "Phone", text: newText })
-            }
-            defaultValue={user.Phone}
-            inputMode={"tel"}
-            keyboardType={"phone-pad"}
-            maxLength={10}
-          />
-        </View>
-
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <Text style={{ marginBottom: 5 }}>Role</Text>
-          <SelectList
-            setSelected={(val) => addUser({ type: "role", text: val })}
-            data={Role}
-            placeholder={"Select Role"}
-            save="value"
-          />
-        </View>
-
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <Text style={{ marginBottom: 5 }}>Status</Text>
-          <SelectList
-            setSelected={(val) => addUser({ type: "status", text: val })}
-            data={Status}
-            style={styles.input}
-            placeholder={"Status"}
-            save="key"
-          />
-        </View>
-
-        <View style={styles.containerButtons}>
-          <View style={{ width: "50%", padding: 8 }}>
-            <Button
-              theme="primary"
-              label="submit"
-              onPress={submitUser}
-              disbaled={activateBtn}
+            <TextInput
+              style={styles.input}
+              placeholder="Glenn Tedd"
+              onChangeText={(newText) =>
+                addUser({ type: "Name", text: newText })
+              }
+              defaultValue={user.phoneNo}
+              inputMode={"text"}
+              keyboardType={"default"}
+              maxLength={10}
             />
           </View>
-          <View style={{ width: "50%", padding: 8 }}>
-            <Button theme="primary" label="check users" disbaled={true} />
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <Text style={{ marginBottom: 5 }}>Phone number</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="0723241223"
+              onChangeText={(newText) =>
+                addUser({ type: "Phone", text: newText })
+              }
+              defaultValue={user.Phone}
+              inputMode={"tel"}
+              keyboardType={"phone-pad"}
+              maxLength={10}
+            />
+          </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <Text style={{ marginBottom: 5 }}>Role</Text>
+            <SelectList
+              setSelected={(val) => addUser({ type: "block", text: val })}
+              data={Block}
+              placeholder={"Select Block"}
+              save="value"
+            />
+          </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <Text style={{ marginBottom: 5 }}>House</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="hse"
+              onChangeText={(newText) =>
+                addUser({ type: "hse", text: newText })
+              }
+              defaultValue={user.hse}
+              inputMode={"text"}
+              keyboardType={"default"}
+            />
+          </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <Text style={{ marginBottom: 5 }}>Role</Text>
+            <SelectList
+              setSelected={(val) => addUser({ type: "role", text: val })}
+              data={Role}
+              placeholder={"Select Role"}
+              save="value"
+            />
+          </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <Text style={{ marginBottom: 5 }}>Status</Text>
+            <SelectList
+              setSelected={(val) => addUser({ type: "status", text: val })}
+              data={Status}
+              style={styles.input}
+              placeholder={"Status"}
+              save="key"
+            />
+          </View>
+
+          <View style={styles.containerButtons}>
+            <View style={{ width: "50%", padding: 8 }}>
+              <Button
+                theme="primary"
+                label="submit"
+                onPress={submitUser}
+                disbaled={activateBtn}
+              />
+            </View>
+            <View style={{ width: "50%", padding: 8 }}>
+              <Button theme="primary" label="check users" disbaled={true} onPress={moveUser}/>
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </ScrollView>
   );
 }
 
