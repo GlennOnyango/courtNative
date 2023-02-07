@@ -7,56 +7,92 @@ import {
   Keyboard,
   FlatList,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import Button from "./Button";
+import { useNavigation } from "@react-navigation/native";
 import AuthContext from "../context/AuthContext";
 import { useFetch } from "../API/useFetch";
+import { Dimensions } from "react-native";
 
-export default function GetUser({ navigation }) {
+const ScreenWidth = Dimensions.get("window").width;
+
+export default function GetUser() {
   const ctx = React.useContext(AuthContext);
   const [data, callApi, isLoading] = useFetch();
+  const navigation = useNavigation();
+  const [search, setSearch] = useState("");
+
+  // Customize header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <TextInput
+          style={styles.input}
+          placeholder="Search User"
+          onChangeText={setSearch}
+          inputMode={"text"}
+          keyboardType={"default"}
+        />
+      ),
+    });
+  }, [navigation]);
+
+  useEffect(() => {
+    console.log(search);
+  }, [search]);
+
+  useEffect(() => {
+    if ("fetch" in data) {
+      callApi("Users.json");
+    }
+  }, [data]);
+
+  const userList = React.useMemo(() => {
+    if (Object.keys(data).length > 0 && !("fetch" in data)) {
+      const userData = [];
+      for (const user in data) {
+        for (const tel in data[user]) {
+          if (search.length > 0) {
+            if (tel.includes(search)) {
+              userData.push(data[user][tel]);
+            }
+          } else {
+            userData.push(data[user][tel]);
+          }
+        }
+      }
+      return userData;
+    }
+    return [];
+  }, [data,search]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <View style={styles.containerSearch}>
-          <View style={{ width: "80%", height: 50 }}>
-            <TextInput
-              style={styles.input}
-              placeholder="Search User"
-              onChangeText={(newText) =>
-                addUser({ type: "Name", text: newText })
-              }
-              inputMode={"text"}
-              keyboardType={"default"}
-            />
-          </View>
-          <View style={{ width: "20%", height: 50, paddingHorizontal: 4 }}>
-            <Button
-              theme="primary"
-              label="search"
-              onPress={() => alert("asd")}
-              disbaled={true}
-            />
-          </View>
-        </View>
         <View style={styles.containerList}>
           <FlatList
-            data={[
-              { key: "Devin" },
-              { key: "Dan" },
-              { key: "Dominic" },
-              { key: "Jackson" },
-              { key: "James" },
-              { key: "Joel" },
-              { key: "John" },
-              { key: "Jillian" },
-              { key: "Jimmy" },
-              { key: "Julie" },
-            ]}
+            data={userList}
             renderItem={({ item }) => (
-              <Text style={styles.item}>{item.key}</Text>
-              
+              <View
+                style={{
+                  flex: 1,
+                  flexDirection: "row",
+                  height: 50,
+                  borderBottomColor: "black",
+                  paddingLeft: 4,
+                  borderBottomWidth: 1,
+                }}
+              >
+                <View
+                  key={item.Phone}
+                  style={{ width: "90%", justifyContent: "center" }}
+                >
+                  <Text style={styles.item}>{item.Name}</Text>
+                </View>
+                <View style={{ width: "10%" }}>
+                  <Button theme="icon" onPress={() => alert("asd")} />
+                </View>
+              </View>
             )}
           />
         </View>
@@ -69,7 +105,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: "column",
-    
   },
   containerSearch: {
     flex: 1,
@@ -82,12 +117,9 @@ const styles = StyleSheet.create({
     maxWidth: "100%",
   },
   input: {
-    width: "100%",
-    height: "100%",
+    width: "90%",
+    height: 40,
+    backgroundColor: "white",
     padding: 5,
-    borderWidth: 1,
-    borderColor: "grey",
-    borderStyle: "solid",
-    borderRadius: 3,
   },
 });

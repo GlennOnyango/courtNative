@@ -11,6 +11,7 @@ import Home from "./pages/Home";
 import User from "./pages/User";
 import GetUser from "./components/GetUser";
 import AddUser from "./components/AddUser";
+import { TextInput } from "react-native";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -49,6 +50,16 @@ export default function App() {
             <stack.Screen
               name="GetUser"
               component={GetUser}
+              
+              options={{
+                headerTitleStyle:
+                <TextInput
+                  placeholder="0724258876"
+                  inputMode={"tel"}
+                  keyboardType={"phone-pad"}
+                  maxLength={10}
+                />
+              }}
             />
           </stack.Group>
         </stack.Navigator>

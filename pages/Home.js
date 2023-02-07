@@ -67,6 +67,7 @@ export default function Admin({ navigation }) {
       <View style={styles.imageContainer}>
         <Image source={PlaceholderImage} style={styles.image} />
       </View>
+
       <View style={styles.cardsContainer}>
         <FlatList
           data={modules}
@@ -104,8 +105,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonContainer: {
-    flex: 1,
-    paddingHorizontal:16
+    paddingHorizontal:16,
+    height:50,
+    marginBottom:4
+
   },
   image: {
     width: "100%",

@@ -42,7 +42,7 @@ export default function Login({ navigation }) {
         if (!("fetch" in data)) {
           for (const user in data) {
             if (data[user][credentials.phoneNo]) {
-              setLoggedData({...data[user][credentials.phoneNo],id:user});
+              setLoggedData({ ...data[user][credentials.phoneNo], id: user });
               navigation.navigate(`Home`);
             }
           }
@@ -106,15 +106,17 @@ export default function Login({ navigation }) {
             </View>
 
             <View style={styles.containerGroup}>
-              <Button
-                theme="primary"
-                label="Login"
-                onPress={login}
-                disbaled={
-                  credentials.phoneNo.length > 0 &&
-                  credentials.password.length > 0
-                }
-              />
+              <View style={{ height: 50 }}>
+                <Button
+                  theme="primary"
+                  label="Login"
+                  onPress={login}
+                  disbaled={
+                    credentials.phoneNo.length > 0 &&
+                    credentials.password.length > 0
+                  }
+                />
+              </View>
             </View>
           </View>
         </View>

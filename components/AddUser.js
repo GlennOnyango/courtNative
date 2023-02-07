@@ -193,7 +193,7 @@ export default function AddUser() {
           </View>
 
           <View style={styles.containerButtons}>
-            <View style={{ width: "50%", padding: 8 }}>
+            <View style={{ width: "50%", padding: 8, height:70 }}>
               <Button
                 theme="primary"
                 label="submit"
@@ -201,7 +201,7 @@ export default function AddUser() {
                 disbaled={activateBtn}
               />
             </View>
-            <View style={{ width: "50%", padding: 8 }}>
+            <View style={{ width: "50%", padding: 8, height:70 }}>
               <Button theme="primary" label="check users" disbaled={true} onPress={moveUser}/>
             </View>
           </View>
