@@ -12,7 +12,7 @@ import Button from "./Button";
 import { SelectList } from "react-native-dropdown-select-list";
 import AuthContext from "../context/AuthContext";
 import { usePost } from "../API/usePost";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation,useRoute } from "@react-navigation/native";
 
 import * as SMS from "expo-sms";
 
@@ -35,7 +35,8 @@ const Status = [
 
 export default function AddUser() {
   const ctx = React.useContext(AuthContext);
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
+  const route = useRoute();
   const [data, callApi, isLoading] = usePost();
   const [user, setUser] = React.useState({
     Name: "",
@@ -62,13 +63,22 @@ export default function AddUser() {
   };
   const submitUser = () => {
     const newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
-   
+
     callApi("Users.json", newData);
   };
 
-  const moveUser = ()=>{
-    navigation.navigate('GetUser');
-  }
+  useEffect(() => {
+    if (route.params) {
+
+      // const {editUserDetails} = route.params;
+      // setUser({...editUserDetails})
+      console.log(route.params);
+    }
+  }, [route.params]);
+
+  const moveUser = () => {
+    navigation.navigate("GetUser");
+  };
 
   async function sendSMS(password) {
     const isAvailable = await SMS.isAvailableAsync();
@@ -77,7 +87,7 @@ export default function AddUser() {
         [user.Phone],
         `Hey ${user.Name} you have been registered on Icourt. Your password is ${password}`
       );
-      if(result){
+      if (result) {
         navigation.navigate(`GetUser`);
       }
     } else {
@@ -88,11 +98,9 @@ export default function AddUser() {
 
   useEffect(() => {
     if ("error" in data) {
-      console.log(data);
+      //console.log(data);
     } else if ("name" in data) {
       sendSMS(data.name);
-    } else {
-      //console.log(data);
     }
   }, [data]);
 
@@ -141,7 +149,7 @@ export default function AddUser() {
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
-            <Text style={{ marginBottom: 5 }}>Role</Text>
+            <Text style={{ marginBottom: 5 }}>Select Block</Text>
             <SelectList
               setSelected={(val) => addUser({ type: "block", text: val })}
               data={Block}
@@ -193,7 +201,7 @@ export default function AddUser() {
           </View>
 
           <View style={styles.containerButtons}>
-            <View style={{ width: "50%", padding: 8, height:70 }}>
+            <View style={{ width: "50%", padding: 8, height: 70 }}>
               <Button
                 theme="primary"
                 label="submit"
@@ -201,8 +209,13 @@ export default function AddUser() {
                 disbaled={activateBtn}
               />
             </View>
-            <View style={{ width: "50%", padding: 8, height:70 }}>
-              <Button theme="primary" label="check users" disbaled={true} onPress={moveUser}/>
+            <View style={{ width: "50%", padding: 8, height: 70 }}>
+              <Button
+                theme="primary"
+                label="check users"
+                disbaled={true}
+                onPress={moveUser}
+              />
             </View>
           </View>
         </View>

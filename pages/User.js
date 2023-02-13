@@ -8,7 +8,6 @@ export default function User({ navigation }) {
   const ctx = React.useContext(AuthContext);
 
   React.useEffect(() => {
-    console.log(ctx.user);
     navigation.setOptions({
       title: `${ctx.user.role}`,
     });

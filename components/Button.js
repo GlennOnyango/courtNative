@@ -6,6 +6,7 @@ export default function Button({
   /* @info The prop theme to detect the button variant. */ theme /* @end */,
   onPress,
   disbaled,
+  btnIcon
 }) {
   if (theme === "primary") {
     return (
@@ -25,9 +26,9 @@ export default function Button({
     <View style={styles.buttonContainer}>
       <Pressable
         style={styles.button}
-        onPress={() => alert("You pressed a button.")}
+        onPress={onPress}
       >
-        <AntDesign name="rightcircle" size={24} color="black" />
+        {btnIcon}
       </Pressable>
     </View>
   );

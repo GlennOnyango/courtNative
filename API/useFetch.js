@@ -17,7 +17,6 @@ export const useFetch = (token) => {
       },
     };
 
-    console.log(url_send);
     fetch(url_send, extra)
       .then((res) => {
         const isJson = res.headers

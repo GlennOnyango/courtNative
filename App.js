@@ -33,7 +33,7 @@ export default function App() {
               name="Home"
               component={Home}
               options={{
-                headerBackVisible:false
+                headerBackVisible:false,
               }}
             />
             <stack.Screen

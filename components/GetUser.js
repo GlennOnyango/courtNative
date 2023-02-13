@@ -12,9 +12,8 @@ import Button from "./Button";
 import { useNavigation } from "@react-navigation/native";
 import AuthContext from "../context/AuthContext";
 import { useFetch } from "../API/useFetch";
-import { Dimensions } from "react-native";
-
-const ScreenWidth = Dimensions.get("window").width;
+import { Feather } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
 
 export default function GetUser() {
   const ctx = React.useContext(AuthContext);
@@ -25,6 +24,7 @@ export default function GetUser() {
   // Customize header
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerBackTitle: "asdads",
       headerTitle: () => (
         <TextInput
           style={styles.input}
@@ -36,10 +36,6 @@ export default function GetUser() {
       ),
     });
   }, [navigation]);
-
-  useEffect(() => {
-    console.log(search);
-  }, [search]);
 
   useEffect(() => {
     if ("fetch" in data) {
@@ -64,7 +60,8 @@ export default function GetUser() {
       return userData;
     }
     return [];
-  }, [data,search]);
+  }, [data, search]);
+
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -72,7 +69,7 @@ export default function GetUser() {
         <View style={styles.containerList}>
           <FlatList
             data={userList}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <View
                 style={{
                   flex: 1,
@@ -84,13 +81,29 @@ export default function GetUser() {
                 }}
               >
                 <View
-                  key={item.Phone}
-                  style={{ width: "90%", justifyContent: "center" }}
+                  key={index}
+                  style={{ width: "80%", justifyContent: "center" }}
                 >
-                  <Text style={styles.item}>{item.Name}</Text>
+                  <Text style={styles.item}>{item.Name}{index}</Text>
                 </View>
                 <View style={{ width: "10%" }}>
-                  <Button theme="icon" onPress={() => alert("asd")} />
+                  <Button
+                    theme="icon"
+                    onPress={()=>navigation.navigate('AddUser',{
+                      editUserDetails:item
+                    })}
+                    btnIcon={<Feather name="edit" size={24} color="black" />}
+                  />
+                </View>
+
+                <View style={{ width: "10%" }}>
+                  <Button
+                    theme="icon"
+                    onPress={() => alert(index)}
+                    btnIcon={
+                      <AntDesign name="deleteuser" size={24} color="black" />
+                    }
+                  />
                 </View>
               </View>
             )}
