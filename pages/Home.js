@@ -47,8 +47,8 @@ export default function Admin({ navigation }) {
       ),
     },
     {
-      key: "House",
-      press: () => alert("house"),
+      key: "Block",
+      press: () => navigation.navigate(`AddBlock`),
       child: <FontAwesome5 name="house-user" size={32} color="#ad1457" />,
     },
     {

@@ -12,6 +12,7 @@ import User from "./pages/User";
 import GetUser from "./components/GetUser";
 import AddUser from "./components/AddUser";
 import { TextInput } from "react-native";
+import AddBlock from "./components/block/AddBlock";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -60,6 +61,10 @@ export default function App() {
                   maxLength={10}
                 />
               }}
+            />
+            <stack.Screen
+              name="AddBlock"
+              component={AddBlock}
             />
           </stack.Group>
         </stack.Navigator>

@@ -12,7 +12,7 @@ import Button from "./Button";
 import { SelectList } from "react-native-dropdown-select-list";
 import AuthContext from "../context/AuthContext";
 import { usePost } from "../API/usePost";
-import { useNavigation,useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import * as SMS from "expo-sms";
 
@@ -62,17 +62,21 @@ export default function AddUser() {
     setUser({ ...user, [e.type]: e.text });
   };
   const submitUser = () => {
-    const newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
+    let newData = {};
+
+    if (route.params.editUserDetails) {
+      newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
+    } else {
+      newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
+    }
 
     callApi("Users.json", newData);
   };
 
   useEffect(() => {
     if (route.params) {
-
-      // const {editUserDetails} = route.params;
-      // setUser({...editUserDetails})
-      console.log(route.params);
+      console.log(route.params.editUserDetails);
+      setUser({ ...route.params.editUserDetails });
     }
   }, [route.params]);
 
@@ -121,7 +125,7 @@ export default function AddUser() {
               onChangeText={(newText) =>
                 addUser({ type: "Name", text: newText })
               }
-              defaultValue={user.phoneNo}
+              defaultValue={user.Name}
               inputMode={"text"}
               keyboardType={"default"}
               maxLength={10}
@@ -153,6 +157,7 @@ export default function AddUser() {
             <SelectList
               setSelected={(val) => addUser({ type: "block", text: val })}
               data={Block}
+              defaultOption={user.block}
               placeholder={"Select Block"}
               save="value"
             />
@@ -184,6 +189,9 @@ export default function AddUser() {
               data={Role}
               placeholder={"Select Role"}
               save="value"
+              defaultOption={
+                Role[Role.findIndex((element) => element.value == user.role)]
+              }
             />
           </View>
 
@@ -197,6 +205,11 @@ export default function AddUser() {
               style={styles.input}
               placeholder={"Status"}
               save="key"
+              defaultOption={
+                Status[
+                  Status.findIndex((element) => element.key == user.status)
+                ]
+              }
             />
           </View>
 

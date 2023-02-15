@@ -50,10 +50,10 @@ export default function GetUser() {
         for (const tel in data[user]) {
           if (search.length > 0) {
             if (tel.includes(search)) {
-              userData.push(data[user][tel]);
+              userData.push({ ...data[user][tel], userId: user });
             }
           } else {
-            userData.push(data[user][tel]);
+            userData.push({ ...data[user][tel], userId: user });
           }
         }
       }
@@ -61,7 +61,6 @@ export default function GetUser() {
     }
     return [];
   }, [data, search]);
-
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -84,14 +83,19 @@ export default function GetUser() {
                   key={index}
                   style={{ width: "80%", justifyContent: "center" }}
                 >
-                  <Text style={styles.item}>{item.Name}{index}</Text>
+                  <Text style={styles.item}>
+                    {item.Name}
+                    {index}
+                  </Text>
                 </View>
                 <View style={{ width: "10%" }}>
                   <Button
                     theme="icon"
-                    onPress={()=>navigation.navigate('AddUser',{
-                      editUserDetails:item
-                    })}
+                    onPress={() =>
+                      navigation.navigate("AddUser", {
+                        editUserDetails: item,
+                      })
+                    }
                     btnIcon={<Feather name="edit" size={24} color="black" />}
                   />
                 </View>
