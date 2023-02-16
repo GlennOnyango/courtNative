@@ -9,76 +9,62 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Button from "./Button";
-import { SelectList } from "react-native-dropdown-select-list";
 import AuthContext from "../context/AuthContext";
-import { usePost } from "../API/usePost";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
 import * as SMS from "expo-sms";
 
-const Role = [
-  { key: "Admin", value: "Admin" },
-  { key: "Landlord", value: "Landlord" },
-  { key: "Tenant", value: "Tenant" },
-];
-
-const Block = [
-  { key: "M81", value: "M81" },
-  { key: "M82", value: "M83" },
-  { key: "M83", value: "M83" },
-];
-
-const Status = [
-  { key: false, value: "false" },
-  { key: true, value: "true" },
-];
+import { getDatabase, ref, set } from "firebase/database";
 
 export default function AddUser() {
   const ctx = React.useContext(AuthContext);
   const navigation = useNavigation();
   const route = useRoute();
-  const [data, callApi, isLoading] = usePost();
   const [user, setUser] = React.useState({
     Name: "",
     Phone: 0,
-    id: 0,
-    password: "",
-    role: "",
-    status: false,
-    block: "",
-    hse: "",
-    needPasswordChange: true,
+    status: true,
   });
 
   const [activateBtn, setBtnActive] = useState();
 
   useEffect(() => {
-    setBtnActive(
-      user.Name.length > 0 && user.Phone.length > 9 && user.role.length > 0
-    );
+    setBtnActive(user.Name.length > 0 && user.Phone.length > 9);
   }, [user]);
 
   const addUser = (e) => {
     setUser({ ...user, [e.type]: e.text });
   };
+
+  function writeUserData(edit) {
+    const db = getDatabase();
+    const pass = generatePassword(8);
+    set(ref(db, `users/${user.Phone}`), {
+      Name: user.Name,
+      Phone: user.Phone,
+      password: edit ? user.password : pass,
+      status: true,
+    })
+      .then(function () {
+        console.log("Synchronization succeeded");
+        edit ? moveUser() : sendSMS(pass);
+      })
+      .catch(function (error) {
+        console.log("Synchronization failed");
+      });
+  }
+
+  
   const submitUser = () => {
-    let newData = {};
-
-    if (route.params.editUserDetails) {
-      newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
-    } else {
-      newData = { [user.Phone]: { ...user, createdBy: ctx.user.id } };
-    }
-
-    callApi("Users.json", newData);
+    writeUserData(route.params.editUserDetails);
   };
 
   useEffect(() => {
     if (route.params) {
-      console.log(route.params.editUserDetails);
       setUser({ ...route.params.editUserDetails });
     }
   }, [route.params]);
+
+  useEffect(()=>{console.log(user)},[user])
 
   const moveUser = () => {
     navigation.navigate("GetUser");
@@ -96,24 +82,33 @@ export default function AddUser() {
       }
     } else {
       // misfortune... there's no SMS available on this device
-      console.log("cant send");
     }
   }
 
-  useEffect(() => {
-    if ("error" in data) {
-      //console.log(data);
-    } else if ("name" in data) {
-      sendSMS(data.name);
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: `Add Users`,
+    });
+  }, [ctx.user]);
+
+  function generatePassword(length) {
+    var charset =
+      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+    var password = "";
+    for (var i = 0; i < length; i++) {
+      password += charset.charAt(Math.floor(Math.random() * charset.length));
     }
-  }, [data]);
+    return password;
+  }
+
+  // // Example usage: generate a 12-character password
+  // var password = generatePassword(12);
+  // console.log(password); // Output: something like "4H#i6^L|w~aB"
 
   return (
     <ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30, marginVertical: 8 }}>Add User</Text>
-
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
@@ -128,7 +123,6 @@ export default function AddUser() {
               defaultValue={user.Name}
               inputMode={"text"}
               keyboardType={"default"}
-              maxLength={10}
             />
           </View>
 
@@ -149,69 +143,9 @@ export default function AddUser() {
               maxLength={10}
             />
           </View>
-
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <Text style={{ marginBottom: 5 }}>Select Block</Text>
-            <SelectList
-              setSelected={(val) => addUser({ type: "block", text: val })}
-              data={Block}
-              defaultOption={user.block}
-              placeholder={"Select Block"}
-              save="value"
-            />
-          </View>
-
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <Text style={{ marginBottom: 5 }}>House</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="hse"
-              onChangeText={(newText) =>
-                addUser({ type: "hse", text: newText })
-              }
-              defaultValue={user.hse}
-              inputMode={"text"}
-              keyboardType={"default"}
-            />
-          </View>
-
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <Text style={{ marginBottom: 5 }}>Role</Text>
-            <SelectList
-              setSelected={(val) => addUser({ type: "role", text: val })}
-              data={Role}
-              placeholder={"Select Role"}
-              save="value"
-              defaultOption={
-                Role[Role.findIndex((element) => element.value == user.role)]
-              }
-            />
-          </View>
-
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <Text style={{ marginBottom: 5 }}>Status</Text>
-            <SelectList
-              setSelected={(val) => addUser({ type: "status", text: val })}
-              data={Status}
-              style={styles.input}
-              placeholder={"Status"}
-              save="key"
-              defaultOption={
-                Status[
-                  Status.findIndex((element) => element.key == user.status)
-                ]
-              }
-            />
-          </View>
+          <Text style={{ fontSize: 14, marginVertical: 8 }}>
+            You should use this section to get new admins to the platform.
+          </Text>
 
           <View style={styles.containerButtons}>
             <View style={{ width: "50%", padding: 8, height: 70 }}>

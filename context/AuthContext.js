@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const auth = {
-  user: { Name: "", Phone: 0, id: 0, role: "", status: false },
+  user: { Name: "", Phone: 0, status: false },
   login: (formData) => {},
   logout: () => {},
 };
@@ -12,8 +12,6 @@ export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState({
     Name: "",
     Phone: 0,
-    id: 0,
-    role: "",
     status: false,
   });
 
@@ -22,7 +20,7 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const logoutHandler = () => {
-    setUser({ Name: "", Phone: 0, id: 0, role: "", status: false });
+    setUser({ Name: "", Phone: 0, status: false });
   };
 
   return (

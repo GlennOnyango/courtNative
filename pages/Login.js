@@ -8,55 +8,50 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState,useContext } from "react";
 import Button from "../components/Button";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useFetch } from "../API/useFetch";
 import AuthContext from "../context/AuthContext";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { app } from "../firebaseConfig";
 
 export default function Login({ navigation }) {
   const [credentials, setCredentials] = useState({ phoneNo: 0, password: "" });
   const [error, setError] = useState(false);
-  const [loggedData, setLoggedData] = useState({
-    Name: "",
-    Phone: 0,
-    id: 0,
-    role: "",
-    status: false,
-  });
-  const [data, callApi] = useFetch();
   const ctx = useContext(AuthContext);
 
   const updateCredentials = (e) => {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
-  const login = () => {
-    callApi("Users.json");
-  };
+  const database = getDatabase(app);
 
-  //Gets data when you visit accounts
-  useEffect(() => {
-    if (!("fetch" in data)) {
-      if (credentials.phoneNo && credentials.password) {
-        if (!("fetch" in data)) {
-          for (const user in data) {
-            if (data[user][credentials.phoneNo]) {
-              setLoggedData({ ...data[user][credentials.phoneNo], id: user });
-              navigation.navigate(`Home`);
-            }
-          }
+
+  const login = () => {
+    const starCountRef = ref(database, `users/${credentials.phoneNo}`);
+
+    onValue(starCountRef, (snapshot) => {
+
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        if(data.password == credentials.password && data.status){
+          ctx.login(data);
+          navigation.navigate(`Home`);
+        }else{
           setError(true);
+          console.log("Password Wrong");  
         }
+        
       } else {
         setError(true);
+        console.log("No data available");
       }
-    }
-  }, [data]);
+      //updateStarCount(postElement, data);
+    });
 
-  useEffect(() => {
-    ctx.login(loggedData);
-  }, [loggedData]);
+  };
+
+
   return (
     <ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

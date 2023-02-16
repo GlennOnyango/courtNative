@@ -7,19 +7,22 @@ import {
   Keyboard,
   FlatList,
 } from "react-native";
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect, useMemo } from "react";
 import Button from "./Button";
 import { useNavigation } from "@react-navigation/native";
 import AuthContext from "../context/AuthContext";
 import { useFetch } from "../API/useFetch";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { app } from "../firebaseConfig";
 
 export default function GetUser() {
   const ctx = React.useContext(AuthContext);
   const [data, callApi, isLoading] = useFetch();
   const navigation = useNavigation();
   const [search, setSearch] = useState("");
+  const database = getDatabase(app);
 
   // Customize header
   useLayoutEffect(() => {
@@ -38,29 +41,45 @@ export default function GetUser() {
   }, [navigation]);
 
   useEffect(() => {
-    if ("fetch" in data) {
-      callApi("Users.json");
-    }
-  }, [data]);
+    const starCountRef = ref(database, `users/`);
 
-  const userList = React.useMemo(() => {
-    if (Object.keys(data).length > 0 && !("fetch" in data)) {
-      const userData = [];
-      for (const user in data) {
-        for (const tel in data[user]) {
+    onValue(starCountRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        console.log(data);
+      } else {
+        setError(true);
+        console.log("No data available");
+      }
+      //updateStarCount(postElement, data);
+    });
+  }, []);
+
+  const userList = useMemo(() => {
+    const starCountRef = ref(database, `users/`);
+
+    const userData = [];
+
+    onValue(starCountRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+
+        for (const user in data) {
           if (search.length > 0) {
-            if (tel.includes(search)) {
-              userData.push({ ...data[user][tel], userId: user });
+            if (user.includes(search)) {
+              userData.push(data[user]);
             }
           } else {
-            userData.push({ ...data[user][tel], userId: user });
+            userData.push(data[user]);
           }
         }
+      } else {
+        console.log("No data available");
       }
-      return userData;
-    }
-    return [];
-  }, [data, search]);
+    });
+
+    return userData;
+  }, [search]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -85,7 +104,6 @@ export default function GetUser() {
                 >
                   <Text style={styles.item}>
                     {item.Name}
-                    {index}
                   </Text>
                 </View>
                 <View style={{ width: "10%" }}>

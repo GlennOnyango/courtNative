@@ -17,7 +17,7 @@ export default function Admin({ navigation }) {
 
   React.useEffect(() => {
     navigation.setOptions({
-      title: `${ctx.user.role}`,
+      title: `Admin`,
     });
   }, [ctx.user]);
 
