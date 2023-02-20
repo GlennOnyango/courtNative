@@ -19,6 +19,7 @@ import {
   Provider as PaperProvider,
 } from "react-native-paper";
 import CustomNavigationBar from "./components/CustomNavigationBar";
+import AddCourt from "./components/courts/AddCourt";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -69,11 +70,10 @@ export default function App() {
               <stack.Screen
                 name="Courts"
                 component={Courts}
-                options={
-                  {
-                    //headerBackVisible:false
-                  }
-                }
+              />
+              <stack.Screen
+                name="Add Courts"
+                component={AddCourt}
               />
               <stack.Screen name="AddUser" component={AddUser} />
               <stack.Screen

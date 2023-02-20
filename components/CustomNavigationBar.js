@@ -1,7 +1,6 @@
 import { Appbar } from "react-native-paper";
 
 function CustomNavigationBar({ navigation, back, route }) {
-  console.log(route);
   return (
     <Appbar.Header mode="center-aligned" elevated>
       {back ? (
