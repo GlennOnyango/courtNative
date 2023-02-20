@@ -10,46 +10,50 @@ import React, { useState, useEffect } from "react";
 import { TextInput } from "react-native-paper";
 import { Button } from "react-native-paper";
 
-import { Text } from 'react-native-paper';
+import { Text } from "react-native-paper";
 import { getDatabase, ref, set } from "firebase/database";
 
-export default function AddCourt() {
+export default function AddCourt({ navigation, route }) {
+  const { item } = route.params;
   const [user, setUser] = React.useState({
     Name: "",
     status: true,
   });
-  const [response,setResponse] = useState("");
+  const db = getDatabase();
+
+  const [response, setResponse] = useState("");
 
   const addCourt = (e) => {
     setUser({ ...user, [e.type]: e.text });
   };
 
+  useEffect(() => {
+    if (route.params) setUser(item);
+  }, [route.params]);
+
   function writeUserData() {
-    const db = getDatabase();
     set(ref(db, `court/${user.Name}`), {
       Name: user.Name,
       status: true,
     })
       .then(function () {
-        setResponse("Court added to the system")
+        setResponse("Court added to the system");
       })
       .catch(function (error) {
-        setResponse("Court not added to the system")
+        setResponse("Court not added to the system");
       });
   }
 
   const submitUser = () => {
-    
-    if(user.Name.length > 0){
+    if (user.Name.length > 0) {
       writeUserData();
       setUser({
         Name: "",
         status: true,
       });
-    }else{
+    } else {
       setResponse("Text field is empty");
     }
-    
   };
 
   const clear = () => {
@@ -59,11 +63,19 @@ export default function AddCourt() {
     });
   };
 
-  // useEffect(() => {
-  //   if (Object.keys(item.item).length > 0) {
-  //     setUser(item.item);
-  //   }
-  // }, [item]);
+  const changeUserStatus = () => {
+    set(ref(db, `court/${user.Name}`), {
+      Name: user.Name,
+      status: !route.params.item.status,
+    })
+      .then(function () {
+        setResponse("Court status changed");
+        navigation.navigate("Courts");
+      })
+      .catch(function (error) {
+        setResponse("Court not added to the system");
+      });
+  };
 
   return (
     <ScrollView>
@@ -85,6 +97,17 @@ export default function AddCourt() {
             />
           </View>
 
+          {route.params ? (
+            <View style={styles.containerButtons}>
+              <View style={{ width: "100%", padding: 4, height: 50 }}>
+                <Button mode="contained" onPress={changeUserStatus}>
+                  {route.params.item.status
+                    ? "Deactivate Court"
+                    : "Activate Court"}
+                </Button>
+              </View>
+            </View>
+          ) : null}
           <View style={styles.containerButtons}>
             <View style={{ width: "50%", padding: 4, height: 50 }}>
               <Button icon="plus" mode="contained" onPress={submitUser}>
@@ -99,7 +122,9 @@ export default function AddCourt() {
             </View>
           </View>
 
-          <Text variant="titleSmall" marginVertical={4}>{response}</Text>
+          <Text variant="titleSmall" marginVertical={4}>
+            {response}
+          </Text>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>

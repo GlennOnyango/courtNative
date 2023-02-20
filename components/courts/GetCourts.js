@@ -1,8 +1,5 @@
-import { StyleSheet, View, Text, FlatList } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
-import Button from "../Button";
-import { Feather } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "../../firebaseConfig";
 import { Searchbar } from "react-native-paper";
@@ -65,11 +62,9 @@ export default function GetCourts({ editItem,openAddCourt }) {
               <List.Icon
                 {...props}
                 icon="database-edit"
-                onPress={() => editItem(item)}
-                color={"green"}
               />
             )}
-            left={(props) => <List.Icon {...props} icon="delete-forever" color={"error"}/>}
+            onPress={() =>  editItem(item)}
           />
         ))}
       </View>

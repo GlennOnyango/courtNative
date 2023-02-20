@@ -1,13 +1,11 @@
 import { StyleSheet, View } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import AuthContext from "../context/AuthContext";
-import AddCourt from "../components/courts/AddCourt";
 import GetCourts from "../components/courts/GetCourts";
 
 export default function Courts({ navigation }) {
   const ctx = React.useContext(AuthContext);
-  const [edit, setEdit] = useState({});
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -16,18 +14,14 @@ export default function Courts({ navigation }) {
   }, [ctx.user]);
 
   const getEditItem = (item) => {
-    setEdit(item);
+    navigation.navigate("Add Courts",{item});
   };
 
   const AddCourt = () => {
-    navigation.navigate("Add Courts");
+    navigation.navigate("Add Courts",{item});
   };
-
   return (
     <View style={styles.container}>
-      {/* <View style={styles.containerViewUser}>
-           <AddCourt item={edit} />
-         </View> */}
       <View style={styles.containerViewUser}>
         <GetCourts editItem={getEditItem} openAddCourt={AddCourt} />
       </View>
