@@ -3,26 +3,24 @@ import {
   View,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
   FlatList,
 } from "react-native";
-import React, { useState, useEffect, useLayoutEffect, useMemo } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import Button from "./Button";
 import { useNavigation } from "@react-navigation/native";
-import AuthContext from "../context/AuthContext";
-import { useFetch } from "../API/useFetch";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "../firebaseConfig";
 
-export default function GetUser() {
-  const ctx = React.useContext(AuthContext);
-  const [data, callApi, isLoading] = useFetch();
+export default function GetUser({editItem}) {
+  const [data,setData] = useState([]);
+  const [filterData,setFilteredData] = useState([]);
   const navigation = useNavigation();
   const [search, setSearch] = useState("");
+
   const database = getDatabase(app);
+  const starCountRef = ref(database, `users/`);
 
   // Customize header
   useLayoutEffect(() => {
@@ -40,53 +38,35 @@ export default function GetUser() {
     });
   }, [navigation]);
 
-  useEffect(() => {
-    const starCountRef = ref(database, `users/`);
 
-    onValue(starCountRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        console.log(data);
-      } else {
-        setError(true);
-        console.log("No data available");
-      }
-      //updateStarCount(postElement, data);
-    });
-  }, []);
-
-  const userList = useMemo(() => {
-    const starCountRef = ref(database, `users/`);
-
+useEffect(()=>{
+  onValue(starCountRef, (snapshot) => {
     const userData = [];
 
-    onValue(starCountRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const data = snapshot.val();
+    if (snapshot.exists()) {
+      const data = snapshot.val();
 
-        for (const user in data) {
-          if (search.length > 0) {
-            if (user.includes(search)) {
-              userData.push(data[user]);
-            }
-          } else {
-            userData.push(data[user]);
-          }
-        }
-      } else {
-        console.log("No data available");
+      for (const user in data) {
+          userData.push(data[user]);
       }
-    });
+    }
 
-    return userData;
-  }, [search]);
+    setData(userData);
+  });
+},[]);
+
+useEffect(()=>{
+  if (search.length > 0) {
+  setFilteredData(data.filter((e)=>e.Phone.includes(search)));  
+  }
+},[search]);
+
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.containerList}>
           <FlatList
-            data={userList}
+            data={search.length > 0 ? filterData : data}
             renderItem={({ item, index }) => (
               <View
                 style={{
@@ -97,9 +77,10 @@ export default function GetUser() {
                   paddingLeft: 4,
                   borderBottomWidth: 1,
                 }}
+                key={item.Phone}
               >
+
                 <View
-                  key={index}
                   style={{ width: "80%", justifyContent: "center" }}
                 >
                   <Text style={styles.item}>
@@ -109,11 +90,7 @@ export default function GetUser() {
                 <View style={{ width: "10%" }}>
                   <Button
                     theme="icon"
-                    onPress={() =>
-                      navigation.navigate("AddUser", {
-                        editUserDetails: item,
-                      })
-                    }
+                    onPress={() =>editItem(item)}
                     btnIcon={<Feather name="edit" size={24} color="black" />}
                   />
                 </View>
@@ -132,7 +109,6 @@ export default function GetUser() {
           />
         </View>
       </View>
-    </TouchableWithoutFeedback>
   );
 }
 

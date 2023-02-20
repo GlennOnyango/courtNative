@@ -2,10 +2,10 @@ import { StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 
 import AuthContext from "../context/AuthContext";
-import AddUser from "../components/AddUser";
-import GetUser from "../components/GetUser";
+import AddCourt from "../components/courts/AddCourt";
+import GetCourts from "../components/courts/GetCourts";
 
-export default function User({ navigation }) {
+export default function Courts({ navigation }) {
   const ctx = React.useContext(AuthContext);
   const [edit,setEdit] = useState({});
 
@@ -22,10 +22,10 @@ export default function User({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.containerViewUser}>
-        <GetUser editItem={getEditItem}/>
+        <GetCourts editItem={getEditItem}/>
       </View>
       <View style={styles.containerAddUser}>
-        <AddUser editItem={edit}/>
+        <AddCourt item={edit}/>
       </View>
     </View>
   );

@@ -36,7 +36,7 @@ export default function Admin({ navigation }) {
     },
     {
       key: "Courts",
-      press: () => alert("courts"),
+      press: () => navigation.navigate(`Courts`),
       child: <Fontisto name="treehouse" size={32} color="#ad1457" />,
     },
     {

@@ -9,16 +9,13 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Button from "./Button";
-import AuthContext from "../context/AuthContext";
-import { useNavigation, useRoute } from "@react-navigation/native";
+//import { useNavigation, useRoute } from "@react-navigation/native";
 import * as SMS from "expo-sms";
 
 import { getDatabase, ref, set } from "firebase/database";
 
-export default function AddUser() {
-  const ctx = React.useContext(AuthContext);
-  const navigation = useNavigation();
-  const route = useRoute();
+export default function AddUser(editItem, reset) {
+  // const route = useRoute();
   const [user, setUser] = React.useState({
     Name: "",
     Phone: 0,
@@ -46,50 +43,45 @@ export default function AddUser() {
     })
       .then(function () {
         console.log("Synchronization succeeded");
-        edit ? moveUser() : sendSMS(pass);
+        edit ? sendSMS(undefined) : sendSMS(pass);
       })
       .catch(function (error) {
         console.log("Synchronization failed");
       });
   }
 
-  
   const submitUser = () => {
-    writeUserData(route.params.editUserDetails);
+    writeUserData(editItem.editItem);
+    setUser({
+      Name: "",
+      Phone: 0,
+      status: true,
+    });
   };
 
   useEffect(() => {
-    if (route.params) {
-      setUser({ ...route.params.editUserDetails });
+    if (Object.keys(editItem.editItem).length > 0) {
+      setUser(editItem.editItem);
     }
-  }, [route.params]);
-
-  useEffect(()=>{console.log(user)},[user])
-
-  const moveUser = () => {
-    navigation.navigate("GetUser");
-  };
+  }, [editItem]);
 
   async function sendSMS(password) {
     const isAvailable = await SMS.isAvailableAsync();
     if (isAvailable) {
-      const { result } = await SMS.sendSMSAsync(
-        [user.Phone],
-        `Hey ${user.Name} you have been registered on Icourt. Your password is ${password}`
-      );
+      let message = "";
+      if (password) {
+        message = `Hey ${user.Name} you have been registered on Icourt. Your password is ${password}`;
+      } else {
+        message = `Hey ${user.Name} you details have been edited.If you get any issues contact any Adminstrator.`;
+      }
+      const { result } = await SMS.sendSMSAsync([user.Phone], message);
       if (result) {
-        navigation.navigate(`GetUser`);
+        reset();
       }
     } else {
       // misfortune... there's no SMS available on this device
     }
   }
-
-  React.useEffect(() => {
-    navigation.setOptions({
-      title: `Add Users`,
-    });
-  }, [ctx.user]);
 
   function generatePassword(length) {
     var charset =
@@ -105,6 +97,14 @@ export default function AddUser() {
   // var password = generatePassword(12);
   // console.log(password); // Output: something like "4H#i6^L|w~aB"
 
+  const clear = () => {
+    setUser({
+      Name: "",
+      Phone: 0,
+      status: true,
+    });
+  };
+
   return (
     <ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -112,11 +112,9 @@ export default function AddUser() {
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
-            <Text style={{ marginBottom: 5 }}>Full name</Text>
-
             <TextInput
               style={styles.input}
-              placeholder="Glenn Tedd"
+              placeholder="Full name"
               onChangeText={(newText) =>
                 addUser({ type: "Name", text: newText })
               }
@@ -129,11 +127,9 @@ export default function AddUser() {
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
-            <Text style={{ marginBottom: 5 }}>Phone number</Text>
-
             <TextInput
               style={styles.input}
-              placeholder="0723241223"
+              placeholder="Phone number"
               onChangeText={(newText) =>
                 addUser({ type: "Phone", text: newText })
               }
@@ -143,25 +139,23 @@ export default function AddUser() {
               maxLength={10}
             />
           </View>
-          <Text style={{ fontSize: 14, marginVertical: 8 }}>
-            You should use this section to get new admins to the platform.
-          </Text>
 
           <View style={styles.containerButtons}>
-            <View style={{ width: "50%", padding: 8, height: 70 }}>
+            <View style={{ width: "50%", padding: 4, height: 50 }}>
               <Button
                 theme="primary"
-                label="submit"
+                label="Add User"
                 onPress={submitUser}
                 disbaled={activateBtn}
               />
             </View>
-            <View style={{ width: "50%", padding: 8, height: 70 }}>
+
+            <View style={{ width: "50%", padding: 4, height: 50 }}>
               <Button
                 theme="primary"
-                label="check users"
+                label="Clear"
+                onPress={clear}
                 disbaled={true}
-                onPress={moveUser}
               />
             </View>
           </View>
@@ -174,7 +168,7 @@ export default function AddUser() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#e3f2fd",
     justifyContent: "center",
     alignItems: "center",
   },

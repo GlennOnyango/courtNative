@@ -13,6 +13,7 @@ import GetUser from "./components/GetUser";
 import AddUser from "./components/AddUser";
 import { TextInput } from "react-native";
 import AddBlock from "./components/block/AddBlock";
+import Courts from "./pages/Courts";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -40,6 +41,13 @@ export default function App() {
             <stack.Screen
               name="User"
               component={User}
+              options={{
+                //headerBackVisible:false
+              }}
+            />
+            <stack.Screen
+              name="Courts"
+              component={Courts}
               options={{
                 //headerBackVisible:false
               }}

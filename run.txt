@@ -1,0 +1,1 @@
+windows - PS C:\Users\GlennTedd\AppData\Local\Android\Sdk\emulator> .\emulator.exe -avd Pixel_XL_API_30
