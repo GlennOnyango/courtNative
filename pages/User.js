@@ -24,9 +24,9 @@ export default function User({ navigation }) {
       <View style={styles.containerViewUser}>
         <GetUser editItem={getEditItem}/>
       </View>
-      <View style={styles.containerAddUser}>
+      {/* <View style={styles.containerAddUser}>
         <AddUser editItem={edit}/>
-      </View>
+      </View> */}
     </View>
   );
 }

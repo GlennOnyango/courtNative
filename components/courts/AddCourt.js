@@ -12,6 +12,7 @@ import Button from "../Button";
 import { getDatabase, ref, set } from "firebase/database";
 
 export default function AddCourt(item) {
+
   const [user, setUser] = React.useState({
     Name: "",
     status: true,
@@ -62,11 +63,11 @@ export default function AddCourt(item) {
     }
   }, [item]);
 
-
   return (
     <ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
+          
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >

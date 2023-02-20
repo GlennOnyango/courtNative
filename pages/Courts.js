@@ -24,9 +24,9 @@ export default function Courts({ navigation }) {
       <View style={styles.containerViewUser}>
         <GetCourts editItem={getEditItem}/>
       </View>
-      <View style={styles.containerAddUser}>
+      {/* <View style={styles.containerAddUser}>
         <AddCourt item={edit}/>
-      </View>
+      </View> */}
     </View>
   );
 }

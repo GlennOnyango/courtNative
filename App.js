@@ -14,70 +14,88 @@ import AddUser from "./components/AddUser";
 import { TextInput } from "react-native";
 import AddBlock from "./components/block/AddBlock";
 import Courts from "./pages/Courts";
+import {
+  MD3LightTheme as DefaultTheme,
+  Provider as PaperProvider,
+} from "react-native-paper";
+import CustomNavigationBar from "./components/CustomNavigationBar";
 
 export default function App() {
   const stack = createNativeStackNavigator();
 
+  const theme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      primary: "tomato",
+      secondary: "yellow",
+    },
+  };
+
   return (
     <AuthContextProvider>
       <NavigationContainer>
-        <stack.Navigator>
-          <stack.Group
+        <PaperProvider theme={theme}>
+          <stack.Navigator
             screenOptions={{
-              headerStyle: { backgroundColor: "#ad1457" },
-              headerTitleStyle: {
-                color: "white",
-              },
+              header: (props) => <CustomNavigationBar {...props} />,
             }}
           >
-            <stack.Screen name="Login" component={Login} />
-            <stack.Screen
-              name="Home"
-              component={Home}
-              options={{
-                headerBackVisible:false,
+            <stack.Group
+              screenOptions={{
+                headerStyle: { backgroundColor: "#ad1457" },
+                headerTitleStyle: {
+                  color: "white",
+                },
               }}
-            />
-            <stack.Screen
-              name="User"
-              component={User}
-              options={{
-                //headerBackVisible:false
-              }}
-            />
-            <stack.Screen
-              name="Courts"
-              component={Courts}
-              options={{
-                //headerBackVisible:false
-              }}
-            />
-            <stack.Screen
-              name="AddUser"
-              component={AddUser}
-            />
-            <stack.Screen
-              name="GetUser"
-              component={GetUser}
-              
-              options={{
-                headerTitleStyle:
-                <TextInput
-                  placeholder="0724258876"
-                  inputMode={"tel"}
-                  keyboardType={"phone-pad"}
-                  maxLength={10}
-                />
-              }}
-            />
-            <stack.Screen
-              name="AddBlock"
-              component={AddBlock}
-            />
-          </stack.Group>
-        </stack.Navigator>
+            >
+              <stack.Screen name="Login" component={Login} />
+              <stack.Screen
+                name="Home"
+                component={Home}
+                options={{
+                  headerBackVisible: false,
+                }}
+              />
+              <stack.Screen
+                name="User"
+                component={User}
+                options={
+                  {
+                    //headerBackVisible:false
+                  }
+                }
+              />
+              <stack.Screen
+                name="Courts"
+                component={Courts}
+                options={
+                  {
+                    //headerBackVisible:false
+                  }
+                }
+              />
+              <stack.Screen name="AddUser" component={AddUser} />
+              <stack.Screen
+                name="GetUser"
+                component={GetUser}
+                options={{
+                  headerTitleStyle: (
+                    <TextInput
+                      placeholder="0724258876"
+                      inputMode={"tel"}
+                      keyboardType={"phone-pad"}
+                      maxLength={10}
+                    />
+                  ),
+                }}
+              />
+              <stack.Screen name="AddBlock" component={AddBlock} />
+            </stack.Group>
+          </stack.Navigator>
 
-        <StatusBar style="light" />
+          <StatusBar style="light" />
+        </PaperProvider>
       </NavigationContainer>
     </AuthContextProvider>
   );
