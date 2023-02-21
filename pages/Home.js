@@ -1,4 +1,4 @@
-import { StyleSheet, FlatList, ScrollView, View, Image } from "react-native";
+import { StyleSheet, FlatList, View, Image } from "react-native";
 import React from "react";
 
 import CardButton from "../components/Card";
@@ -10,7 +10,8 @@ import { Fontisto } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AuthContext from "../context/AuthContext";
-import { Card } from "react-native-paper";
+import { Card, Text, Badge, } from "react-native-paper";
+
 const PlaceholderImage = require("../assets/images/admin1.jpg");
 
 export default function Admin({ navigation }) {
@@ -67,6 +68,24 @@ export default function Admin({ navigation }) {
         <Image source={PlaceholderImage} style={styles.image} />
       </View>
 
+      <Card style={styles.cardStyle}>
+        <Card.Title
+          title="Manage Your Residents"
+          subtitle={`welecome ${ctx.user.Name}`}
+          subtitleStyle={{textAlign:"center"}}
+          titleStyle={styles.cardText}
+        />
+        <Card.Content style={styles.cardContent}>
+          <Badge >100</Badge>
+          <Text variant="labelSmall" style={{marginRight:6}}> Residents</Text>
+
+          <Badge>110</Badge>
+          <Text variant="labelSmall" style={{marginRight:6}}>Homes</Text>
+          <Badge>110K</Badge>
+          <Text variant="labelSmall">Collections</Text>
+        </Card.Content>
+      </Card>
+
       <View style={styles.cardsContainer}>
         <FlatList
           data={modules}
@@ -99,20 +118,40 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   imageContainer: {
-    flex: 2,
+    height: "40%",
   },
   cardsContainer: {
-    flex: 2,
+    height: "40%",
+    marginTop: "15%",
     alignItems: "center",
   },
   buttonContainer: {
-    height: 50,
+    height: "10%",
     marginBottom: 4,
   },
   image: {
     width: "100%",
     height: "100%",
-    borderBottomLeftRadius:16,
-    borderBottomRightRadius:16,
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+  },
+  cardStyle: {
+    marginHorizontal: 16,
+    position: "absolute",
+    left: 0,
+    top: "30%",
+    width: "90%",
+    zIndex: 1,
+  },
+  cardText: {
+    textAlign: "center",
+    fontSize: 24,
+    marginTop:4
+  },
+  cardContent: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent:"center",
+    marginBottom:12
   },
 });
