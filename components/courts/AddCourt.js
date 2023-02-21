@@ -6,11 +6,8 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
-//import Button from "../Button";
-import { TextInput } from "react-native-paper";
-import { Button } from "react-native-paper";
+import { TextInput,Button,Text } from "react-native-paper";
 
-import { Text } from "react-native-paper";
 import { getDatabase, ref, set } from "firebase/database";
 
 export default function AddCourt({ navigation, route }) {

@@ -1,13 +1,11 @@
 import { StyleSheet, View } from "react-native";
-import React, { useState } from "react";
+import React from "react";
 
 import AuthContext from "../context/AuthContext";
-import AddUser from "../components/users/AddUser";
 import GetUser from "../components/users/GetUser";
 
 export default function User({ navigation }) {
   const ctx = React.useContext(AuthContext);
-  const [edit,setEdit] = useState({});
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -16,17 +14,19 @@ export default function User({ navigation }) {
   }, [ctx.user]);
 
   const getEditItem = (item)=>{
-    setEdit(item)
+    
+    navigation.navigate("Add User",{item});
   }
+  
+  const AddAdmin = () => {
+    navigation.navigate("Add User");
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.containerViewUser}>
-        <GetUser editItem={getEditItem}/>
+        <GetUser editItem={getEditItem} openAddAdmin={AddAdmin}/>
       </View>
-      {/* <View style={styles.containerAddUser}>
-        <AddUser editItem={edit}/>
-      </View> */}
     </View>
   );
 }
@@ -37,11 +37,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   containerViewUser:{
-    height:"70%",
+    height:"100%",
     backgroundColor: "#fff",
-  },
-  containerAddUser:{
-    height:"30%",
-    backgroundColor: "#e3f2fd",
   }
 });

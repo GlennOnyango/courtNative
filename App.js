@@ -67,29 +67,9 @@ export default function App() {
                   }
                 }
               />
-              <stack.Screen
-                name="Courts"
-                component={Courts}
-              />
-              <stack.Screen
-                name="Add Courts"
-                component={AddCourt}
-              />
-              <stack.Screen name="AddUser" component={AddUser} />
-              <stack.Screen
-                name="GetUser"
-                component={GetUser}
-                options={{
-                  headerTitleStyle: (
-                    <TextInput
-                      placeholder="0724258876"
-                      inputMode={"tel"}
-                      keyboardType={"phone-pad"}
-                      maxLength={10}
-                    />
-                  ),
-                }}
-              />
+              <stack.Screen name="Courts" component={Courts} />
+              <stack.Screen name="Add Courts" component={AddCourt} />
+              <stack.Screen name="Add User" component={AddUser} />
               <stack.Screen name="AddBlock" component={AddBlock} />
             </stack.Group>
           </stack.Navigator>

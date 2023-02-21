@@ -1,69 +1,72 @@
 import {
   StyleSheet,
   View,
-  Text,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import Button from "../Button";
-//import { useNavigation, useRoute } from "@react-navigation/native";
+import React, { useState, useEffect, useMemo } from "react";
 import * as SMS from "expo-sms";
+import { TextInput, Button, Text } from "react-native-paper";
 
 import { getDatabase, ref, set } from "firebase/database";
 
-export default function AddUser(editItem, reset) {
-  // const route = useRoute();
+export default function AddUser({ navigation, route }) {
+  const [response, setResponse] = useState("");
   const [user, setUser] = React.useState({
     Name: "",
     Phone: 0,
     status: true,
   });
 
-  const [activateBtn, setBtnActive] = useState();
-
+  const db = getDatabase();
   useEffect(() => {
-    setBtnActive(user.Name.length > 0 && user.Phone.length > 9);
-  }, [user]);
+    if (route.params) {
+      const { item } = route.params;
+      setUser(item);
+    }
+  }, [route.params]);
+
+  const state = useMemo(() => {
+    if (route.params) {
+      return route.params.item.status;
+    }
+    return false;
+  }, [route.params]);
 
   const addUser = (e) => {
     setUser({ ...user, [e.type]: e.text });
   };
 
-  function writeUserData(edit) {
-    const db = getDatabase();
+  function writeUserData() {
     const pass = generatePassword(8);
     set(ref(db, `users/${user.Phone}`), {
       Name: user.Name,
       Phone: user.Phone,
-      password: edit ? user.password : pass,
+      password: state ? user.password : pass,
       status: true,
     })
       .then(function () {
-        console.log("Synchronization succeeded");
-        edit ? sendSMS(undefined) : sendSMS(pass);
+        setResponse("Admin added to the system");
+        state ? sendSMS(undefined) : sendSMS(pass);
       })
       .catch(function (error) {
-        console.log("Synchronization failed");
+        setResponse("Admin not added to the system");
       });
   }
 
   const submitUser = () => {
-    writeUserData(editItem.editItem);
-    setUser({
-      Name: "",
-      Phone: 0,
-      status: true,
-    });
-  };
-
-  useEffect(() => {
-    if (Object.keys(editItem.editItem).length > 0) {
-      setUser(editItem.editItem);
+    if (user.Name.length > 0) {
+      writeUserData();
+      setUser({
+        Name: "",
+        Phone: 0,
+        status: true,
+      });
+    } else {
+      setResponse("Text field is empty");
     }
-  }, [editItem]);
+  };
 
   async function sendSMS(password) {
     const isAvailable = await SMS.isAvailableAsync();
@@ -76,7 +79,7 @@ export default function AddUser(editItem, reset) {
       }
       const { result } = await SMS.sendSMSAsync([user.Phone], message);
       if (result) {
-        reset();
+        navigation.navigate("User");
       }
     } else {
       // misfortune... there's no SMS available on this device
@@ -97,6 +100,22 @@ export default function AddUser(editItem, reset) {
   // var password = generatePassword(12);
   // console.log(password); // Output: something like "4H#i6^L|w~aB"
 
+  const changeUserStatus = () => {
+    set(ref(db, `users/${user.Phone}`), {
+      Name: user.Name,
+      Phone: user.Phone,
+      password: state ? user.password : pass,
+      status: !user.status,
+    })
+      .then(function () {
+        setResponse("Admin status changed");
+        navigation.navigate("User");
+      })
+      .catch(function (error) {
+        setResponse("Admin not added to the system");
+      });
+  };
+
   const clear = () => {
     setUser({
       Name: "",
@@ -114,11 +133,12 @@ export default function AddUser(editItem, reset) {
           >
             <TextInput
               style={styles.input}
-              placeholder="Full name"
+              label="Full name"
+              mode="outlined"
               onChangeText={(newText) =>
                 addUser({ type: "Name", text: newText })
               }
-              defaultValue={user.Name}
+              value={user.Name}
               inputMode={"text"}
               keyboardType={"default"}
             />
@@ -129,36 +149,49 @@ export default function AddUser(editItem, reset) {
           >
             <TextInput
               style={styles.input}
-              placeholder="Phone number"
+              label="Phone number"
+              mode="outlined"
               onChangeText={(newText) =>
                 addUser({ type: "Phone", text: newText })
               }
-              defaultValue={user.Phone}
+              value={user.Phone}
               inputMode={"tel"}
               keyboardType={"phone-pad"}
               maxLength={10}
             />
           </View>
 
+          {route.params ? (
+            <View style={styles.containerButtons}>
+              <View style={{ width: "100%", padding: 4, height: 50 }}>
+                <Button
+                  mode="contained"
+                  onPress={changeUserStatus}
+                  buttonColor={state ? "red" : "green"}
+                >
+                  {state ? "Deactivate Admin" : "Activate Admin"}
+                </Button>
+              </View>
+            </View>
+          ) : null}
+
           <View style={styles.containerButtons}>
             <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button
-                theme="primary"
-                label="Add User"
-                onPress={submitUser}
-                disbaled={activateBtn}
-              />
+              <Button icon="plus" mode="contained" onPress={submitUser}>
+                Add Admin
+              </Button>
             </View>
 
             <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button
-                theme="primary"
-                label="Clear"
-                onPress={clear}
-                disbaled={true}
-              />
+              <Button icon="backspace" mode="contained" onPress={clear}>
+                Clear
+              </Button>
             </View>
           </View>
+
+          <Text variant="titleSmall" marginVertical={4}>
+            {response}
+          </Text>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>
@@ -168,7 +201,6 @@ export default function AddUser(editItem, reset) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e3f2fd",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -182,10 +214,5 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
-    padding: 5,
-    borderWidth: 1,
-    borderColor: "grey",
-    borderStyle: "solid",
-    borderRadius: 3,
   },
 });

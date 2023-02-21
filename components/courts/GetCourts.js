@@ -1,11 +1,8 @@
 import { StyleSheet, View } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
-import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "../../firebaseConfig";
-import { Divider, Searchbar } from "react-native-paper";
-import { FAB } from "react-native-paper";
-
-import { List } from "react-native-paper";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { Divider, Searchbar,FAB,List } from "react-native-paper";
 
 export default function GetCourts({ editItem, openAddCourt }) {
   const [data, setData] = useState([]);
