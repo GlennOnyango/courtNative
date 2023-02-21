@@ -41,7 +41,7 @@ export default function Admin({ navigation }) {
       child: <Fontisto name="treehouse" size={32} color="#ad1457" />,
     },
     {
-      key: "Tenant",
+      key: "Residents",
       press: () => alert("tenant"),
       child: (
         <MaterialIcons name="person-pin-circle" size={32} color="#ad1457" />
@@ -100,21 +100,19 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     flex: 2,
-    padding: 4,
   },
   cardsContainer: {
     flex: 2,
-    padding: 12,
     alignItems: "center",
   },
   buttonContainer: {
-    paddingHorizontal: 16,
     height: 50,
     marginBottom: 4,
   },
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 18,
+    borderBottomLeftRadius:16,
+    borderBottomRightRadius:16,
   },
 });

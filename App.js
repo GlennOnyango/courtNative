@@ -9,9 +9,7 @@ import { AuthContextProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
 import User from "./pages/User";
-import GetUser from "./components/users/GetUser";
 import AddUser from "./components/users/AddUser";
-import { TextInput } from "react-native";
 import AddBlock from "./components/block/AddBlock";
 import Courts from "./pages/Courts";
 import {
@@ -74,7 +72,7 @@ export default function App() {
             </stack.Group>
           </stack.Navigator>
 
-          <StatusBar style="light" />
+          <StatusBar backgroundColor="transparent" animated hidden/>
         </PaperProvider>
       </NavigationContainer>
     </AuthContextProvider>

@@ -51,12 +51,13 @@ export default function GetCourts({ editItem, openAddCourt }) {
         style={styles.searchBar}
       />
       <View style={styles.containerList}>
-        {dataArray.map((item) => (
+        {dataArray.map((item,index) => (
           <>
             <List.Item
               title={item.Name}
               right={(props) => <List.Icon {...props} icon="note-edit-outline" />}
               onPress={() => editItem(item)}
+              key={index}
             />
             <Divider bold={true} horizontalInset={true}/>
           </>

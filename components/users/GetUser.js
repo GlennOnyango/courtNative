@@ -51,13 +51,14 @@ export default function GetUser({ editItem, openAddAdmin}) {
         style={styles.searchBar}
       />
       <View style={styles.containerList}>
-        {dataArray.map((item) => (
+        {dataArray.map((item,index) => (
           <>
             <List.Item
               title={item.Name}
               right={(props) => (
                 <List.Icon {...props} icon="note-edit-outline" />
               )}
+              key={index}
               onPress={() => editItem(item)}
             />
             <Divider bold={true} horizontalInset={true} />
