@@ -2,12 +2,12 @@ import { StyleSheet, View } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "../../firebaseConfig";
-import { Searchbar } from "react-native-paper";
+import { Divider, Searchbar } from "react-native-paper";
 import { FAB } from "react-native-paper";
 
 import { List } from "react-native-paper";
 
-export default function GetCourts({ editItem,openAddCourt }) {
+export default function GetCourts({ editItem, openAddCourt }) {
   const [data, setData] = useState([]);
   const [filterData, setFilteredData] = useState([]);
 
@@ -17,7 +17,6 @@ export default function GetCourts({ editItem,openAddCourt }) {
   const [searchQuery, setSearchQuery] = React.useState("");
 
   const onChangeSearch = (query) => setSearchQuery(query);
-
 
   useEffect(() => {
     onValue(starCountRef, (snapshot) => {
@@ -56,24 +55,18 @@ export default function GetCourts({ editItem,openAddCourt }) {
       />
       <View style={styles.containerList}>
         {dataArray.map((item) => (
-          <List.Item
-            title={item.Name}
-            right={(props) => (
-              <List.Icon
-                {...props}
-                icon="database-edit"
-              />
-            )}
-            onPress={() =>  editItem(item)}
-          />
+          <>
+            <List.Item
+              title={item.Name}
+              right={(props) => <List.Icon {...props} icon="note-edit-outline" />}
+              onPress={() => editItem(item)}
+            />
+            <Divider bold={true} horizontalInset={true}/>
+          </>
         ))}
       </View>
 
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => openAddCourt()}
-      />
+      <FAB icon="plus" label="Create court" style={styles.fab} onPress={() => openAddCourt()} />
     </View>
   );
 }

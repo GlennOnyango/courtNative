@@ -5,7 +5,7 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 //import Button from "../Button";
 import { TextInput } from "react-native-paper";
 import { Button } from "react-native-paper";
@@ -14,7 +14,6 @@ import { Text } from "react-native-paper";
 import { getDatabase, ref, set } from "firebase/database";
 
 export default function AddCourt({ navigation, route }) {
-  const { item } = route.params;
   const [user, setUser] = React.useState({
     Name: "",
     status: true,
@@ -28,7 +27,17 @@ export default function AddCourt({ navigation, route }) {
   };
 
   useEffect(() => {
-    if (route.params) setUser(item);
+    if (route.params) {
+      const { item } = route.params;
+      setUser(item);
+    }
+  }, [route.params]);
+
+  const state = useMemo(() => {
+    if (route.params) {
+      return route.params.item.status;
+    }
+    return false;
   }, [route.params]);
 
   function writeUserData() {
@@ -66,7 +75,7 @@ export default function AddCourt({ navigation, route }) {
   const changeUserStatus = () => {
     set(ref(db, `court/${user.Name}`), {
       Name: user.Name,
-      status: !route.params.item.status,
+      status: !state,
     })
       .then(function () {
         setResponse("Court status changed");
@@ -100,10 +109,12 @@ export default function AddCourt({ navigation, route }) {
           {route.params ? (
             <View style={styles.containerButtons}>
               <View style={{ width: "100%", padding: 4, height: 50 }}>
-                <Button mode="contained" onPress={changeUserStatus}>
-                  {route.params.item.status
-                    ? "Deactivate Court"
-                    : "Activate Court"}
+                <Button
+                  mode="contained"
+                  onPress={changeUserStatus}
+                  buttonColor={state ? "red" : "green"}
+                >
+                  {state ? "Deactivate Court" : "Activate Court"}
                 </Button>
               </View>
             </View>

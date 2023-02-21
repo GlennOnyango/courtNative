@@ -2,8 +2,8 @@ import { StyleSheet, View } from "react-native";
 import React, { useState } from "react";
 
 import AuthContext from "../context/AuthContext";
-import AddUser from "../components/AddUser";
-import GetUser from "../components/GetUser";
+import AddUser from "../components/users/AddUser";
+import GetUser from "../components/users/GetUser";
 
 export default function User({ navigation }) {
   const ctx = React.useContext(AuthContext);

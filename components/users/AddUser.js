@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import Button from "./Button";
+import Button from "../Button";
 //import { useNavigation, useRoute } from "@react-navigation/native";
 import * as SMS from "expo-sms";
 

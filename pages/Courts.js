@@ -18,7 +18,7 @@ export default function Courts({ navigation }) {
   };
 
   const AddCourt = () => {
-    navigation.navigate("Add Courts",{item});
+    navigation.navigate("Add Courts");
   };
   return (
     <View style={styles.container}>

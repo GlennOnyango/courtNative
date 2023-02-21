@@ -10,6 +10,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AuthContext from "../context/AuthContext";
+import { Card } from "react-native-paper";
 const PlaceholderImage = require("../assets/images/admin1.jpg");
 
 export default function Admin({ navigation }) {
@@ -60,8 +61,6 @@ export default function Admin({ navigation }) {
     },
   ];
 
-  //navigation.setParams({ title: "value" })
-
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -84,7 +83,11 @@ export default function Admin({ navigation }) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button theme="primary" label="have complaint or need help" disbaled={true} />
+        <Button
+          theme="primary"
+          label="have complaint or need help"
+          disbaled={true}
+        />
       </View>
     </View>
   );
@@ -101,14 +104,13 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     flex: 2,
-    padding:12,
+    padding: 12,
     alignItems: "center",
   },
   buttonContainer: {
-    paddingHorizontal:16,
-    height:50,
-    marginBottom:4
-
+    paddingHorizontal: 16,
+    height: 50,
+    marginBottom: 4,
   },
   image: {
     width: "100%",

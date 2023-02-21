@@ -6,12 +6,12 @@ import {
   FlatList,
 } from "react-native";
 import React, { useState, useEffect, useLayoutEffect } from "react";
-import Button from "./Button";
+import Button from "../Button";
 import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { app } from "../firebaseConfig";
+import { app } from "../../firebaseConfig";
 
 export default function GetUser({editItem}) {
   const [data,setData] = useState([]);
