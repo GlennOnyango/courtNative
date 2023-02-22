@@ -1,9 +1,11 @@
 import { Appbar } from "react-native-paper";
 
 function CustomNavigationBar({ navigation, back, route }) {
+  const noBarList = ["Home", "Login"];
+  const presence = noBarList.find((e) => e === route.name);
   return (
     <>
-      {route.name === "Home" ? null : (
+      {presence ? null : (
         <Appbar.Header mode="center-aligned" elevated>
           {back ? (
             back.title != "Login" ? (

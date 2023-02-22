@@ -1,84 +1,81 @@
 import {
-  Image,
   StyleSheet,
-  Text,
   View,
-  TextInput,
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
-import React, { useState,useContext } from "react";
-import Button from "../components/Button";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState, useContext, useMemo } from "react";
 import AuthContext from "../context/AuthContext";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "../firebaseConfig";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { TextInput, Button, Text } from "react-native-paper";
 
 export default function Login({ navigation }) {
   const [credentials, setCredentials] = useState({ phoneNo: 0, password: "" });
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const ctx = useContext(AuthContext);
-
+  const [showPassword, setShowPassword] = useState(true);
   const updateCredentials = (e) => {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
   const database = getDatabase(app);
 
-
   const login = () => {
-    const starCountRef = ref(database, `users/${credentials.phoneNo}`);
+    if (state) {
+      const starCountRef = ref(database, `users/${credentials.phoneNo}`);
 
-    onValue(starCountRef, (snapshot) => {
-
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-        if(data.password == credentials.password && data.status){
-          ctx.login(data);
-          navigation.navigate(`Home`);
-        }else{
-          setError(true);
-          console.log("Password Wrong");  
+      onValue(starCountRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          if (data.password == credentials.password && data.status) {
+            ctx.login(data);
+            navigation.navigate(`Home`);
+          } else {
+            setError("Password Wrong");
+          }
+        } else {
+          setError("No data available");
         }
-        
-      } else {
-        setError(true);
-        console.log("No data available");
-      }
-      //updateStarCount(postElement, data);
-    });
-
+        //updateStarCount(postElement, data);
+      });
+    } else {
+      setError("Empty input fields");
+    }
   };
 
+  const state = useMemo(() => {
+    return credentials.phoneNo.length > 0 && credentials.password.length > 0;
+  }, [credentials]);
+
+  const clear = () => {
+    setCredentials({ phoneNo: 0, password: "" });
+  };
 
   return (
-    <ScrollView>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <ScrollView style={styles.scrollContainer}>
         <View style={styles.container}>
-          <MaterialCommunityIcons
-            name="greenhouse"
-            size={140}
-            color="#ad1457"
-          />
+          <FontAwesome5 name="house-user" size={86} color="black" />
 
           <View style={styles.containerInput}>
             <Text style={{ fontSize: 30, marginVertical: 8 }}>
               Access your account
             </Text>
 
-            {error && <Text style={{ color: "red" }}>Wrong credentials</Text>}
+            <Text variant="bodyMedium">{error}</Text>
 
             <View style={styles.containerGroup}>
-              <Text style={{ marginBottom: 5 }}>Phone number</Text>
-
               <TextInput
                 style={styles.input}
-                placeholder="0724258876"
+                label="Phone number"
+                mode="outlined"
                 onChangeText={(newText) =>
                   updateCredentials({ type: "phoneNo", text: newText })
                 }
-                defaultValue={credentials.phoneNo}
+                value={credentials.phoneNo}
                 inputMode={"tel"}
                 keyboardType={"phone-pad"}
                 maxLength={10}
@@ -86,54 +83,74 @@ export default function Login({ navigation }) {
             </View>
 
             <View style={styles.containerGroup}>
-              <Text style={{ marginBottom: 5 }}>Password</Text>
               <TextInput
                 style={styles.input}
-                placeholder="*******"
-                placeholderTextColor={"black"}
+                label="Password"
+                mode="outlined"
                 onChangeText={(newText) =>
                   updateCredentials({ type: "password", text: newText })
                 }
-                defaultValue={credentials.password}
+                value={credentials.password}
                 textContentType={"password"}
-                secureTextEntry={true}
+                secureTextEntry={showPassword}
+                right={
+                  <TextInput.Icon
+                    icon="eye"
+                    onPress={(e) => setShowPassword(!showPassword)}
+                    forceTextInputFocus={false}
+                  />
+                }
               />
             </View>
 
             <View style={styles.containerGroup}>
-              <View style={{ height: 50 }}>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                }}
+              >
                 <Button
-                  theme="primary"
-                  label="Login"
+                  icon="login"
+                  mode="elevated"
+                  buttonColor={state ? "black" : "grey"}
+                  textColor={"white"}
                   onPress={login}
-                  disbaled={
-                    credentials.phoneNo.length > 0 &&
-                    credentials.password.length > 0
-                  }
-                />
+                  style={{ width: "45%" }}
+                  disbaled={state}
+                >
+                  Submit
+                </Button>
+
+                <Button
+                  icon="backspace"
+                  mode="elevated"
+                  buttonColor="black"
+                  textColor={"white"}
+                  style={{ width: "45%" }}
+                  onPress={clear}
+                >
+                  Clear
+                </Button>
               </View>
             </View>
           </View>
         </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+      </ScrollView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollContainer:{
+    flex:1,
+  },
   container: {
-    flex: 1,
     alignItems: "center",
     paddingTop: "10%",
   },
-  image: {
-    width: "50%",
-    height: "30%",
-    borderRadius: "50%",
-    marginBottom: "5%",
-  },
   containerInput: {
-    height: "auto",
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1,
@@ -148,11 +165,6 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "100%",
-    height: 50,
-    borderWidth: 1,
-    borderColor: "grey",
-    borderStyle: "solid",
-    borderRadius: 3,
-    paddingHorizontal: 8,
+    height: 60,
   },
 });
