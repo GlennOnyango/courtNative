@@ -17,11 +17,13 @@ import SelectSpecial from "../selectSpecial";
 //database
 import { getDatabase, ref, set } from "firebase/database";
 import { writeUserData } from "../../constants";
+import { useCheckPrefect } from "../../customHooks/checkPrefect";
 
 export default function AddCourt({ navigation, route }) {
   const [showDropDown, setShowDropDown] = useState(false);
   const [user, setuser] = React.useState("");
   const [response, setResponse] = useState("");
+  const [responsePrefects, setResponsePrefects] = useState("");
   const [court, setCourt] = useState({
     Name: "",
     status: true,
@@ -30,6 +32,7 @@ export default function AddCourt({ navigation, route }) {
   const db = getDatabase();
 
   const [users] = useGetUsers();
+  const [getPrefect, isPrefects] = useCheckPrefect();
 
   useEffect(() => {
     if (route.params) {
@@ -37,6 +40,30 @@ export default function AddCourt({ navigation, route }) {
       setCourt(item);
     }
   }, [route.params]);
+
+  useEffect(() => {
+    if (response == "data created") createPrefect();
+  }, [response]);
+
+  useEffect(() => {
+    if (responsePrefects == "data created") {
+      setCourt({
+        Name: "",
+        status: true,
+      });
+      setuser("");
+
+      navigation.navigate("Courts");
+    }
+  }, [responsePrefects]);
+
+  useEffect(() => {
+    getPrefect(user);
+  }, [user]);
+
+  useEffect(() => {
+    if (isPrefects) setResponse("User is alread an admin on another court");
+  }, [isPrefects]);
 
   const state = useMemo(() => {
     if (route.params) {
@@ -46,7 +73,7 @@ export default function AddCourt({ navigation, route }) {
   }, [route.params]);
 
   const usersData = useMemo(() => {
-    const newData = users.map((e:any) => {
+    const newData = users.map((e: any) => {
       if (e.status) {
         return {
           label: e.Name,
@@ -63,20 +90,25 @@ export default function AddCourt({ navigation, route }) {
   };
 
   const submitUser = () => {
-    if (court.Name.length > 0 && user.length > 0) {
-      const sendObj = {
-        Name: court.Name,
-        status: true,
-        prefect: user,
-      };
-      setResponse(writeUserData(db, set, ref, "court", user, sendObj));
-      setCourt({
-        Name: "",
-        status: true,
-      });
-    } else {
-      setResponse("Text field is empty");
+    if (!isPrefects) {
+      if (court.Name.length > 0 && user.length > 0) {
+        const sendObj = {
+          Name: court.Name,
+          status: true,
+          prefect: user,
+        };
+        writeUserData(db, set, ref, "court", user, sendObj, setResponse);
+      } else {
+        setResponse("Text field is empty");
+      }
     }
+  };
+  const createPrefect = () => {
+    const sendObj = {
+      Name: court.Name,
+      status: true,
+    };
+    writeUserData(db, set, ref, "prefects", user, sendObj, setResponsePrefects);
   };
 
   const clear = () => {
@@ -105,6 +137,15 @@ export default function AddCourt({ navigation, route }) {
     <ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
+          <Text
+            variant="titleSmall"
+            style={{
+              marginVertical: 8,
+              color: `${response == "data created" ? "green" : "red"}`,
+            }}
+          >
+            {response}
+          </Text>
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
@@ -160,10 +201,6 @@ export default function AddCourt({ navigation, route }) {
               </Button>
             </View>
           </View>
-
-          <Text variant="titleSmall" >
-            {response}
-          </Text>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>

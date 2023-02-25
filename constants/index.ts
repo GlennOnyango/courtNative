@@ -18,15 +18,17 @@ export const writeUserData = (
   ref: any,
   jObject: string,
   Uname: string,
-  objectUsed: any
+  objectUsed: any,
+  getResponse?: (data: string) => void
 ) => {
-  let response = ""
-  set(ref(db, `${jObject}/${Uname}`), objectUsed)
+  const response = set(ref(db, `${jObject}/${Uname}`), objectUsed)
     .then(function () {
-      response =  "data created";
+      getResponse("data created");
     })
     .catch(function (error) {
-      response = `error => ${error}`;
+      getResponse(`error => ${error}`);
     });
-    return response
+
+  console.log(response);
+  return response;
 };

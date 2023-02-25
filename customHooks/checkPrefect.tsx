@@ -3,27 +3,22 @@ import { getDatabase, ref, onValue } from "firebase/database";
 
 import { app } from "../firebaseConfig";
 export const useCheckPrefect = () => {
-  const [prefects, setPrefects] = useState([]);
+  const [isPrefects, setIsPrefects] = useState(false);
 
   const database = getDatabase(app);
-  const starCountRef = ref(database, `court/`);
 
-  const getPrefect = useCallback(() => {
+  const getPrefect = useCallback((user: string) => {
+    const starCountRef = ref(database, `prefects/${user}`);
     onValue(starCountRef, (snapshot) => {
-      const courtData:any[] = [];
-
       if (snapshot.exists()) {
-        const data:Record<string,any> = snapshot.val();
+        const data: Record<string, any> = snapshot.val();
 
-        for (const court in data) {
-          courtData.push(data[court]);
+        if (data) {
+          setIsPrefects(true);
         }
       }
-
-      console.log(courtData);
-
     });
   }, []);
 
-  return [getPrefect];
+  return [getPrefect, isPrefects] as const;
 };
