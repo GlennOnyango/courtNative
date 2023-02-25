@@ -5,15 +5,20 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
 } from "react-native";
-import React, { useState, useContext, useMemo } from "react";
+import { useState, useContext, useMemo } from "react";
 import AuthContext from "../context/AuthContext";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from "../firebaseConfig";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { TextInput, Button, Text } from "react-native-paper";
 
+type userCredntial = {
+  phoneNo: number;
+  password: string;
+};
+
 export default function Login({ navigation }) {
-  const [credentials, setCredentials] = useState({ phoneNo: 0, password: "" });
+  const [credentials, setCredentials] = useState<userCredntial>({ phoneNo: 0, password: "" });
   const [error, setError] = useState("");
   const ctx = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(true);
@@ -47,7 +52,7 @@ export default function Login({ navigation }) {
   };
 
   const state = useMemo(() => {
-    return credentials.phoneNo.length > 0 && credentials.password.length > 0;
+    return credentials.phoneNo.toString().length > 0 && credentials.password.length > 0;
   }, [credentials]);
 
   const clear = () => {
@@ -143,8 +148,8 @@ export default function Login({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  scrollContainer:{
-    flex:1,
+  scrollContainer: {
+    flex: 1,
   },
   container: {
     alignItems: "center",

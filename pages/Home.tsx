@@ -1,16 +1,15 @@
-import { StyleSheet, FlatList, View, Image } from "react-native";
 import React from "react";
 
-import CardButton from "../components/Card";
-import Button from "../components/Button";
+import { StyleSheet, FlatList, View, Image } from "react-native";
 
+import CardButton from "../components/Card";
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Fontisto } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AuthContext from "../context/AuthContext";
-import { Card, Text, Badge } from "react-native-paper";
+import { Card, Text, Badge, Button } from "react-native-paper";
 
 const PlaceholderImage = require("../assets/images/admin1.jpg");
 
@@ -111,10 +110,12 @@ export default function Admin({ navigation }) {
 
       <View style={styles.buttonContainer}>
         <Button
-          theme="primary"
-          label="have complaint or need help"
-          disbaled={true}
-        />
+          icon="camera"
+          mode="contained"
+          onPress={() => console.log("Pressed")}
+        >
+          Press me
+        </Button>
       </View>
     </View>
   );

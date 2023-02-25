@@ -2,38 +2,38 @@ import { StyleSheet, View } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
 import { app } from "../../firebaseConfig";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { Divider, Searchbar,FAB,List } from "react-native-paper";
+import { Divider, Searchbar, FAB, List } from "react-native-paper";
 
-export default function GetCourts({ editItem, openAddCourt }) {
-  const [data, setData] = useState([]);
-  const [filterData, setFilteredData] = useState([]);
-
-  const database = getDatabase(app);
-  const starCountRef = ref(database, `court/`);
+export default function GetUser({ editItem, openAddAdmin }) {
+  const [data, setData] = useState<any[]>([]);
+  const [filterData, setFilteredData] = useState<any[]>([]);
 
   const [searchQuery, setSearchQuery] = React.useState("");
+
+  const database = getDatabase(app);
+  const starCountRef = ref(database, `users/`);
 
   const onChangeSearch = (query) => setSearchQuery(query);
 
   useEffect(() => {
     onValue(starCountRef, (snapshot) => {
-      const userData = [];
+      const userArrayData:any[] = [];
 
       if (snapshot.exists()) {
-        const data = snapshot.val();
+        const data:Record<string,any> = snapshot.val();
 
         for (const user in data) {
-          userData.push(data[user]);
+          userArrayData.push(data[user]);
         }
       }
 
-      setData(userData);
+      setData(userArrayData);
     });
   }, []);
 
   useEffect(() => {
     if (searchQuery.length > 0) {
-      setFilteredData(data.filter((e) => e.Name.includes(searchQuery)));
+      setFilteredData(data.filter((e) => e.Phone.includes(searchQuery)));
     }
   }, [searchQuery]);
 
@@ -51,20 +51,27 @@ export default function GetCourts({ editItem, openAddCourt }) {
         style={styles.searchBar}
       />
       <View style={styles.containerList}>
-        {dataArray.map((item,index) => (
+        {dataArray.map((item, index) => (
           <>
             <List.Item
               title={item.Name}
-              right={(props) => <List.Icon {...props} icon="note-edit-outline" />}
-              onPress={() => editItem(item)}
+              right={(props) => (
+                <List.Icon {...props} icon="note-edit-outline" />
+              )}
               key={index}
+              onPress={() => editItem(item)}
             />
-            <Divider bold={true} horizontalInset={true}/>
+            <Divider bold={true} horizontalInset={true} />
           </>
         ))}
       </View>
 
-      <FAB icon="plus" label="Create court" style={styles.fab} onPress={() => openAddCourt()} />
+      <FAB
+        icon="plus"
+        label="Create admin"
+        style={styles.fab}
+        onPress={() => openAddAdmin()}
+      />
     </View>
   );
 }
@@ -74,8 +81,9 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
   },
+
   containerList: {
-    height: "90%",
+    flex: 8,
     maxWidth: "100%",
   },
   searchBar: {

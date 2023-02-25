@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createNativeStackNavigator, NativeStackHeaderProps } from "@react-navigation/native-stack";
 
 import { AuthContextProvider } from "./context/AuthContext";
 
@@ -35,7 +35,7 @@ export default function App() {
         <PaperProvider theme={theme}>
           <stack.Navigator
             screenOptions={{
-              header: (props) => <CustomNavigationBar {...props} />,
+              header: (props:NativeStackHeaderProps) => <CustomNavigationBar {...props} />,
             }}
           >
             <stack.Group

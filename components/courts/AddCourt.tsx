@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useMemo } from "react";
 import {
   StyleSheet,
   View,
@@ -5,32 +6,37 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect, useMemo } from "react";
 import { TextInput, Button, Text } from "react-native-paper";
 
+//custom hooks
+import { useGetUsers } from "../../customHooks/getUsers";
+
+//special components
+import SelectSpecial from "../selectSpecial";
+
+//database
 import { getDatabase, ref, set } from "firebase/database";
+import { writeUserData } from "../../constants";
 
 export default function AddCourt({ navigation, route }) {
-  const [user, setUser] = React.useState({
+  const [showDropDown, setShowDropDown] = useState(false);
+  const [user, setuser] = React.useState("");
+  const [response, setResponse] = useState("");
+  const [court, setCourt] = useState({
     Name: "",
     status: true,
   });
+
   const db = getDatabase();
 
-  const [response, setResponse] = useState("");
-
-  const addCourt = (e) => {
-    setUser({ ...user, [e.type]: e.text });
-  };
+  const [users] = useGetUsers();
 
   useEffect(() => {
     if (route.params) {
       const { item } = route.params;
-      setUser(item);
+      setCourt(item);
     }
   }, [route.params]);
-
-  
 
   const state = useMemo(() => {
     if (route.params) {
@@ -39,23 +45,32 @@ export default function AddCourt({ navigation, route }) {
     return false;
   }, [route.params]);
 
-  function writeUserData() {
-    set(ref(db, `court/${user.Name}`), {
-      Name: user.Name,
-      status: true,
-    })
-      .then(function () {
-        setResponse("Court added to the system");
-      })
-      .catch(function (error) {
-        setResponse("Court not added to the system");
-      });
-  }
+  const usersData = useMemo(() => {
+    const newData = users.map((e:any) => {
+      if (e.status) {
+        return {
+          label: e.Name,
+          value: e.Phone,
+        };
+      }
+    });
+
+    return newData.filter((x) => x !== undefined);
+  }, [users]);
+
+  const addCourt = (e) => {
+    setCourt({ ...court, [e.type]: e.text });
+  };
 
   const submitUser = () => {
-    if (user.Name.length > 0) {
-      writeUserData();
-      setUser({
+    if (court.Name.length > 0 && user.length > 0) {
+      const sendObj = {
+        Name: court.Name,
+        status: true,
+        prefect: user,
+      };
+      setResponse(writeUserData(db, set, ref, "court", user, sendObj));
+      setCourt({
         Name: "",
         status: true,
       });
@@ -65,15 +80,16 @@ export default function AddCourt({ navigation, route }) {
   };
 
   const clear = () => {
-    setUser({
+    setCourt({
       Name: "",
       status: true,
     });
+    setuser("");
   };
 
   const changeUserStatus = () => {
-    set(ref(db, `court/${user.Name}`), {
-      Name: user.Name,
+    set(ref(db, `court/${court.Name}`), {
+      Name: court.Name,
       status: !state,
     })
       .then(function () {
@@ -99,9 +115,22 @@ export default function AddCourt({ navigation, route }) {
               onChangeText={(newText) =>
                 addCourt({ type: "Name", text: newText })
               }
-              value={user.Name}
+              value={court.Name}
               inputMode={"text"}
               keyboardType={"default"}
+            />
+          </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <SelectSpecial
+              showDropDown={showDropDown}
+              setShowDropDown={setShowDropDown}
+              selectedData={user}
+              setData={setuser}
+              list={usersData}
+              label="Select prefect"
             />
           </View>
 
@@ -132,7 +161,7 @@ export default function AddCourt({ navigation, route }) {
             </View>
           </View>
 
-          <Text variant="titleSmall" marginVertical={4}>
+          <Text variant="titleSmall" >
             {response}
           </Text>
         </View>

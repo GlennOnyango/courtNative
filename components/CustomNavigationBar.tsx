@@ -1,6 +1,12 @@
 import { Appbar } from "react-native-paper";
 
-function CustomNavigationBar({ navigation, back, route }) {
+type Props = {
+  navigation: any;
+  back: any;
+  route: any;
+};
+
+function CustomNavigationBar({ navigation, back, route }:Props) {
   const noBarList = ["Home", "Login"];
   const presence = noBarList.find((e) => e === route.name);
   return (
