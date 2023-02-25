@@ -9,7 +9,8 @@ import { Fontisto } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AuthContext from "../context/AuthContext";
-import { Card, Text, Badge, Button } from "react-native-paper";
+import { Card, Text, Button } from "react-native-paper";
+import CardHome from "../components/cardBriefHome";
 
 const PlaceholderImage = require("../assets/images/admin1.jpg");
 
@@ -19,7 +20,10 @@ export default function Admin({ navigation }) {
   React.useEffect(() => {
     navigation.setOptions({
       title: `Admin`,
+      
+      
     });
+    
   }, [ctx.user]);
 
   const modules = [
@@ -73,20 +77,14 @@ export default function Admin({ navigation }) {
           subtitle={`welecome ${ctx.user.Name}`}
           subtitleStyle={{ textAlign: "center" }}
           titleStyle={styles.cardText}
+          
         />
         <Card.Content style={styles.cardContent}>
-          <Badge>100</Badge>
-          <Text variant="labelSmall" style={{ marginRight: 6 }}>
-            {" "}
-            Residents
-          </Text>
+          <CardHome firstText="100" secondText="Residents" />
 
-          <Badge>110</Badge>
-          <Text variant="labelSmall" style={{ marginRight: 6 }}>
-            Homes
-          </Text>
-          <Badge>110K</Badge>
-          <Text variant="labelSmall">Collections</Text>
+          <CardHome firstText="110" secondText="Homes" />
+
+          <CardHome firstText="20000" secondText="Collections" />
         </Card.Content>
       </Card>
 
@@ -109,12 +107,8 @@ export default function Admin({ navigation }) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <Button
-          icon="camera"
-          mode="contained"
-          onPress={() => console.log("Pressed")}
-        >
-          Press me
+        <Button mode="contained" buttonColor="black">
+          I have a complaint
         </Button>
       </View>
     </View>
@@ -148,21 +142,22 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     position: "absolute",
     left: 0,
-    top: "30%",
+    top: "20%",
     width: "90%",
     zIndex: 1,
     borderRadius: 0,
-    backgroundColor: "white",
+    backgroundColor: "#1B1B1B",
+
   },
   cardText: {
     textAlign: "center",
+    color:"white",
     fontSize: 24,
     marginTop: 4,
   },
   cardContent: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 12,
+    justifyContent: "space-between",
   },
 });

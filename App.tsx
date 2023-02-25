@@ -52,6 +52,7 @@ export default function App() {
                 component={Home}
                 options={{
                   headerBackVisible: false,
+                  
                 }}
               />
               <stack.Screen

@@ -37,7 +37,11 @@ export default function AddCourt({ navigation, route }) {
   useEffect(() => {
     if (route.params) {
       const { item } = route.params;
-      setCourt(item);
+      setCourt({
+        Name: item.Name,
+        status: item.status,
+      });
+      setuser(item.prefect);
     }
   }, [route.params]);
 
@@ -177,7 +181,7 @@ export default function AddCourt({ navigation, route }) {
 
           {route.params ? (
             <View style={styles.containerButtons}>
-              <View style={{ width: "100%", padding: 4, height: 50 }}>
+              <View style={{ width: "50%", padding: 4, height: 50 }}>
                 <Button
                   mode="contained"
                   onPress={changeUserStatus}
@@ -186,12 +190,18 @@ export default function AddCourt({ navigation, route }) {
                   {state ? "Deactivate Court" : "Activate Court"}
                 </Button>
               </View>
+
+              <View style={{ width: "50%", padding: 4, height: 50 }}>
+                <Button icon="security" mode="contained" onPress={clear}>
+                  Control admins
+                </Button>
+              </View>
             </View>
           ) : null}
           <View style={styles.containerButtons}>
             <View style={{ width: "50%", padding: 4, height: 50 }}>
               <Button icon="plus" mode="contained" onPress={submitUser}>
-                Add Court
+                {route.params ? "edit court" : "Add Court"}
               </Button>
             </View>
 

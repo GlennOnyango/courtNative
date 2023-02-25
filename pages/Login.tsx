@@ -3,7 +3,6 @@ import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
-  ScrollView,
 } from "react-native";
 import { useState, useContext, useMemo } from "react";
 import AuthContext from "../context/AuthContext";
@@ -18,7 +17,10 @@ type userCredntial = {
 };
 
 export default function Login({ navigation }) {
-  const [credentials, setCredentials] = useState<userCredntial>({ phoneNo: 0, password: "" });
+  const [credentials, setCredentials] = useState<userCredntial>({
+    phoneNo: 0,
+    password: "",
+  });
   const [error, setError] = useState("");
   const ctx = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(true);
@@ -52,7 +54,10 @@ export default function Login({ navigation }) {
   };
 
   const state = useMemo(() => {
-    return credentials.phoneNo.toString().length > 0 && credentials.password.length > 0;
+    return (
+      credentials.phoneNo.toString().length > 0 &&
+      credentials.password.length > 0
+    );
   }, [credentials]);
 
   const clear = () => {
@@ -61,88 +66,86 @@ export default function Login({ navigation }) {
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ScrollView style={styles.scrollContainer}>
-        <View style={styles.container}>
-          <FontAwesome5 name="house-user" size={86} color="black" />
+      <View style={styles.container}>
+        <FontAwesome5 name="house-user" size={86} color="black" />
 
-          <View style={styles.containerInput}>
-            <Text style={{ fontSize: 30, marginVertical: 8 }}>
-              Access your account
-            </Text>
+        <View style={styles.containerInput}>
+          <Text style={{ fontSize: 30, marginVertical: 8 }}>
+            Access your account
+          </Text>
 
-            <Text variant="bodyMedium">{error}</Text>
+          <Text variant="bodyMedium">{error}</Text>
 
-            <View style={styles.containerGroup}>
-              <TextInput
-                style={styles.input}
-                label="Phone number"
-                mode="outlined"
-                onChangeText={(newText) =>
-                  updateCredentials({ type: "phoneNo", text: newText })
-                }
-                value={credentials.phoneNo}
-                inputMode={"tel"}
-                keyboardType={"phone-pad"}
-                maxLength={10}
-              />
-            </View>
+          <View style={styles.containerGroup}>
+            <TextInput
+              style={styles.input}
+              label="Phone number"
+              mode="outlined"
+              onChangeText={(newText) =>
+                updateCredentials({ type: "phoneNo", text: newText })
+              }
+              value={credentials.phoneNo}
+              inputMode={"tel"}
+              keyboardType={"phone-pad"}
+              maxLength={10}
+            />
+          </View>
 
-            <View style={styles.containerGroup}>
-              <TextInput
-                style={styles.input}
-                label="Password"
-                mode="outlined"
-                onChangeText={(newText) =>
-                  updateCredentials({ type: "password", text: newText })
-                }
-                value={credentials.password}
-                textContentType={"password"}
-                secureTextEntry={showPassword}
-                right={
-                  <TextInput.Icon
-                    icon="eye"
-                    onPress={(e) => setShowPassword(!showPassword)}
-                    forceTextInputFocus={false}
-                  />
-                }
-              />
-            </View>
+          <View style={styles.containerGroup}>
+            <TextInput
+              style={styles.input}
+              label="Password"
+              mode="outlined"
+              onChangeText={(newText) =>
+                updateCredentials({ type: "password", text: newText })
+              }
+              value={credentials.password}
+              textContentType={"password"}
+              secureTextEntry={showPassword}
+              right={
+                <TextInput.Icon
+                  icon="eye"
+                  onPress={(e) => setShowPassword(!showPassword)}
+                  forceTextInputFocus={false}
+                />
+              }
+            />
+          </View>
 
-            <View style={styles.containerGroup}>
-              <View
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                }}
+          <View style={styles.containerGroup}>
+            <View
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+              }}
+            >
+              <Button
+                icon="login"
+                mode="elevated"
+                buttonColor={state ? "black" : "grey"}
+                textColor={"white"}
+                onPress={login}
+                style={{ width: "45%" }}
+                disbaled={state}
               >
-                <Button
-                  icon="login"
-                  mode="elevated"
-                  buttonColor={state ? "black" : "grey"}
-                  textColor={"white"}
-                  onPress={login}
-                  style={{ width: "45%" }}
-                  disbaled={state}
-                >
-                  Submit
-                </Button>
+                Submit
+              </Button>
 
-                <Button
-                  icon="backspace"
-                  mode="elevated"
-                  buttonColor="black"
-                  textColor={"white"}
-                  style={{ width: "45%" }}
-                  onPress={clear}
-                >
-                  Clear
-                </Button>
-              </View>
+              <Button
+                icon="backspace"
+                mode="elevated"
+                buttonColor="black"
+                textColor={"white"}
+                style={{ width: "45%" }}
+                onPress={clear}
+              >
+                Clear
+              </Button>
             </View>
           </View>
         </View>
-      </ScrollView>
+      </View>
     </TouchableWithoutFeedback>
   );
 }
@@ -153,7 +156,8 @@ const styles = StyleSheet.create({
   },
   container: {
     alignItems: "center",
-    paddingTop: "10%",
+    justifyContent: "center",
+    height:"100%"
   },
   containerInput: {
     alignItems: "center",

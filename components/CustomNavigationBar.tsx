@@ -6,19 +6,24 @@ type Props = {
   route: any;
 };
 
-function CustomNavigationBar({ navigation, back, route }:Props) {
-  const noBarList = ["Home", "Login"];
+function CustomNavigationBar({ navigation, back, route }: Props) {
+  const noBarList = ["Login"];
   const presence = noBarList.find((e) => e === route.name);
+
   return (
     <>
       {presence ? null : (
-        <Appbar.Header mode="center-aligned" elevated>
+        <Appbar.Header
+          mode="center-aligned"
+          elevated
+          style={{ backgroundColor: "#000" }}
+        >
           {back ? (
             back.title != "Login" ? (
               <Appbar.BackAction onPress={navigation.goBack} />
             ) : null
           ) : null}
-          <Appbar.Content title={route.name} />
+          <Appbar.Content title={route.name} titleStyle={{ color: "white" }} />
         </Appbar.Header>
       )}
     </>
