@@ -10,7 +10,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import AuthContext from "../context/AuthContext";
-import { Card, Text, Badge, } from "react-native-paper";
+import { Card, Text, Badge } from "react-native-paper";
 
 const PlaceholderImage = require("../assets/images/admin1.jpg");
 
@@ -50,7 +50,7 @@ export default function Admin({ navigation }) {
     },
     {
       key: "Block",
-      press: () => navigation.navigate(`AddBlock`),
+      press: () => navigation.navigate(`Add Block`),
       child: <FontAwesome5 name="house-user" size={32} color="#ad1457" />,
     },
     {
@@ -72,21 +72,29 @@ export default function Admin({ navigation }) {
         <Card.Title
           title="Manage Your Residents"
           subtitle={`welecome ${ctx.user.Name}`}
-          subtitleStyle={{textAlign:"center"}}
+          subtitleStyle={{ textAlign: "center" }}
           titleStyle={styles.cardText}
         />
         <Card.Content style={styles.cardContent}>
-          <Badge >100</Badge>
-          <Text variant="labelSmall" style={{marginRight:6}}> Residents</Text>
+          <Badge>100</Badge>
+          <Text variant="labelSmall" style={{ marginRight: 6 }}>
+            {" "}
+            Residents
+          </Text>
 
           <Badge>110</Badge>
-          <Text variant="labelSmall" style={{marginRight:6}}>Homes</Text>
+          <Text variant="labelSmall" style={{ marginRight: 6 }}>
+            Homes
+          </Text>
           <Badge>110K</Badge>
           <Text variant="labelSmall">Collections</Text>
         </Card.Content>
       </Card>
 
       <View style={styles.cardsContainer}>
+        <Text variant="titleLarge" style={{ textAlign: "left" }}>
+          Title Medium
+        </Text>
         <FlatList
           data={modules}
           key={3}
@@ -132,8 +140,8 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
   },
   cardStyle: {
     marginHorizontal: 16,
@@ -142,16 +150,18 @@ const styles = StyleSheet.create({
     top: "30%",
     width: "90%",
     zIndex: 1,
+    borderRadius: 0,
+    backgroundColor: "white",
   },
   cardText: {
     textAlign: "center",
     fontSize: 24,
-    marginTop:4
+    marginTop: 4,
   },
   cardContent: {
     display: "flex",
     flexDirection: "row",
-    justifyContent:"center",
-    marginBottom:12
+    justifyContent: "center",
+    marginBottom: 12,
   },
 });

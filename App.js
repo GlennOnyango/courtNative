@@ -1,5 +1,3 @@
-import React from "react";
-
 import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -68,7 +66,7 @@ export default function App() {
               <stack.Screen name="Courts" component={Courts} />
               <stack.Screen name="Add Courts" component={AddCourt} />
               <stack.Screen name="Add User" component={AddUser} />
-              <stack.Screen name="AddBlock" component={AddBlock} />
+              <stack.Screen name="Add Block" component={AddBlock} />
             </stack.Group>
           </stack.Navigator>
 

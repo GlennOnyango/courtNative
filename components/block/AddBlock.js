@@ -1,113 +1,143 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
-  ScrollView,
-} from "react-native";
-import React from "react";
-import Button from "../Button";
+import { StyleSheet, View, TouchableWithoutFeedback, Keyboard } from "react-native";
+import React, { useMemo, useState } from "react";
+
 import AuthContext from "../../context/AuthContext";
-import { usePost } from "../../API/usePost";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { TextInput, Text, Button } from "react-native-paper";
+import { useGetCourts } from "../../customHooks/getCourts";
+import DropDown from "react-native-paper-dropdown";
+import { getDatabase, ref, set } from "firebase/database";
 
 export default function AddBlock() {
   const ctx = React.useContext(AuthContext);
   const navigation = useNavigation();
-  const route = useRoute();
-  const [data, callApi, isLoading] = usePost();
+
+  const db = getDatabase();
+  const [response, setResponse] = useState("");
+  const [showDropDown, setShowDropDown] = React.useState(false);
+  const [court, setCourt] = React.useState("");
+  const [courts] = useGetCourts();
 
   const [block, setBlock] = React.useState({
     blockName: "",
-    Phone: 0,
+    court: "",
   });
-
-  const [activateBtn, setBtnActive] = React.useState();
-
-  React.useEffect(() => {
-    setBtnActive(block.blockName.length > 0);
-  }, [block]);
 
   const addBlock = (e) => {
     setBlock({ ...block, [e.type]: e.text });
   };
 
   const submitUser = () => {
-    const newData = { ...block, createdBy: ctx.user.id };
-
-    callApi("Blocks.json", newData);
+    if (block.blockName.length > 0 && court.length > 0) {
+      writeUserData();
+      setBlock({
+        blockName: "",
+        court: "",
+      });
+      setCourt("");
+    } else {
+      setResponse("Text field is empty");
+    }
   };
 
-  React.useEffect(() => {
-    if ("error" in data) {
-      console.log(data);
-    } else if ("name" in data) {
-      console.log(data);
-    }
-  }, [data]);
+  const courtsData = useMemo(() => {
+    const newData = courts.map((e) => {
+      if (e.status) {
+        return {
+          label: e.Name,
+          value: e.Name,
+        };
+      }
+    });
 
-  const moveUser = () => {
-    navigation.navigate("GetUser");
+    return newData.filter((x) => x !== undefined);
+  }, [courts]);
+
+  function writeUserData() {
+    set(ref(db, `blocks/${block.blockName}`), {
+      Name: block.blockName,
+      courtName: court,
+    })
+      .then(function () {
+        setResponse("Block added to the system");
+      })
+      .catch(function (error) {
+        setResponse("Block not added to the system");
+      });
+  }
+
+  const clear = () => {
+    console.log(court);
+    setBlock({
+      blockName: "",
+      court: "",
+    });
+    setCourt("");
   };
 
   return (
-    <ScrollView>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
-          <Text style={{ fontSize: 30, marginVertical: 8 }}>Add Block</Text>
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <DropDown
+              label={"Select court"}
+              mode={"outlined"}
+              visible={showDropDown}
+              showDropDown={() => setShowDropDown(true)}
+              onDismiss={() => setShowDropDown(false)}
+              value={court}
+              setValue={setCourt}
+              list={courtsData}
+            />
+          </View>
 
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
-            <Text style={{ marginBottom: 5 }}>Block name</Text>
-
             <TextInput
               style={styles.input}
-              placeholder="M01"
+              label="Block Name"
+              mode="outlined"
               onChangeText={(newText) =>
                 addBlock({ type: "blockName", text: newText })
               }
-              defaultValue={block.blockName}
+              value={block.blockName}
               inputMode={"text"}
               keyboardType={"default"}
             />
           </View>
 
           <View style={styles.containerButtons}>
-            <View style={{ width: "50%", padding: 8, height: 70 }}>
-              <Button
-                theme="primary"
-                label="submit"
-                onPress={submitUser}
-                disbaled={activateBtn}
-              />
+            <View style={{ width: "50%", padding: 4, height: 50 }}>
+              <Button icon="plus" mode="contained" onPress={submitUser}>
+                Add Block
+              </Button>
             </View>
-            <View style={{ width: "50%", padding: 8, height: 70 }}>
-              <Button
-                theme="primary"
-                label="check Blocks"
-                disbaled={true}
-                onPress={moveUser}
-              />
+
+            <View style={{ width: "50%", padding: 4, height: 50 }}>
+              <Button icon="backspace" mode="contained" onPress={clear}>
+                Clear
+              </Button>
             </View>
           </View>
+
+          <Text variant="titleSmall" marginVertical={4}>
+            {response}
+          </Text>
         </View>
       </TouchableWithoutFeedback>
-    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
+    height:"100%",
     justifyContent: "center",
     alignItems: "center",
   },
   containerButtons: {
-    flex: 1,
     flexDirection: "row",
     maxWidth: "100%",
     justifyContent: "center",
@@ -116,10 +146,5 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
-    padding: 5,
-    borderWidth: 1,
-    borderColor: "grey",
-    borderStyle: "solid",
-    borderRadius: 3,
   },
 });

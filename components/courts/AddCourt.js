@@ -6,7 +6,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
-import { TextInput,Button,Text } from "react-native-paper";
+import { TextInput, Button, Text } from "react-native-paper";
 
 import { getDatabase, ref, set } from "firebase/database";
 
@@ -29,6 +29,8 @@ export default function AddCourt({ navigation, route }) {
       setUser(item);
     }
   }, [route.params]);
+
+  
 
   const state = useMemo(() => {
     if (route.params) {
