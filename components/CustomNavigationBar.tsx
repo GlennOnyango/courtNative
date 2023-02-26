@@ -7,7 +7,7 @@ type Props = {
 };
 
 function CustomNavigationBar({ navigation, back, route }: Props) {
-  const noBarList = ["Login"];
+  const noBarList = ["Home","Login"];
   const presence = noBarList.find((e) => e === route.name);
 
   return (

@@ -11,7 +11,7 @@ type Props = {
 
 export default function CardHome({ firstText, secondText }: Props) {
   return (
-    <Card style={styles.cardStyle}>
+    <Card style={styles.cardStyle} mode="elevated" elevation={4}>
       <Card.Content style={styles.cardContent}>
         <Text
           variant="labelSmall"
