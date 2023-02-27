@@ -35,7 +35,7 @@ export default function App() {
         <PaperProvider theme={theme}>
           <stack.Navigator
             screenOptions={{
-              header: (props:NativeStackHeaderProps) => <CustomNavigationBar {...props} />,
+              header: (props:NativeStackHeaderProps) => <CustomNavigationBar navigation={props.navigation} back={props.back} route={props.route} />,
             }}
           >
             <stack.Group

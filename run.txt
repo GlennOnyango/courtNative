@@ -3,5 +3,4 @@ windows - PS C:\Users\GlennTedd\AppData\Local\Android\Sdk\emulator> .\emulator.e
 
 build
 eas login    
-eas build:configure
-eas build --platform android 
+eas build:configureeas build -p android --profile preview
