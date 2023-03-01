@@ -1,6 +1,6 @@
 import React from "react";
 
-import { StyleSheet, View, Image, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -14,22 +14,20 @@ import { Card, Text } from "react-native-paper";
 import CardHome from "../components/cardBriefHome";
 import CardOptions from "../components/cardOptions";
 
-const PlaceholderImage = require("../assets/images/admin1.jpg");
-
 export default function Admin({ navigation }) {
   const ctx = React.useContext(AuthContext);
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={PlaceholderImage} style={styles.image} />
-      </View>
-
       <Card style={styles.cardStyle} elevation={1}>
         <Card.Title
           title="Manage Your Residents"
           subtitle={`welecome ${ctx.user.Name}`}
-          subtitleStyle={{ textAlign: "center" }}
+          subtitleStyle={{
+            textAlign: "center",
+            color: "#ffffff",
+            marginTop: 4,
+          }}
           titleStyle={styles.cardText}
         />
         <Card.Content style={styles.cardContent}>
@@ -37,7 +35,7 @@ export default function Admin({ navigation }) {
 
           <CardHome firstText="110" secondText="Homes" />
 
-          <CardHome firstText="20000" secondText="Collections" />
+          <CardHome firstText="2" secondText="Admins" />
         </Card.Content>
       </Card>
 
@@ -45,7 +43,7 @@ export default function Admin({ navigation }) {
         <View
           style={{
             paddingVertical: 8,
-            paddingHorizontal:8,
+            paddingHorizontal: 8,
             display: "flex",
             flexDirection: "row",
             justifyContent: "space-between",
@@ -57,13 +55,14 @@ export default function Admin({ navigation }) {
           <Entypo name="list" size={24} color="black" />
         </View>
 
-        <ScrollView>
+        <ScrollView style={{ backgroundColor: "transparent" }}>
           <View
             style={{
               display: "flex",
               flexDirection: "row",
               justifyContent: "space-around",
               paddingVertical: 8,
+              backgroundColor: "transparent",
             }}
           >
             <CardOptions
@@ -73,6 +72,32 @@ export default function Admin({ navigation }) {
               press={`User`}
               navigation={navigation}
             />
+
+            <CardOptions
+              firstText="Courts"
+              secondText="200"
+              Icon={<Fontisto name="treehouse" size={24} color="white" />}
+              press={`Courts`}
+              navigation={navigation}
+            />
+          </View>
+
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-around",
+              paddingVertical: 8,
+            }}
+          >
+            <CardOptions
+              firstText="Block"
+              secondText="200"
+              Icon={<FontAwesome5 name="house-user" size={24} color="white" />}
+              press={`Block`}
+              navigation={navigation}
+            />
+
             <CardOptions
               firstText="Bills"
               secondText="2"
@@ -97,13 +122,6 @@ export default function Admin({ navigation }) {
             }}
           >
             <CardOptions
-              firstText="Courts"
-              secondText="200"
-              Icon={<Fontisto name="treehouse" size={24} color="white" />}
-              press={`Courts`}
-              navigation={navigation}
-            />
-            <CardOptions
               firstText="Residents"
               secondText="86"
               Icon={
@@ -116,23 +134,7 @@ export default function Admin({ navigation }) {
               press={`Residents`}
               navigation={navigation}
             />
-          </View>
 
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "space-around",
-              paddingVertical: 8,
-            }}
-          >
-            <CardOptions
-              firstText="Block"
-              secondText="200"
-              Icon={<FontAwesome5 name="house-user" size={24} color="white" />}
-              press={`Block`}
-              navigation={navigation}
-            />
             <CardOptions
               firstText="Notifications"
               secondText="10"
@@ -152,13 +154,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f3e5f5",
   },
-  imageContainer: {
-    height: "40%",
+
+  cardStyle: {
+    height: "30%",
+    zIndex: 1,
+    borderRadius: 0,
+    backgroundColor: "#000000",
   },
   cardsContainer: {
-    height: "60%",
+    height: "70%",
     backgroundColor: "transparent",
-    paddingTop: "25%",
   },
   image: {
     width: "100%",
@@ -166,20 +171,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
-  cardStyle: {
-    marginHorizontal: 16,
-    position: "absolute",
-    left: 0,
-    top: "30%",
-    width: "90%",
-    height: "25%",
-    zIndex: 1,
-    borderRadius: 4,
-    backgroundColor: "#1B1B1B",
-  },
   cardText: {
     textAlign: "center",
-    color: "white",
+    color: "#ffffff",
     fontSize: 24,
     marginTop: 4,
   },
@@ -187,5 +181,6 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
+    marginTop: 12,
   },
 });

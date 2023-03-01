@@ -12,13 +12,13 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { TextInput, Button, Text } from "react-native-paper";
 
 type userCredntial = {
-  phoneNo: number;
+  phoneNo: string;
   password: string;
 };
 
 export default function Login({ navigation }) {
   const [credentials, setCredentials] = useState<userCredntial>({
-    phoneNo: 0,
+    phoneNo: "",
     password: "",
   });
   const [error, setError] = useState("");
@@ -55,13 +55,13 @@ export default function Login({ navigation }) {
 
   const state = useMemo(() => {
     return (
-      credentials.phoneNo.toString().length > 0 &&
+      credentials.phoneNo.length === 10 &&
       credentials.password.length > 0
     );
   }, [credentials]);
 
   const clear = () => {
-    setCredentials({ phoneNo: 0, password: "" });
+    setCredentials({ phoneNo: "", password: "" });
   };
 
   return (
@@ -123,11 +123,11 @@ export default function Login({ navigation }) {
               <Button
                 icon="login"
                 mode="elevated"
-                buttonColor={state ? "black" : "grey"}
+                buttonColor={"black"}
                 textColor={"white"}
                 onPress={login}
                 style={{ width: "45%" }}
-                disbaled={state}
+                disabled={!state}
               >
                 Submit
               </Button>

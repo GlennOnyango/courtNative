@@ -14,15 +14,15 @@ export default function CardHome({ firstText, secondText }: Props) {
     <Card style={styles.cardStyle} mode="elevated" elevation={4}>
       <Card.Content style={styles.cardContent}>
         <Text
-          variant="labelSmall"
-          style={{ textAlign: "center", color: "white" }}
+          variant="headlineMedium"
+          style={{ textAlign: "center", color: "black" }}
         >
           {" "}
           {firstText}
         </Text>
         <Text
           variant="labelSmall"
-          style={{ textAlign: "center", color: "white" }}
+          style={{ textAlign: "center", color: "black" }}
         >
           {" "}
           {secondText}
@@ -34,7 +34,7 @@ export default function CardHome({ firstText, secondText }: Props) {
 
 const styles = StyleSheet.create({
   cardStyle: {
-    backgroundColor: "#000000",
+    backgroundColor: "#ffffff",
     width: "30%",
   },
   cardContent: {

@@ -7,14 +7,15 @@ import { initializeApp } from "firebase/app";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCTb_9pPq5OyuLrRVNYXw-mF9H1nBzzPnI",
-  authDomain: "courtpayment-3b15c.firebaseapp.com",
-  databaseURL: "https://courtpayment-3b15c-default-rtdb.firebaseio.com",
-  projectId: "courtpayment-3b15c",
-  storageBucket: "courtpayment-3b15c.appspot.com",
-  messagingSenderId: "848864737846",
-  appId: "1:848864737846:web:22311f734fbcdabadbf697"
+  apiKey: "AIzaSyCK-a7fcI7RSzv8DDY6anBIVdg4oiUTdUU",
+  authDomain: "courtpayment2.firebaseapp.com",
+  databaseURL: "https://courtpayment2-default-rtdb.firebaseio.com",
+  projectId: "courtpayment2",
+  storageBucket: "courtpayment2.appspot.com",
+  messagingSenderId: "212187553650",
+  appId: "1:212187553650:web:7564586e97cecf04f107eb"
 };
+
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
