@@ -17,6 +17,10 @@ import CardOptions from "../components/cardOptions";
 export default function Admin({ navigation }) {
   const ctx = React.useContext(AuthContext);
 
+  navigation.addListener("beforeRemove", (e) => {
+    // Prevent default behavior of leaving the screen
+    e.preventDefault();
+  });
   return (
     <View style={styles.container}>
       <Card style={styles.cardStyle} elevation={1}>
@@ -31,11 +35,11 @@ export default function Admin({ navigation }) {
           titleStyle={styles.cardText}
         />
         <Card.Content style={styles.cardContent}>
-          <CardHome firstText="100" secondText="Residents" />
+          <CardHome firstText="10" secondText="Residents" />
 
-          <CardHome firstText="110" secondText="Homes" />
+          <CardHome firstText="30" secondText="Homes" />
 
-          <CardHome firstText="2" secondText="Admins" />
+          <CardHome firstText="20" secondText="Admins" />
         </Card.Content>
       </Card>
 

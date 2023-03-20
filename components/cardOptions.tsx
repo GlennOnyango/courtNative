@@ -4,18 +4,32 @@ import { Card, Text } from "react-native-paper";
 
 import { Entypo } from "@expo/vector-icons";
 
-
 type Props = {
   firstText: string;
   secondText: string;
   Icon: JSX.Element;
-  press:string;
-  navigation:any;
+  press: string;
+  navigation: any;
 };
 
-export default function CardOptions({ firstText, secondText, Icon,press,navigation }: Props) {
-    return (
-    <Card style={styles.cardStyle} mode={"elevated"} elevation={5}  onPress={()=>navigation.navigate(press)}>
+export default function CardOptions({
+  firstText,
+  secondText,
+  Icon,
+  press,
+  navigation,
+}: Props) {
+  const openNavigation = () => {
+    navigation.navigate(press);
+  };
+
+  return (
+    <Card
+      style={styles.cardStyle}
+      mode={"elevated"}
+      elevation={5}
+      onPress={openNavigation}
+    >
       <Card.Content style={styles.cardContent}>
         <View
           style={{

@@ -20,7 +20,7 @@ function CustomNavigationBar({ navigation, back, route }: Props) {
         >
           {back ? (
             back.title != "Login" ? (
-              <Appbar.BackAction onPress={navigation.goBack} />
+              <Appbar.BackAction onPress={navigation.goBack} color={'white'} />
             ) : null
           ) : null}
           <Appbar.Content title={route.name} titleStyle={{ color: "white" }} />

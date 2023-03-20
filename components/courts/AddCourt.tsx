@@ -4,10 +4,10 @@ import {
   View,
   TouchableWithoutFeedback,
   Keyboard,
-  ScrollView,
 } from "react-native";
-import { TextInput, Button, Text } from "react-native-paper";
+import { TextInput, Button, FAB } from "react-native-paper";
 
+import { Fontisto } from "@expo/vector-icons";
 //custom hooks
 import { useGetUsers } from "../../customHooks/getUsers";
 
@@ -138,18 +138,12 @@ export default function AddCourt({ navigation, route }) {
   };
 
   return (
-    <ScrollView>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <Text
-            variant="titleSmall"
-            style={{
-              marginVertical: 8,
-              color: `${response == "data created" ? "green" : "red"}`,
-            }}
-          >
-            {response}
-          </Text>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <View style={styles.containerForm}>
+          <View style={{alignItems:"center"}}>
+            <Fontisto name="treehouse" size={98} color="black" />
+          </View>
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
@@ -179,52 +173,64 @@ export default function AddCourt({ navigation, route }) {
             />
           </View>
 
-          {route.params ? (
-            <View style={styles.containerButtons}>
-              <View style={{ width: "50%", padding: 4, height: 50 }}>
-                <Button
-                  mode="contained"
-                  onPress={changeUserStatus}
-                  buttonColor={state ? "red" : "green"}
-                >
-                  {state ? "Deactivate Court" : "Activate Court"}
-                </Button>
-              </View>
-
-              <View style={{ width: "50%", padding: 4, height: 50 }}>
-                <Button icon="security" mode="contained" onPress={clear}>
-                  Control admins
-                </Button>
-              </View>
-            </View>
-          ) : null}
           <View style={styles.containerButtons}>
             <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button icon="plus" mode="contained" onPress={submitUser}>
+              <Button
+                icon="plus"
+                mode="contained"
+                buttonColor="black"
+                onPress={submitUser}
+              >
                 {route.params ? "edit court" : "Add Court"}
               </Button>
             </View>
 
             <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button icon="backspace" mode="contained" onPress={clear}>
+              <Button
+                icon="backspace"
+                mode="contained"
+                buttonColor="black"
+                onPress={clear}
+              >
                 Clear
               </Button>
             </View>
           </View>
+
+          {route.params ? (
+            <View style={styles.containerButtons}>
+              <View style={{ width: "100%", padding: 4, height: 50 }}>
+                <Button
+                  mode="contained"
+                  onPress={changeUserStatus}
+                  buttonColor={"black"}
+                >
+                  {state ? "Deactivate Court" : "Activate Court"}
+                </Button>
+              </View>
+            </View>
+          ) : null}
+
+          <FAB label="Add Court Admin" style={styles.fab} />
         </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: "100%",
     justifyContent: "center",
     alignItems: "center",
+    height: "100%",
+  },
+  containerForm: {
+    width: "100%",
+    height: "100%",
+    justifyContent:"center",
   },
   containerButtons: {
-    flex: 1,
     flexDirection: "row",
     maxWidth: "100%",
     justifyContent: "center",
@@ -233,5 +239,11 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 60,
+  },
+  fab: {
+    position: "absolute",
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
 });
