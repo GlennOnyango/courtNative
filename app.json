@@ -4,7 +4,7 @@
     "slug": "court",
     "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/vectors/cloud.jpg",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/vectors/cloud.jpg",

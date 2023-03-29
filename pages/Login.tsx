@@ -5,6 +5,7 @@ import {
   TouchableWithoutFeedback,
   SafeAreaView,
   Image,
+  Dimensions, ScrollView
 } from "react-native";
 import { useState, useContext, useMemo, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
@@ -18,6 +19,7 @@ type userCredntial = {
   password: string;
 };
 
+const {width,height} = Dimensions.get('window');
 export default function Login({ navigation }) {
   const theme = useTheme();
   const [data, callApi, isLoading] = usePost();
@@ -62,7 +64,7 @@ export default function Login({ navigation }) {
 
   const state = useMemo(() => {
     return (
-      credentials.phoneNumber.length === 12 && credentials.password.length > 0
+      credentials.phoneNumber.length >= 10 && credentials.password.length > 0
     );
   }, [credentials]);
 
@@ -81,7 +83,7 @@ export default function Login({ navigation }) {
         textStyle={styles.spinnerTextStyle}
       />
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
           <View style={styles.containerImage}>
             <Image
               source={require("../assets/vectors/cloud.jpg")}
@@ -103,7 +105,7 @@ export default function Login({ navigation }) {
             >
               Access your account
             </Text>
-
+  
             <View style={styles.containerGroup}>
               <TextInput
                 style={styles.input}
@@ -140,7 +142,9 @@ export default function Login({ navigation }) {
               />
             </View>
 
-            <Text variant="bodyMedium">{errorText}</Text>
+            <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
+              {errorText}
+            </Text>
 
             <View style={styles.containerGroup}>
               <View
@@ -194,8 +198,20 @@ export default function Login({ navigation }) {
                 </View>
               </View>
             </View>
+
+            <Text variant="bodyLarge" style={{ marginTop: 8 }}>
+              Unable to access our services ?{" "}
+              {
+                <Text
+                  variant="bodyLarge"
+                  style={{ color: theme.colors.secondary }}
+                >
+                  Get help
+                </Text>
+              }
+            </Text>
           </View>
-        </View>
+                  </ScrollView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
   );
@@ -203,13 +219,11 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
     flex: 1,
   },
   containerImage: {
-    height: "40%",
-    width: "100%",
+    height: height/2,
+    width: width,
     justifyContent: "center",
     alignItems: "center",
     paddingVertical: 4,
@@ -217,12 +231,13 @@ const styles = StyleSheet.create({
   containerInput: {
     alignItems: "center",
     zIndex: 1,
-    width: "100%",
-    height: "60%",
+    width: width,
+    height: height/2,
+    justifyContent:"center",
     paddingHorizontal: 12,
   },
   containerGroup: {
-    marginVertical: 2,
+    marginVertical: 4,
     paddingHorizontal: 5,
     width: "100%",
     paddingVertical: 4,
