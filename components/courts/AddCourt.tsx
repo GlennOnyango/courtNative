@@ -197,7 +197,7 @@ export default function AddCourt({ navigation, route }) {
             </View>
           </View>
 
-          {route.params ? (
+          {/* {route.params ? (
             <View style={styles.containerButtons}>
               <View style={{ width: "100%", padding: 4, height: 50 }}>
                 <Button
@@ -209,7 +209,7 @@ export default function AddCourt({ navigation, route }) {
                 </Button>
               </View>
             </View>
-          ) : null}
+          ) : null} */}
 
           <FAB label="Add Court Admin" style={styles.fab} />
         </View>

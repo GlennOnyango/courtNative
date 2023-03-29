@@ -1,6 +1,17 @@
+import { useEffect } from "react";
+
 import { StatusBar } from "expo-status-bar";
+
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator, NativeStackHeaderProps } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackHeaderProps,
+} from "@react-navigation/native-stack";
+
+import {
+  MD3LightTheme as DefaultTheme,
+  Provider as PaperProvider,
+} from "react-native-paper";
 
 import { AuthContextProvider } from "./context/AuthContext";
 
@@ -10,22 +21,51 @@ import User from "./pages/User";
 import AddUser from "./components/users/AddUser";
 import AddBlock from "./components/block/AddBlock";
 import Courts from "./pages/Courts";
-import {
-  MD3LightTheme as DefaultTheme,
-  Provider as PaperProvider,
-} from "react-native-paper";
 import CustomNavigationBar from "./components/CustomNavigationBar";
 import AddCourt from "./components/courts/AddCourt";
 
+import * as SplashScreen from "expo-splash-screen";
+
+import {
+  useFonts,
+  SpaceMono_400Regular,
+  SpaceMono_400Regular_Italic,
+  SpaceMono_700Bold,
+  SpaceMono_700Bold_Italic,
+} from '@expo-google-fonts/space-mono';
+
 export default function App() {
   const stack = createNativeStackNavigator();
+  const [fontsLoaded] = useFonts({
+    SpaceMono_400Regular,
+    SpaceMono_400Regular_Italic,
+    SpaceMono_700Bold,
+    SpaceMono_700Bold_Italic,
+  });
+
+  useEffect(() => {
+    async () => {
+      if (fontsLoaded) {
+        // This tells the splash screen to hide immediately! If we call this after
+        // `setAppIsReady`, then we may see a blank screen while the app is
+        // loading its initial state and rendering its first pixels. So instead,
+        // we hide the splash screen once we know the root view has already
+        // performed layout.
+        await SplashScreen.hideAsync();
+      }
+    };
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   const theme = {
     ...DefaultTheme,
     colors: {
       ...DefaultTheme.colors,
-      primary: "tomato",
-      secondary: "yellow",
+      primary: "#0d47a1",
+      secondary: "#1565c0",
     },
   };
 
@@ -35,14 +75,21 @@ export default function App() {
         <PaperProvider theme={theme}>
           <stack.Navigator
             screenOptions={{
-              header: (props:NativeStackHeaderProps) => <CustomNavigationBar navigation={props.navigation} back={props.back} route={props.route} />,
+              header: (props: NativeStackHeaderProps) => (
+                <CustomNavigationBar
+                  navigation={props.navigation}
+                  back={props.back}
+                  route={props.route}
+                  
+                />
+              ),
             }}
           >
             <stack.Group
               screenOptions={{
                 headerStyle: { backgroundColor: "#ad1457" },
                 headerTitleStyle: {
-                  color: "white",
+                  color: "blue",
                 },
               }}
             >
@@ -52,7 +99,6 @@ export default function App() {
                 component={Home}
                 options={{
                   headerBackVisible: false,
-                  
                 }}
               />
               <stack.Screen
@@ -71,7 +117,7 @@ export default function App() {
             </stack.Group>
           </stack.Navigator>
 
-          <StatusBar backgroundColor="transparent" animated hidden/>
+          <StatusBar backgroundColor="transparent" animated hidden />
         </PaperProvider>
       </NavigationContainer>
     </AuthContextProvider>

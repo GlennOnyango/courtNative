@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+import * as SecureStore from "expo-secure-store";
+
 
 const auth = {
-  user: { Name: "", Phone: 0, status: false },
-  login: (formData: User) => {},
+  user: { Name: "", Phone: 0, token: "", expiry: 0 },
+  login: (formData: User | any) => {},
   logout: () => {},
 };
 type Props = {
@@ -12,25 +15,45 @@ type Props = {
 type User = {
   Name: string;
   Phone: number;
-  status: boolean;
+  token: string;
+  expiry: number;
 };
 
 const AuthContext = React.createContext(auth);
 
 export const AuthContextProvider = ({ children }: Props) => {
+  //const navigation = useNavigation();
   const [user, setUser] = useState<User>({
     Name: "",
     Phone: 0,
-    status: false,
+    token: "",
+    expiry: 0,
   });
 
-  const loginHandler = (formData: User) => {
+  const loginHandler = (formData: User | any) => {
     setUser(formData);
   };
 
   const logoutHandler = () => {
-    setUser({ Name: "", Phone: 0, status: false });
+    setUser({ Name: "", Phone: 0, token: "", expiry: 0 });
   };
+
+  async function getValueFor(key) {
+    const result = await SecureStore.getItemAsync(key);
+
+    if (result) {
+      const resultData = JSON.parse(result);
+      if (Date.now() >= resultData.expiry) {
+        setUser(resultData);
+      }
+    } else {
+     // navigation.navigate("Login" as never);
+    }
+  }
+
+  useEffect(() => {
+    getValueFor("token_exp");
+  }, []);
 
   return (
     <AuthContext.Provider

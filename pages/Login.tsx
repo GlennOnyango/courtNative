@@ -3,51 +3,58 @@ import {
   View,
   Keyboard,
   TouchableWithoutFeedback,
+  SafeAreaView,
+  Image,
 } from "react-native";
-import { useState, useContext, useMemo } from "react";
+import { useState, useContext, useMemo, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
-import { getDatabase, ref, onValue } from "firebase/database";
-import { app } from "../firebaseConfig";
-import { FontAwesome5 } from "@expo/vector-icons";
-import { TextInput, Button, Text } from "react-native-paper";
+import { TextInput, Button, Text, useTheme } from "react-native-paper";
+import Spinner from "react-native-loading-spinner-overlay";
+import { usePost } from "../customHooks/usePost";
+import * as SecureStore from "expo-secure-store";
 
 type userCredntial = {
-  phoneNo: string;
+  phoneNumber: string;
   password: string;
 };
 
 export default function Login({ navigation }) {
+  const theme = useTheme();
+  const [data, callApi, isLoading] = usePost();
+  const blurhash =
+    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
+
   const [credentials, setCredentials] = useState<userCredntial>({
-    phoneNo: "",
+    phoneNumber: "",
     password: "",
   });
-  const [error, setError] = useState("");
+  const [errorText, setError] = useState("");
   const ctx = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(true);
+
   const updateCredentials = (e) => {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
-  const database = getDatabase(app);
+  async function save(key, value) {
+    await SecureStore.setItemAsync(key, value);
+  }
+
+  useEffect(() => {
+    if (data.token) {
+      save("token_exp", data);
+
+      ctx.login(data);
+
+      navigation.navigate(`Home`);
+    } else if (Object.keys(data).length !== 0) {
+      setError("Authentication error");
+    }
+  }, [data]);
 
   const login = () => {
     if (state) {
-      const starCountRef = ref(database, `users/${credentials.phoneNo}`);
-
-      onValue(starCountRef, (snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          if (data.password == credentials.password && data.status) {
-            ctx.login(data);
-            navigation.navigate(`Home`);
-          } else {
-            setError("Password Wrong");
-          }
-        } else {
-          setError("No data available");
-        }
-        //updateStarCount(postElement, data);
-      });
+      callApi(credentials, "login");
     } else {
       setError("Empty input fields");
     }
@@ -55,125 +62,181 @@ export default function Login({ navigation }) {
 
   const state = useMemo(() => {
     return (
-      credentials.phoneNo.length === 10 &&
-      credentials.password.length > 0
+      credentials.phoneNumber.length === 12 && credentials.password.length > 0
     );
   }, [credentials]);
 
   const clear = () => {
-    setCredentials({ phoneNo: "", password: "" });
+    setCredentials({ phoneNumber: "", password: "" });
   };
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <FontAwesome5 name="house-user" size={86} color="black" />
-
-        <View style={styles.containerInput}>
-          <Text style={{ fontSize: 30, marginVertical: 8 }}>
-            Access your account
-          </Text>
-
-          <Text variant="bodyMedium">{error}</Text>
-
-          <View style={styles.containerGroup}>
-            <TextInput
-              style={styles.input}
-              label="Phone number"
-              mode="outlined"
-              onChangeText={(newText) =>
-                updateCredentials({ type: "phoneNo", text: newText })
-              }
-              value={credentials.phoneNo}
-              inputMode={"tel"}
-              keyboardType={"phone-pad"}
-              maxLength={10}
-            />
-          </View>
-
-          <View style={styles.containerGroup}>
-            <TextInput
-              style={styles.input}
-              label="Password"
-              mode="outlined"
-              onChangeText={(newText) =>
-                updateCredentials({ type: "password", text: newText })
-              }
-              value={credentials.password}
-              textContentType={"password"}
-              secureTextEntry={showPassword}
-              right={
-                <TextInput.Icon
-                  icon="eye"
-                  onPress={(e) => setShowPassword(!showPassword)}
-                  forceTextInputFocus={false}
-                />
-              }
-            />
-          </View>
-
-          <View style={styles.containerGroup}>
-            <View
+    <SafeAreaView style={{ flex: 1 }}>
+      <Spinner
+        //visibility of Overlay Loading Spinner
+        visible={isLoading}
+        //Text with the Spinner
+        textContent={"Loading..."}
+        //Text style of the Spinner Text
+        textStyle={styles.spinnerTextStyle}
+      />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <View style={styles.containerImage}>
+            <Image
+              source={require("../assets/vectors/cloud.jpg")}
               style={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-around",
+                width: 250,
+                height: 250,
+                borderRadius: 150,
+              }}
+            />
+          </View>
+
+          <View style={styles.containerInput}>
+            <Text
+              style={{
+                fontSize: 30,
+                marginVertical: 2,
+                fontFamily: "SpaceMono_700Bold",
               }}
             >
-              <Button
-                icon="login"
-                mode="elevated"
-                buttonColor={"black"}
-                textColor={"white"}
-                onPress={login}
-                style={{ width: "45%" }}
-                disabled={!state}
-              >
-                Submit
-              </Button>
+              Access your account
+            </Text>
 
-              <Button
-                icon="backspace"
-                mode="elevated"
-                buttonColor="black"
-                textColor={"white"}
-                style={{ width: "45%" }}
-                onPress={clear}
+            <View style={styles.containerGroup}>
+              <TextInput
+                style={styles.input}
+                label="Phone number"
+                mode="outlined"
+                onChangeText={(newText) =>
+                  updateCredentials({ type: "phoneNumber", text: newText })
+                }
+                value={credentials.phoneNumber}
+                inputMode={"tel"}
+                keyboardType={"phone-pad"}
+                maxLength={12}
+              />
+            </View>
+
+            <View style={styles.containerGroup}>
+              <TextInput
+                style={styles.input}
+                label="Password"
+                mode="outlined"
+                onChangeText={(newText) =>
+                  updateCredentials({ type: "password", text: newText })
+                }
+                value={credentials.password}
+                textContentType={"password"}
+                secureTextEntry={showPassword}
+                right={
+                  <TextInput.Icon
+                    icon="eye"
+                    onPress={(e) => setShowPassword(!showPassword)}
+                    forceTextInputFocus={false}
+                  />
+                }
+              />
+            </View>
+
+            <Text variant="bodyMedium">{errorText}</Text>
+
+            <View style={styles.containerGroup}>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                }}
               >
-                Clear
-              </Button>
+                <View
+                  style={{
+                    width: "48%",
+                  }}
+                >
+                  <Button
+                    mode="elevated"
+                    buttonColor={theme.colors.secondary}
+                    textColor={"white"}
+                    onPress={login}
+                    style={{
+                      borderRadius: 1,
+                    }}
+                    labelStyle={{
+                      fontFamily: "SpaceMono_700Bold",
+                    }}
+                    disabled={!state}
+                  >
+                    Submit
+                  </Button>
+                </View>
+
+                <View
+                  style={{
+                    width: "48%",
+                  }}
+                >
+                  <Button
+                    mode="elevated"
+                    buttonColor={theme.colors.secondary}
+                    textColor={"white"}
+                    style={{
+                      borderRadius: 1,
+                    }}
+                    onPress={clear}
+                    labelStyle={{
+                      fontFamily: "SpaceMono_700Bold",
+                    }}
+                  >
+                    Clear
+                  </Button>
+                </View>
+              </View>
             </View>
           </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flex: 1,
-  },
   container: {
     alignItems: "center",
     justifyContent: "center",
-    height:"100%"
+    flex: 1,
+  },
+  containerImage: {
+    height: "40%",
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 4,
   },
   containerInput: {
     alignItems: "center",
-    justifyContent: "center",
     zIndex: 1,
     width: "100%",
-    padding: 8,
+    height: "60%",
+    paddingHorizontal: 12,
   },
   containerGroup: {
-    marginVertical: 8,
+    marginVertical: 2,
     paddingHorizontal: 5,
     width: "100%",
-    paddingVertical: 8,
+    paddingVertical: 4,
   },
   input: {
     width: "100%",
-    height: 60,
+    height: 50,
+  },
+  spinnerTextStyle: {
+    color: "#FFF",
+  },
+  image: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#0553",
   },
 });

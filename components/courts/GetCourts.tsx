@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { app } from "../../firebaseConfig";
 import { getDatabase, ref, onValue } from "firebase/database";
 import { Divider, Searchbar, FAB, List } from "react-native-paper";
+import { IconButton, MD3Colors } from "react-native-paper";
 
 export default function GetCourts({ editItem, openAddCourt }) {
   const [data, setData] = useState([]);
@@ -51,20 +52,37 @@ export default function GetCourts({ editItem, openAddCourt }) {
         style={styles.searchBar}
       />
       <View style={styles.containerList}>
-        {dataArray.map((item,index) => (
+        {dataArray.map((item, index) => (
           <>
-            <List.Item
-              title={item.Name}
-              right={(props) => <List.Icon {...props} icon="note-edit-outline" />}
-              onPress={() => editItem(item)}
-              key={index}
-            />
-            <Divider bold={true} horizontalInset={true}/>
+            <View style={{flexDirection:"row",alignItems:"stretch"}}>
+              <List.Item
+                title={item.Name}
+                right={(props) => (
+                  <List.Icon {...props} icon="note-edit-outline" />
+                )}
+                onPress={() => editItem(item)}
+                key={index}
+                style={{width:"90%"}}
+              />
+              <IconButton
+                icon="delete"
+                iconColor={MD3Colors.error50}
+                style={{width:"10%"}}
+                onPress={() => console.log(item)}
+              />
+            </View>
+
+            <Divider bold={true} horizontalInset={true} />
           </>
         ))}
       </View>
 
-      <FAB icon="plus" label="Create court" style={styles.fab} onPress={() => openAddCourt()} />
+      <FAB
+        icon="plus"
+        label="Create court"
+        style={styles.fab}
+        onPress={() => openAddCourt()}
+      />
     </View>
   );
 }
