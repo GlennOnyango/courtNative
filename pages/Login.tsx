@@ -5,7 +5,8 @@ import {
   TouchableWithoutFeedback,
   SafeAreaView,
   Image,
-  Dimensions, ScrollView
+  Dimensions,
+  ScrollView,
 } from "react-native";
 import { useState, useContext, useMemo, useEffect } from "react";
 import AuthContext from "../context/AuthContext";
@@ -19,12 +20,10 @@ type userCredntial = {
   password: string;
 };
 
-const {width,height} = Dimensions.get('window');
+const { width, height } = Dimensions.get("window");
 export default function Login({ navigation }) {
   const theme = useTheme();
   const [data, callApi, isLoading] = usePost();
-  const blurhash =
-    "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
   const [credentials, setCredentials] = useState<userCredntial>({
     phoneNumber: "",
@@ -38,17 +37,15 @@ export default function Login({ navigation }) {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
-  async function save(key, value) {
+  async function save(key: string, value: string) {
     await SecureStore.setItemAsync(key, value);
   }
 
   useEffect(() => {
     if (data.token) {
-      save("token_exp", data);
+      save("token_exp", JSON.stringify(data));
 
       ctx.login(data);
-
-      navigation.navigate(`Home`);
     } else if (Object.keys(data).length !== 0) {
       setError("Authentication error");
     }
@@ -86,11 +83,11 @@ export default function Login({ navigation }) {
         <ScrollView style={styles.container}>
           <View style={styles.containerImage}>
             <Image
-              source={require("../assets/vectors/cloud.jpg")}
+              source={require("../assets/vectors/security.jpg")}
               style={{
-                width: 250,
-                height: 250,
-                borderRadius: 150,
+                width: "100%",
+                height: "100%",
+                borderRadius: 0,
               }}
             />
           </View>
@@ -105,7 +102,7 @@ export default function Login({ navigation }) {
             >
               Access your account
             </Text>
-  
+
             <View style={styles.containerGroup}>
               <TextInput
                 style={styles.input}
@@ -211,7 +208,7 @@ export default function Login({ navigation }) {
               }
             </Text>
           </View>
-                  </ScrollView>
+        </ScrollView>
       </TouchableWithoutFeedback>
     </SafeAreaView>
   );
@@ -222,18 +219,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   containerImage: {
-    height: height/2,
+    height: height / 2,
     width: width,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 4,
+    backgroundColor:"white",
+    paddingHorizontal: 4
   },
   containerInput: {
     alignItems: "center",
     zIndex: 1,
     width: width,
-    height: height/2,
-    justifyContent:"center",
+    height: height / 2,
+    justifyContent: "center",
     paddingHorizontal: 12,
   },
   containerGroup: {

@@ -4,10 +4,10 @@
     "slug": "court",
     "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/vectors/cloud.jpg",
+    "icon": "./assets/vectors/landing.jpg",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/vectors/cloud.jpg",
+      "image": "./assets/vectors/landing.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

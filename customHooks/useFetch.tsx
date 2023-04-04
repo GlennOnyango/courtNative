@@ -1,15 +1,17 @@
 import { useState, useCallback } from "react";
 import { main_url } from "../constants";
 
-export const useFetch = (token?: string) => {
+export const useFetch = () => {
   const [data, setData] = useState<any>({ fetch: 0 });
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const callApi = useCallback((url: string, formData?: any) => {
+  const callApi = useCallback((url: string, formData?: any, token?: string) => {
     setIsLoading(true);
     const url_send = formData
       ? `${main_url}${url}${formData}`
       : `${main_url}${url}`;
+
+    console.log(url_send);
 
     const extra = token
       ? {
@@ -37,7 +39,7 @@ export const useFetch = (token?: string) => {
       .then((data) => {
         setData(data);
       });
-  }, [token]);
+  }, []);
 
   return [data, callApi, isLoading];
 };

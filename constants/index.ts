@@ -1,7 +1,7 @@
 import { Database } from "firebase/database";
 
 export const main_url =
-  "https://9a90-41-90-177-76.eu.ngrok.io/uaa/";
+  "https://1794-41-90-180-113.eu.ngrok.io/uaa/";
 
 // export const currency = function (money: number, code: string) {
 //   return new Intl.NumberFormat(undefined, {

@@ -32,7 +32,7 @@ import {
   SpaceMono_400Regular_Italic,
   SpaceMono_700Bold,
   SpaceMono_700Bold_Italic,
-} from '@expo-google-fonts/space-mono';
+} from "@expo-google-fonts/space-mono";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -66,12 +66,13 @@ export default function App() {
       ...DefaultTheme.colors,
       primary: "#0d47a1",
       secondary: "#1565c0",
+      error: "#dd2c00",
     },
   };
 
   return (
-    <AuthContextProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <AuthContextProvider>
         <PaperProvider theme={theme}>
           <stack.Navigator
             screenOptions={{
@@ -80,7 +81,6 @@ export default function App() {
                   navigation={props.navigation}
                   back={props.back}
                   route={props.route}
-                  
                 />
               ),
             }}
@@ -119,7 +119,7 @@ export default function App() {
 
           <StatusBar backgroundColor="transparent" animated hidden />
         </PaperProvider>
-      </NavigationContainer>
-    </AuthContextProvider>
+      </AuthContextProvider>
+    </NavigationContainer>
   );
 }
