@@ -3,20 +3,23 @@ import { useState, useMemo, useEffect } from "react";
 import { TextInput, Button, Text, useTheme } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../../customHooks/usePost";
-import * as SecureStore from "expo-secure-store";
 import * as Network from "expo-network";
 
 type userCredntial = {
+  courtCode: string;
+  username: string;
   phoneNumber: string;
   password: string;
 };
 
-const { width, height } = Dimensions.get("window");
+const { width } = Dimensions.get("window");
 export default function CreateTenant({ navigation }) {
   const theme = useTheme();
-  const { data, callApi, isLoading, postError, postsuccess } = usePost();
+  const { callApi, isLoading, postError, postsuccess } = usePost();
   const [isConnected, setConnected] = useState(false);
   const [credentials, setCredentials] = useState<userCredntial>({
+    courtCode: "",
+    username: "",
     phoneNumber: "",
     password: "",
   });
@@ -27,21 +30,18 @@ export default function CreateTenant({ navigation }) {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
-  async function save(key: string, value: string) {
-    await SecureStore.setItemAsync(key, value);
-  }
 
   useEffect(() => {
-    if (data.token) {
-      save("token_exp", JSON.stringify(data));
+    if (postsuccess) {
+        navigation.navigate("Login");
     } else if (postError) {
-      setError("Invalid email or passowrd.Try again later or get help");
+      setError("There is an error.Try again later or get help.");
     }
-  }, [data, postError, postsuccess]);
+  }, [postError, postsuccess]);
 
-  const login = () => {
+  const register = () => {
     if (state) {
-      callApi(credentials, "login");
+      callApi(credentials, "register-tenant");
     } else {
       setError("Empty input fields");
     }
@@ -88,12 +88,12 @@ export default function CreateTenant({ navigation }) {
             label="Court Code"
             mode="outlined"
             onChangeText={(newText) =>
-              updateCredentials({ type: "phoneNumber", text: newText })
+              updateCredentials({ type: "courtCode", text: newText })
             }
             value={credentials.phoneNumber}
-            inputMode={"tel"}
-            keyboardType={"phone-pad"}
-            maxLength={12}
+            inputMode={"text"}
+            keyboardType={"default"}
+            maxLength={5}
           />
         </View>
 
@@ -103,12 +103,11 @@ export default function CreateTenant({ navigation }) {
             label="User Name"
             mode="outlined"
             onChangeText={(newText) =>
-              updateCredentials({ type: "phoneNumber", text: newText })
+              updateCredentials({ type: "userName", text: newText })
             }
             value={credentials.phoneNumber}
-            inputMode={"tel"}
-            keyboardType={"phone-pad"}
-            maxLength={12}
+            inputMode={"text"}
+            keyboardType={"default"}
           />
         </View>
 
@@ -169,7 +168,7 @@ export default function CreateTenant({ navigation }) {
                 mode="elevated"
                 buttonColor={theme.colors.primary}
                 textColor={"white"}
-                onPress={login}
+                onPress={register}
                 style={{
                   borderRadius: 1,
                 }}

@@ -32,6 +32,7 @@ export default function CreateCourt({ navigation }) {
 
   useEffect(() => {
     if (postsuccess) {
+      navigation.navigate("Login");
     } else if (postError) {
       setError("There is an error.Try again later or get help.");
     }
