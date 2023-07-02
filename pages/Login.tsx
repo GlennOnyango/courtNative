@@ -102,7 +102,6 @@ export default function Login({ navigation }) {
               style={{
                 fontSize: 30,
                 marginVertical: 2,
-                fontFamily: "SpaceMono_700Bold",
               }}
             >
               Access your account
@@ -169,9 +168,6 @@ export default function Login({ navigation }) {
                     style={{
                       borderRadius: 1,
                     }}
-                    labelStyle={{
-                      fontFamily: "SpaceMono_700Bold",
-                    }}
                     disabled={!state || isLoading || !isConnected}
                   >
                     Sign In
@@ -189,9 +185,6 @@ export default function Login({ navigation }) {
                     textColor={"white"}
                     style={{
                       borderRadius: 1,
-                    }}
-                    labelStyle={{
-                      fontFamily: "SpaceMono_700Bold",
                     }}
                     onPress={() => navigation.navigate("SignUp")}
                   >

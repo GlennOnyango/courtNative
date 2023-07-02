@@ -31,9 +31,6 @@ export default function SignUp({ navigation }) {
               height: height * 0.08,
               borderColor: theme.colors.primary,
             }}
-            labelStyle={{
-              fontFamily: "SpaceMono_700Bold",
-            }}
             onPress={() => setCourt("court")}
           >
             Create Court
@@ -48,9 +45,6 @@ export default function SignUp({ navigation }) {
 
               height: height * 0.08,
               borderColor: theme.colors.primary,
-            }}
-            labelStyle={{
-              fontFamily: "SpaceMono_700Bold",
             }}
             onPress={() => setCourt("tenant")}
           >

@@ -76,6 +76,7 @@ export default function CreateTenant({ navigation }) {
           style={{
             fontSize: 14,
             marginVertical: 2,
+            fontWeight: "bold",
           }}
         >
           Use the court code provided by your admin to join the court.
