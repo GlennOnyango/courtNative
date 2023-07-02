@@ -14,8 +14,11 @@ type Extra = {
 export const usePost = (token?: string, file?: boolean) => {
   const [data, setData] = useState<Record<string, any>>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [postError, setPostError] = useState<boolean>(false);
+  const [postsuccess, setPostSuccess] = useState<boolean>(false);
 
   const callApi = useCallback((formData: any, url: string) => {
+    reset();
     setIsLoading(true);
     const url_send = formData ? `${main_url}${url}` : `${url}`;
     const extra: Extra = {
@@ -31,26 +34,37 @@ export const usePost = (token?: string, file?: boolean) => {
       body: file ? formData : JSON.stringify(formData),
     };
 
+    console.log(url_send, extra);
+
     fetch(url_send, extra)
       .then((res) => {
-        const isJson = res.headers
-          .get("content-type")
-          ?.includes("application/json");
-        const data: any = isJson && res.json();
-
         if (!res.ok) {
-          const error = (data && data.message) || res.status;
-          return { error: error };
+          console.log(res);
+          const error = new Error(res.statusText);
+          throw error;
         }
 
-        return data;
+        return res.json();
       })
       .then((data) => {
         setIsLoading(false);
+        setPostSuccess(true);
 
         setData(data);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false);
+        setPostError(true);
       });
   }, []);
 
-  return [data, callApi, isLoading] as const;
+  const reset = useCallback(() => {
+    setData({});
+    setIsLoading(false);
+    setPostError(false);
+    setPostSuccess(false);
+  }, []);
+
+  return { data, callApi, isLoading, reset, postError, postsuccess };
 };

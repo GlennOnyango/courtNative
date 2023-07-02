@@ -14,6 +14,7 @@ import { TextInput, Button, Text, useTheme } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../customHooks/usePost";
 import * as SecureStore from "expo-secure-store";
+import * as Network from "expo-network";
 
 type userCredntial = {
   phoneNumber: string;
@@ -23,8 +24,8 @@ type userCredntial = {
 const { width, height } = Dimensions.get("window");
 export default function Login({ navigation }) {
   const theme = useTheme();
-  const [data, callApi, isLoading] = usePost();
-
+  const { data, callApi, isLoading, postError, postsuccess } = usePost();
+  const [isConnected, setConnected] = useState(false);
   const [credentials, setCredentials] = useState<userCredntial>({
     phoneNumber: "",
     password: "",
@@ -45,11 +46,11 @@ export default function Login({ navigation }) {
     if (data.token) {
       save("token_exp", JSON.stringify(data));
 
-      ctx.login(data);
-    } else if (Object.keys(data).length !== 0) {
-      setError("Authentication error");
+      ctx.login();
+    } else if (postError) {
+      setError("Invalid email or passowrd.Try again later or get help");
     }
-  }, [data]);
+  }, [data, postError, postsuccess]);
 
   const login = () => {
     if (state) {
@@ -65,9 +66,13 @@ export default function Login({ navigation }) {
     );
   }, [credentials]);
 
-  const clear = () => {
-    setCredentials({ phoneNumber: "", password: "" });
-  };
+  Network.getNetworkStateAsync().then((e) => {
+    if (e.isConnected) {
+      setConnected(true);
+    } else {
+      setConnected(false);
+    }
+  });
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -83,7 +88,7 @@ export default function Login({ navigation }) {
         <ScrollView style={styles.container}>
           <View style={styles.containerImage}>
             <Image
-              source={require("../assets/vectors/security.jpg")}
+              source={require("../assets/vectors/security.png")}
               style={{
                 width: "100%",
                 height: "100%",
@@ -167,9 +172,9 @@ export default function Login({ navigation }) {
                     labelStyle={{
                       fontFamily: "SpaceMono_700Bold",
                     }}
-                    disabled={!state}
+                    disabled={!state || isLoading || !isConnected}
                   >
-                    Submit
+                    Sign In
                   </Button>
                 </View>
 
@@ -185,12 +190,12 @@ export default function Login({ navigation }) {
                     style={{
                       borderRadius: 1,
                     }}
-                    onPress={clear}
                     labelStyle={{
                       fontFamily: "SpaceMono_700Bold",
                     }}
+                    onPress={() => navigation.navigate("SignUp")}
                   >
-                    Clear
+                    Sign Up
                   </Button>
                 </View>
               </View>
@@ -223,8 +228,8 @@ const styles = StyleSheet.create({
     width: width,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor:"white",
-    paddingHorizontal: 4
+    backgroundColor: "white",
+    paddingHorizontal: 4,
   },
   containerInput: {
     alignItems: "center",

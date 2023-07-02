@@ -33,6 +33,7 @@ import {
   SpaceMono_700Bold,
   SpaceMono_700Bold_Italic,
 } from "@expo-google-fonts/space-mono";
+import SignUp from "./pages/SignUp";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -94,6 +95,8 @@ export default function App() {
               }}
             >
               <stack.Screen name="Login" component={Login} />
+
+              <stack.Screen name="SignUp" component={SignUp} />
               <stack.Screen
                 name="Home"
                 component={Home}

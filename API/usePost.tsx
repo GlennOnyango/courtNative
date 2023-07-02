@@ -10,6 +10,7 @@ export const usePost = (token) => {
     setIsLoading(true);
     const url_send =`${main_url}${url}`;
 
+    
     const extra = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -25,7 +26,9 @@ export const usePost = (token) => {
 
         if (!res.ok) {
           const error = (data && data.message) || res.status;
-          return { error: error };
+          console.log(url_send);
+
+          return { error: url_send };
         }
 
         return data;

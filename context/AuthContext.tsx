@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 const auth = {
   user: { Name: "", Phone: 0, token: "", expiry: 0 },
-  login: (formData: User | any) => {},
+  login: () => {},
   logout: () => {},
 };
 type Props = {
@@ -34,7 +34,7 @@ export const AuthContextProvider = ({ children }: Props) => {
     expiry: 0,
   });
 
-  const loginHandler = async (formData: User | any) => {
+  const loginHandler = async () => {
     const result = await SecureStore.getItemAsync("token_exp");
 
     if (result) {
@@ -53,7 +53,6 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (Object.keys(data)[0] !== "fetch") {
-      console.log("here");
       SecureStore.getItemAsync("token_exp")
         .then((result) => {
           if (result) {
@@ -74,43 +73,24 @@ export const AuthContextProvider = ({ children }: Props) => {
           }
         })
         .catch((err) => console.log("No user details found"));
+    } else {
+      SecureStore.getItemAsync("user")
+        .then((result) => {
+          if (result) {
+            const resultData = JSON.parse(result);
+            if (Date.now() < resultData.expiry) {
+              setUser(resultData);
+              navigation.navigate(`Home` as never);
+            }
+          }
+        })
+        .catch((err) => navigation.navigate(`Login` as never));
     }
   }, [data]);
-
-  // useEffect(() => {
-  //   SecureStore.getItemAsync("user")
-  //     .then((result) => {
-  //       if (result) {
-  //         const resultData = JSON.parse(result);
-  //         if (Date.now() < resultData.expiry) {
-  //           setUser(resultData);
-  //           navigation.navigate(`Home` as never);
-  //         }
-  //       }
-  //     })
-  //     .catch((err) => navigation.navigate(`Login` as never));
-  // }, []);
 
   const logoutHandler = () => {
     setUser({ Name: "", Phone: 0, token: "", expiry: 0 });
   };
-
-  // async function getValueFor(key) {
-  //   const result = await SecureStore.getItemAsync(key);
-
-  //   if (result) {
-  //     const resultData = JSON.parse(result);
-  //     if (Date.now() >= resultData.expiry) {
-  //       setUser(resultData);
-  //     }
-  //   } else {
-  //    // navigation.navigate("Login" as never);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   getValueFor("token_exp");
-  // }, []);
 
   return (
     <AuthContext.Provider

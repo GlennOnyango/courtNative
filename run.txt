@@ -1,6 +1,9 @@
-windows - PS C:\Users\GlennTedd\AppData\Local\Android\Sdk\emulator> .\emulator.exe -avd Pixel_XL_API_30
+windows - PS
+cd C:\Users\GlennTedd\AppData\Local\Android\Sdk\emulator\ 
+.\emulator.exe -avd Pixel_XL_API_30
 
 
 build
 eas login    
-eas build:configureeas build -p android --profile preview
+eas build:configure
+eas build -p android --profile preview

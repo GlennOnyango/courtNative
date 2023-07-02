@@ -1,16 +1,6 @@
 import { Database } from "firebase/database";
 
-export const main_url =
-  "https://1794-41-90-180-113.eu.ngrok.io/uaa/";
-
-// export const currency = function (money: number, code: string) {
-//   return new Intl.NumberFormat(undefined, {
-//     style: "currency",
-//     currency: code,
-//     minimumFractionDigits: 2,
-//     currencyDisplay: "code",
-//   }).format(money);
-// };
+export const main_url = "http://192.168.0.11:9000/api/v1/uaa/";
 
 export const writeUserData = (
   db: Database,

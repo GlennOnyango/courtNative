@@ -9,7 +9,7 @@ type Props = {
 
 function CustomNavigationBar({ navigation, back, route }: Props) {
   const theme = useTheme();
-  const noBarList = ["Home","Login"];
+  const noBarList = ["Home", "Login", "SignUp"];
   const presence = noBarList.find((e) => e === route.name);
 
   const tit = route.name === "Login" ? "DigiCourt" : route.name;
@@ -20,10 +20,13 @@ function CustomNavigationBar({ navigation, back, route }: Props) {
         <Appbar.Header style={{ backgroundColor: theme.colors.primary }}>
           {back ? (
             back.title != "Login" ? (
-              <Appbar.BackAction onPress={navigation.goBack} color={"white"}  />
+              <Appbar.BackAction onPress={navigation.goBack} color={"white"} />
             ) : null
           ) : null}
-          <Appbar.Content title={tit} titleStyle={{ color: "white",fontFamily: "SpaceMono_700Bold" }} />
+          <Appbar.Content
+            title={tit}
+            titleStyle={{ color: "white", fontFamily: "SpaceMono_700Bold" }}
+          />
           <Appbar.Action
             icon="lifebuoy"
             color="white"
