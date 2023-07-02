@@ -3,10 +3,11 @@ import { useState, useMemo, useEffect } from "react";
 import { TextInput, Button, Text, useTheme } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../../customHooks/usePost";
-import * as SecureStore from "expo-secure-store";
 import * as Network from "expo-network";
 
-type userCredntial = {
+type courtRegister = {
+  courtName: string;
+  userName: string;
   phoneNumber: string;
   password: string;
 };
@@ -14,9 +15,11 @@ type userCredntial = {
 const { width, height } = Dimensions.get("window");
 export default function CreateCourt({ navigation }) {
   const theme = useTheme();
-  const { data, callApi, isLoading, postError, postsuccess } = usePost();
+  const { callApi, isLoading, postError, postsuccess } = usePost();
   const [isConnected, setConnected] = useState(false);
-  const [credentials, setCredentials] = useState<userCredntial>({
+  const [credentials, setCredentials] = useState<courtRegister>({
+    courtName: "",
+    userName: "",
     phoneNumber: "",
     password: "",
   });
@@ -27,21 +30,16 @@ export default function CreateCourt({ navigation }) {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
-  async function save(key: string, value: string) {
-    await SecureStore.setItemAsync(key, value);
-  }
-
   useEffect(() => {
-    if (data.token) {
-      save("token_exp", JSON.stringify(data));
+    if (postsuccess) {
     } else if (postError) {
-      setError("Invalid email or passowrd.Try again later or get help");
+      setError("There is an error.Try again later or get help.");
     }
-  }, [data, postError, postsuccess]);
+  }, [postError, postsuccess]);
 
   const login = () => {
     if (state) {
-      callApi(credentials, "login");
+      callApi(credentials, "register-court");
     } else {
       setError("Empty input fields");
     }
@@ -87,12 +85,11 @@ export default function CreateCourt({ navigation }) {
             label="Court Name"
             mode="outlined"
             onChangeText={(newText) =>
-              updateCredentials({ type: "phoneNumber", text: newText })
+              updateCredentials({ type: "courtName", text: newText })
             }
-            value={credentials.phoneNumber}
-            inputMode={"tel"}
-            keyboardType={"phone-pad"}
-            maxLength={12}
+            value={credentials.courtName}
+            inputMode={"text"}
+            keyboardType={"default"}
           />
         </View>
 
@@ -102,12 +99,11 @@ export default function CreateCourt({ navigation }) {
             label="User Name"
             mode="outlined"
             onChangeText={(newText) =>
-              updateCredentials({ type: "phoneNumber", text: newText })
+              updateCredentials({ type: "userName", text: newText })
             }
-            value={credentials.phoneNumber}
-            inputMode={"tel"}
-            keyboardType={"phone-pad"}
-            maxLength={12}
+            value={credentials.userName}
+            inputMode={"text"}
+            keyboardType={"default"}
           />
         </View>
 
