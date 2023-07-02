@@ -29,7 +29,7 @@ export default function SignUp({ navigation }) {
               ...(defaultBtnStyle as any),
 
               height: height * 0.08,
-              borderColor: theme.colors.primary,
+              borderWidth: 0,
             }}
             onPress={() => setCourt("court")}
           >
@@ -44,7 +44,7 @@ export default function SignUp({ navigation }) {
               ...(defaultBtnStyle as any),
 
               height: height * 0.08,
-              borderColor: theme.colors.primary,
+              borderWidth: 0,
             }}
             onPress={() => setCourt("tenant")}
           >
