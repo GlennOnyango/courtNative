@@ -1,6 +1,6 @@
 import React from "react";
 
-import { StyleSheet, View, ScrollView } from "react-native";
+import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -10,20 +10,26 @@ import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import AuthContext from "../context/AuthContext";
-import { Card, Text } from "react-native-paper";
+import { Card, Text, useTheme } from "react-native-paper";
 import CardHome from "../components/cardBriefHome";
 import CardOptions from "../components/cardOptions";
 
+const { width, height } = Dimensions.get("window");
+
 export default function Admin({ navigation }) {
   const ctx = React.useContext(AuthContext);
+  const theme = useTheme();
 
   navigation.addListener("beforeRemove", (e) => {
     // Prevent default behavior of leaving the screen
     e.preventDefault();
   });
   return (
-    <View style={styles.container}>
-      <Card style={styles.cardStyle} elevation={1}>
+    <ScrollView style={styles.container}>
+      <Card
+        style={{ ...styles.cardStyle, backgroundColor: theme.colors.primary }}
+        elevation={1}
+      >
         <Card.Title
           title="Manage Your Residents"
           subtitle={`welecome ${ctx.user.Name}`}
@@ -53,10 +59,13 @@ export default function Admin({ navigation }) {
             justifyContent: "space-between",
           }}
         >
-          <Text variant="titleLarge" style={{ textAlign: "left" }}>
+          <Text
+            variant="titleLarge"
+            style={{ textAlign: "left", color: theme.colors.primary }}
+          >
             Administrative options
           </Text>
-          <Entypo name="list" size={24} color="black" />
+          <Entypo name="list" size={24} color={theme.colors.primary} />
         </View>
 
         <ScrollView style={{ backgroundColor: "transparent" }}>
@@ -149,7 +158,7 @@ export default function Admin({ navigation }) {
           </View>
         </ScrollView>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -160,13 +169,12 @@ const styles = StyleSheet.create({
   },
 
   cardStyle: {
-    height: "30%",
+    height: height * 0.3,
     zIndex: 1,
     borderRadius: 0,
-    backgroundColor: "#000000",
   },
   cardsContainer: {
-    height: "70%",
+    height: height * 0.7,
     backgroundColor: "transparent",
   },
   image: {

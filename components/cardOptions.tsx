@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Card, Text, useTheme } from "react-native-paper";
 
 import { Entypo } from "@expo/vector-icons";
 
@@ -19,13 +19,14 @@ export default function CardOptions({
   press,
   navigation,
 }: Props) {
+  const { colors } = useTheme();
   const openNavigation = () => {
     navigation.navigate(press);
   };
 
   return (
     <Card
-      style={styles.cardStyle}
+      style={{...styles.cardStyle, backgroundColor: colors.secondary}}
       mode={"elevated"}
       elevation={5}
       onPress={openNavigation}
