@@ -1,6 +1,12 @@
 import React from "react";
 
-import { StyleSheet, View, ScrollView, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Dimensions,
+  ImageBackground,
+} from "react-native";
 
 import { FontAwesome } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -10,8 +16,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 
 import AuthContext from "../context/AuthContext";
-import { Card, Text, useTheme } from "react-native-paper";
-import CardHome from "../components/cardBriefHome";
+import { Card, Text, useTheme, Chip } from "react-native-paper";
 import CardOptions from "../components/cardOptions";
 
 const { width, height } = Dimensions.get("window");
@@ -24,29 +29,78 @@ export default function Admin({ navigation }) {
     // Prevent default behavior of leaving the screen
     e.preventDefault();
   });
+
+  const imageDashboard = require("../assets/vectors/dashboard1.jpg");
+
   return (
     <ScrollView style={styles.container}>
       <Card
         style={{ ...styles.cardStyle, backgroundColor: theme.colors.primary }}
         elevation={1}
       >
-        <Card.Title
-          title="Manage Your Residents"
-          subtitle={`welecome ${ctx.user.Name}`}
-          subtitleStyle={{
-            textAlign: "center",
-            color: "#ffffff",
-            marginTop: 4,
-          }}
-          titleStyle={styles.cardText}
-        />
-        <Card.Content style={styles.cardContent}>
-          <CardHome firstText="10" secondText="Residents" />
+        <ImageBackground
+          style={{ width: width, height: height * 0.3 }}
+          resizeMode="cover"
+          resizeMethod="resize"
+          source={imageDashboard}
+        >
+          <Card.Title
+            title=""
+            subtitle={``}
+            subtitleStyle={{
+              textAlign: "center",
+              color: theme.colors.primary,
+              marginTop: 4,
+            }}
+            titleStyle={{ ...styles.cardText, color: theme.colors.primary }}
+          />
+          <Card.Content style={styles.cardContent}>
+            <Chip
+              style={{
+                width: width * 0.3,
+                backgroundColor: theme.colors.primary,
+                marginBottom: 2,
+              }}
+              selectedColor="white"
+              onPress={() => console.log("Pressed")}
+              mode="outlined"
+            >
+              30 Homes
+            </Chip>
 
-          <CardHome firstText="30" secondText="Homes" />
+            <Chip
+              style={{
+                width: width * 0.32,
+                backgroundColor: theme.colors.primary,
+              }}
+              onPress={() => console.log("Pressed")}
+              selectedColor="white"
+              mode="outlined"
+            >
+              20 Admins
+            </Chip>
 
-          <CardHome firstText="20" secondText="Admins" />
-        </Card.Content>
+            <Chip
+              style={{
+                width: width * 0.35,
+                marginTop: 2,
+                backgroundColor: theme.colors.primary,
+              }}
+              textStyle={{ color: "white" }}
+              selectedColor="white"
+              onPress={() => console.log("Pressed")}
+              mode="outlined"
+            >
+              10 Residents
+            </Chip>
+
+            {/* <CardHome firstText="10" secondText="Residents" />
+
+            <CardHome firstText="30" secondText="Homes" />
+
+            <CardHome firstText="20" secondText="Admins" /> */}
+          </Card.Content>
+        </ImageBackground>
       </Card>
 
       <View style={styles.cardsContainer}>
@@ -185,14 +239,13 @@ const styles = StyleSheet.create({
   },
   cardText: {
     textAlign: "center",
-    color: "#ffffff",
     fontSize: 24,
+    fontWeight: "bold",
     marginTop: 4,
   },
   cardContent: {
     display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: "column",
     marginTop: 12,
   },
 });

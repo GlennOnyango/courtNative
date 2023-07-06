@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import { Card, Text, useTheme } from "react-native-paper";
 
 import { Entypo } from "@expo/vector-icons";
@@ -12,6 +12,7 @@ type Props = {
   navigation: any;
 };
 
+const { width, height } = Dimensions.get("window");
 export default function CardOptions({
   firstText,
   secondText,
@@ -26,7 +27,7 @@ export default function CardOptions({
 
   return (
     <Card
-      style={{...styles.cardStyle, backgroundColor: colors.secondary}}
+      style={{...styles.cardStyle, backgroundColor: colors.secondary, width: width / 2.5, height: height / 4.5,}}
       mode={"elevated"}
       elevation={5}
       onPress={openNavigation}
@@ -65,7 +66,6 @@ export default function CardOptions({
 const styles = StyleSheet.create({
   cardStyle: {
     backgroundColor: "#000000",
-    width: "45%",
   },
   cardContent: {
     display: "flex",
