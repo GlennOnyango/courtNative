@@ -16,7 +16,6 @@ import {
 import { AuthContextProvider } from "./context/AuthContext";
 
 import Login from "./pages/Login";
-import Home from "./pages/Home";
 import User from "./pages/User";
 import AddUser from "./components/users/AddUser";
 import AddBlock from "./components/block/AddBlock";
@@ -24,7 +23,9 @@ import Courts from "./pages/Courts";
 import CustomNavigationBar from "./components/CustomNavigationBar";
 import AddCourt from "./components/courts/AddCourt";
 
+import Home from "./pages/Home";
 import * as SplashScreen from "expo-splash-screen";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
 import {
   useFonts,
@@ -43,6 +44,8 @@ export default function App() {
     SpaceMono_700Bold,
     SpaceMono_700Bold_Italic,
   });
+
+  const Tab = createMaterialTopTabNavigator();
 
   useEffect(() => {
     async () => {
@@ -71,6 +74,20 @@ export default function App() {
     },
   };
 
+  function Dashboard() {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: theme.colors.primary },
+          tabBarActiveTintColor: "white",
+          tabBarIndicatorStyle: { backgroundColor: "white" },
+        }}
+      >
+        <Tab.Screen name="User list" component={User} />
+        <Tab.Screen name="Add user" component={AddUser} />
+      </Tab.Navigator>
+    );
+  }
   return (
     <NavigationContainer>
       <AuthContextProvider>
@@ -106,12 +123,10 @@ export default function App() {
               />
               <stack.Screen
                 name="User"
-                component={User}
-                options={
-                  {
-                    //headerBackVisible:false
-                  }
-                }
+                component={Dashboard}
+                options={{
+                  headerShown: true,
+                }}
               />
               <stack.Screen name="Courts" component={Courts} />
               <stack.Screen name="Add Courts" component={AddCourt} />

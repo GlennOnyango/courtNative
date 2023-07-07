@@ -7,11 +7,11 @@ import GetUser from "../components/users/GetUser";
 export default function User({ navigation }) {
   const ctx = React.useContext(AuthContext);
 
-  React.useEffect(() => {
-    navigation.setOptions({
-      title: `${ctx.user.role}`,
-    });
-  }, [ctx.user]);
+  // React.useEffect(() => {
+  //   navigation.setOptions({
+  //     title: `Admin`,
+  //   });
+  // }, [ctx.user]);
 
   const getEditItem = (item)=>{
     

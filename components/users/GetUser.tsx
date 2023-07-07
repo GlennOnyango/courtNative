@@ -2,7 +2,8 @@ import { StyleSheet, View } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
 import { app } from "../../firebaseConfig";
 import { getDatabase, ref, onValue } from "firebase/database";
-import { Divider, Searchbar, FAB, List } from "react-native-paper";
+import { Divider, Searchbar, List } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function GetUser({ editItem, openAddAdmin }) {
   const [data, setData] = useState<any[]>([]);
@@ -17,10 +18,10 @@ export default function GetUser({ editItem, openAddAdmin }) {
 
   useEffect(() => {
     onValue(starCountRef, (snapshot) => {
-      const userArrayData:any[] = [];
+      const userArrayData: any[] = [];
 
       if (snapshot.exists()) {
-        const data:Record<string,any> = snapshot.val();
+        const data: Record<string, any> = snapshot.val();
 
         for (const user in data) {
           userArrayData.push(data[user]);
@@ -43,7 +44,7 @@ export default function GetUser({ editItem, openAddAdmin }) {
   }, [searchQuery, data, filterData]);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Searchbar
         placeholder="Search"
         onChangeText={onChangeSearch}
@@ -65,14 +66,7 @@ export default function GetUser({ editItem, openAddAdmin }) {
           </>
         ))}
       </View>
-
-      <FAB
-        icon="plus"
-        label="Create admin"
-        style={styles.fab}
-        onPress={() => openAddAdmin()}
-      />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -82,18 +76,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
 
-  containerList: {
-    flex: 8,
-    maxWidth: "100%",
-  },
   searchBar: {
-    height: "10%",
-    margin: 5,
+    marginHorizontal: 12,
+    marginTop: 12,
   },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
+  containerList: {
+    flex: 1,
+    maxWidth: "100%",
   },
 });
