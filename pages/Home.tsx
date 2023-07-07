@@ -1,4 +1,4 @@
-import React from "react";
+import React, { PropsWithChildren, useEffect, useRef } from "react";
 
 import {
   StyleSheet,
@@ -6,6 +6,8 @@ import {
   ScrollView,
   Dimensions,
   ImageBackground,
+  Animated,
+  ViewStyle,
 } from "react-native";
 
 import { FontAwesome } from "@expo/vector-icons";
@@ -24,6 +26,41 @@ const { width, height } = Dimensions.get("window");
 export default function Admin({ navigation }) {
   const ctx = React.useContext(AuthContext);
   const theme = useTheme();
+
+  //add duration to FadeInViewProps
+  
+
+  type FadeInViewProps = PropsWithChildren<{ style: ViewStyle,duration:number }>;
+
+  const FadeInView: React.FC<FadeInViewProps> = (props) => {
+    const SlideInLeft = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+
+    useEffect(() => {
+      Animated.timing(SlideInLeft, {
+        toValue: 1,
+        duration: props.duration,
+        useNativeDriver: true,
+      }).start();
+    }, [SlideInLeft]);
+
+    return (
+      <Animated.View // Special animatable View
+        style={{
+          ...props.style,
+          transform: [
+            {
+              translateX: SlideInLeft.interpolate({
+                inputRange: [0, 1],
+                outputRange: [600, 0],
+              }),
+            },
+          ],
+        }}
+      >
+        {props.children}
+      </Animated.View>
+    );
+  };
 
   navigation.addListener("beforeRemove", (e) => {
     // Prevent default behavior of leaving the screen
@@ -55,44 +92,66 @@ export default function Admin({ navigation }) {
             titleStyle={{ ...styles.cardText, color: theme.colors.primary }}
           />
           <Card.Content style={styles.cardContent}>
-            <Chip
+            <FadeInView
               style={{
-                width: width * 0.3,
-                backgroundColor: theme.colors.primary,
-                marginBottom: 2,
+                backgroundColor: "transparent",
               }}
-              selectedColor="white"
-              onPress={() => console.log("Pressed")}
-              mode="outlined"
+              duration={1000}
             >
-              30 Homes
-            </Chip>
+              <Chip
+                style={{
+                  width: width * 0.3,
+                  backgroundColor: theme.colors.primary,
+                  marginBottom: 2,
+                }}
+                selectedColor="white"
+                onPress={() => console.log("Pressed")}
+                mode="outlined"
+              >
+                30 Homes
+              </Chip>
+            </FadeInView>
 
-            <Chip
+            <FadeInView
               style={{
-                width: width * 0.32,
-                backgroundColor: theme.colors.primary,
+                backgroundColor: "transparent",
               }}
-              onPress={() => console.log("Pressed")}
-              selectedColor="white"
-              mode="outlined"
+              duration={1500}
             >
-              20 Admins
-            </Chip>
+              <Chip
+                style={{
+                  width: width * 0.32,
+                  backgroundColor: theme.colors.primary,
+                }}
+                onPress={() => console.log("Pressed")}
+                selectedColor="white"
+                mode="outlined"
+              >
+                20 Admins
+              </Chip>
+            </FadeInView>
 
-            <Chip
+            <FadeInView
               style={{
-                width: width * 0.35,
-                marginTop: 2,
-                backgroundColor: theme.colors.primary,
+                backgroundColor: "transparent",
               }}
-              textStyle={{ color: "white" }}
-              selectedColor="white"
-              onPress={() => console.log("Pressed")}
-              mode="outlined"
+              duration={2000}
+
             >
-              10 Residents
-            </Chip>
+              <Chip
+                style={{
+                  width: width * 0.35,
+                  marginTop: 2,
+                  backgroundColor: theme.colors.primary,
+                }}
+                textStyle={{ color: "white" }}
+                selectedColor="white"
+                onPress={() => console.log("Pressed")}
+                mode="outlined"
+              >
+                10 Residents
+              </Chip>
+            </FadeInView>
 
             {/* <CardHome firstText="10" secondText="Residents" />
 
