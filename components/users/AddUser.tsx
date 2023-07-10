@@ -5,33 +5,20 @@ import {
   Keyboard,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import * as SMS from "expo-sms";
 import { TextInput, Button, Text, useTheme } from "react-native-paper";
-import SelectSpecial from "../selectSpecial";
 
 type userCredntial = {
-  Name: string;
   Phone: string;
-  Nopassword: boolean;
 };
 
 export default function AddUser({ navigation, route }) {
   const theme = useTheme();
-  const [showDropDown, setShowDropDown] = useState(false);
-  const [role, setRole] = React.useState("");
-
   const [response, setResponse] = useState("");
   const [user, setUser] = React.useState<userCredntial>({
-    Name: "",
     Phone: "",
-    Nopassword: true,
   });
-
-  const userRole = [
-    { label: "Admin", value: "Admin" },
-    { label: "tenant", value: "tenant" },
-  ];
 
   useEffect(() => {
     if (route.params) {
@@ -40,57 +27,26 @@ export default function AddUser({ navigation, route }) {
     }
   }, [route.params]);
 
-  const state = useMemo(() => {
-    if (route.params) {
-      return route.params.item.status;
-    }
-    return false;
-  }, [route.params]);
-
   const addUser = (e) => {
     setUser({ ...user, [e.type]: e.text });
   };
 
-  function writeUserData() {
-    fetch("https://icourt-api.herokuapp.com/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...user, role: role }),
-    })
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.token) {
-          sendSMS(json.password);
-        } else {
-          setResponse(json.message);
-        }
-      });
-  }
-
   const submitUser = () => {
-    if (user.Name.length > 0) {
-      writeUserData();
+    if (user.Phone.length > 9) {
+      sendSMS();
       setUser({
-        Name: "",
         Phone: "",
-        Nopassword: true,
       });
     } else {
-      setResponse("Text field is empty");
+      setResponse("Incorrect phone number");
     }
   };
 
-  async function sendSMS(password) {
+  async function sendSMS() {
     const isAvailable = await SMS.isAvailableAsync();
     if (isAvailable) {
-      let message = "";
-      if (password) {
-        message = `Hey ${user.Name} you have been registered on Icourt. Your password is ${password}`;
-      } else {
-        message = `Hey ${user.Name} you details have been edited.If you get any issues contact any Adminstrator.`;
-      }
+      let message = `Use this code x1hwq12 to register on Icourt.`;
+
       const { result } = await SMS.sendSMSAsync([user.Phone], message);
       if (result) {
         navigation.navigate("User");
@@ -105,21 +61,22 @@ export default function AddUser({ navigation, route }) {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+            style={{
+              marginVertical: 10,
+              paddingHorizontal: 10,
+              paddingVertical: 20,
+              width: "96%",
+              backgroundColor: "white",
+            }}
           >
-            <TextInput
-              style={styles.input}
-              label="Full name"
-              mode="outlined"
-              onChangeText={(newText) =>
-                addUser({ type: "Name", text: newText })
-              }
-              value={user.Name}
-              inputMode={"text"}
-              keyboardType={"default"}
-            />
+            <Text variant="titleLarge" style={{marginBottom:8}}>How it works</Text>
+            <Text variant="bodyLarge">
+              We use an internal court code and the phone number you provide to
+              create a text message which you will send to the user to register.
+              After their registration, they will be able to acess the court.
+              You can change their role to admin after registration.
+            </Text>
           </View>
-
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
@@ -137,33 +94,9 @@ export default function AddUser({ navigation, route }) {
             />
           </View>
 
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <SelectSpecial
-              showDropDown={showDropDown}
-              setShowDropDown={setShowDropDown}
-              selectedData={role}
-              setData={setRole}
-              list={userRole}
-              label="Select user role"
-            />
-          </View>
-
-          {/* {route.params ? (
-            <View style={styles.containerButtons}>
-              <View style={{ width: "100%", padding: 4, height: 50 }}>
-                <Button
-                  mode="contained"
-                  onPress={changeUserStatus}
-                  buttonColor={state ? "red" : "green"}
-                >
-                  {state ? "Deactivate Admin" : "Activate Admin"}
-                </Button>
-              </View>
-            </View>
-          ) : null} */}
-
+          <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
+            {response}
+          </Text>
           <View style={styles.containerButtons}>
             <View style={{ width: "50%", padding: 4, height: 50 }}>
               <Button
@@ -179,10 +112,6 @@ export default function AddUser({ navigation, route }) {
               </Button>
             </View>
           </View>
-
-          <Text variant="titleSmall">{response}</Text>
-
-          <Text>How it works</Text>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>

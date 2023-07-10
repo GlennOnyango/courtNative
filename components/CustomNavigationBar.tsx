@@ -27,12 +27,12 @@ function CustomNavigationBar({ navigation, back, route }: Props) {
             title={tit}
             titleStyle={{ color: "white", fontFamily: "SpaceMono_700Bold" }}
           />
-          <Appbar.Action
+          {/* <Appbar.Action
             icon="lifebuoy"
             color="white"
             size={32}
             onPress={() => {}}
-          />
+          /> */}
         </Appbar.Header>
       )}
     </>
