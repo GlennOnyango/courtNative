@@ -7,19 +7,32 @@ import {
 } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
 import * as SMS from "expo-sms";
-import { TextInput, Button, Text } from "react-native-paper";
+import { TextInput, Button, Text, useTheme } from "react-native-paper";
+import SelectSpecial from "../selectSpecial";
 
-import { getDatabase, ref, set } from "firebase/database";
+type userCredntial = {
+  Name: string;
+  Phone: string;
+  Nopassword: boolean;
+};
 
 export default function AddUser({ navigation, route }) {
+  const theme = useTheme();
+  const [showDropDown, setShowDropDown] = useState(false);
+  const [role, setRole] = React.useState("");
+
   const [response, setResponse] = useState("");
-  const [user, setUser] = React.useState({
+  const [user, setUser] = React.useState<userCredntial>({
     Name: "",
-    Phone: 0,
-    status: true,
+    Phone: "",
+    Nopassword: true,
   });
 
-  const db = getDatabase();
+  const userRole = [
+    { label: "Admin", value: "Admin" },
+    { label: "tenant", value: "tenant" },
+  ];
+
   useEffect(() => {
     if (route.params) {
       const { item } = route.params;
@@ -39,19 +52,20 @@ export default function AddUser({ navigation, route }) {
   };
 
   function writeUserData() {
-    const pass = generatePassword(8);
-    set(ref(db, `users/${user.Phone}`), {
-      Name: user.Name,
-      Phone: user.Phone,
-      password: state ? user.password : pass,
-      status: true,
+    fetch("https://icourt-api.herokuapp.com/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...user, role: role }),
     })
-      .then(function () {
-        setResponse("Admin added to the system");
-        state ? sendSMS(undefined) : sendSMS(pass);
-      })
-      .catch(function (error) {
-        setResponse("Admin not added to the system");
+      .then((response) => response.json())
+      .then((json) => {
+        if (json.token) {
+          sendSMS(json.password);
+        } else {
+          setResponse(json.message);
+        }
       });
   }
 
@@ -60,8 +74,8 @@ export default function AddUser({ navigation, route }) {
       writeUserData();
       setUser({
         Name: "",
-        Phone: 0,
-        status: true,
+        Phone: "",
+        Nopassword: true,
       });
     } else {
       setResponse("Text field is empty");
@@ -85,44 +99,6 @@ export default function AddUser({ navigation, route }) {
       // misfortune... there's no SMS available on this device
     }
   }
-
-  function generatePassword(length) {
-    var charset =
-      "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
-    var password = "";
-    for (var i = 0; i < length; i++) {
-      password += charset.charAt(Math.floor(Math.random() * charset.length));
-    }
-    return password;
-  }
-
-  // // Example usage: generate a 12-character password
-  // var password = generatePassword(12);
-  // console.log(password); // Output: something like "4H#i6^L|w~aB"
-
-  const changeUserStatus = () => {
-    set(ref(db, `users/${user.Phone}`), {
-      Name: user.Name,
-      Phone: user.Phone,
-      password: state ? user.password : pass,
-      status: !user.status,
-    })
-      .then(function () {
-        setResponse("Admin status changed");
-        navigation.navigate("User");
-      })
-      .catch(function (error) {
-        setResponse("Admin not added to the system");
-      });
-  };
-
-  const clear = () => {
-    setUser({
-      Name: "",
-      Phone: 0,
-      status: true,
-    });
-  };
 
   return (
     <ScrollView>
@@ -161,7 +137,20 @@ export default function AddUser({ navigation, route }) {
             />
           </View>
 
-          {route.params ? (
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <SelectSpecial
+              showDropDown={showDropDown}
+              setShowDropDown={setShowDropDown}
+              selectedData={role}
+              setData={setRole}
+              list={userRole}
+              label="Select user role"
+            />
+          </View>
+
+          {/* {route.params ? (
             <View style={styles.containerButtons}>
               <View style={{ width: "100%", padding: 4, height: 50 }}>
                 <Button
@@ -173,25 +162,27 @@ export default function AddUser({ navigation, route }) {
                 </Button>
               </View>
             </View>
-          ) : null}
+          ) : null} */}
 
           <View style={styles.containerButtons}>
             <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button icon="plus" mode="contained" onPress={submitUser}>
-                Add Admin
-              </Button>
-            </View>
-
-            <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button icon="backspace" mode="contained" onPress={clear}>
-                Clear
+              <Button
+                mode="elevated"
+                buttonColor={theme.colors.secondary}
+                textColor={"white"}
+                onPress={submitUser}
+                style={{
+                  borderRadius: 1,
+                }}
+              >
+                Add User
               </Button>
             </View>
           </View>
 
-          <Text variant="titleSmall" marginVertical={4}>
-            {response}
-          </Text>
+          <Text variant="titleSmall">{response}</Text>
+
+          <Text>How it works</Text>
         </View>
       </TouchableWithoutFeedback>
     </ScrollView>

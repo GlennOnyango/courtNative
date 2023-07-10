@@ -13,19 +13,14 @@ export default function User({ navigation }) {
   //   });
   // }, [ctx.user]);
 
-  const getEditItem = (item)=>{
-    
-    navigation.navigate("Add User",{item});
-  }
-  
-  const AddAdmin = () => {
-    navigation.navigate("Add User");
+  const getEditItem = (item) => {
+    navigation.navigate("Add User", { item });
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.containerViewUser}>
-        <GetUser editItem={getEditItem} openAddAdmin={AddAdmin}/>
+        <GetUser editItem={getEditItem} />
       </View>
     </View>
   );
@@ -36,8 +31,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  containerViewUser:{
-    height:"100%",
+  containerViewUser: {
+    height: "100%",
     backgroundColor: "#fff",
-  }
+  },
 });

@@ -5,7 +5,7 @@ import { getDatabase, ref, onValue } from "firebase/database";
 import { Divider, Searchbar, List } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function GetUser({ editItem, openAddAdmin }) {
+export default function GetUser({ editItem }) {
   const [data, setData] = useState<any[]>([]);
   const [filterData, setFilteredData] = useState<any[]>([]);
 
