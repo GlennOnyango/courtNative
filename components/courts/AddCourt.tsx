@@ -1,160 +1,97 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { TextInput, Button, FAB } from "react-native-paper";
+import { TextInput, Button, useTheme, Text } from "react-native-paper";
 
-import { Fontisto } from "@expo/vector-icons";
-//custom hooks
-import { useGetUsers } from "../../customHooks/getUsers";
 
 //special components
 import SelectSpecial from "../selectSpecial";
 
 //database
-import { getDatabase, ref, set } from "firebase/database";
-import { writeUserData } from "../../constants";
-import { useCheckPrefect } from "../../customHooks/checkPrefect";
+import { usePost } from "../../customHooks/usePost";
+
+type changeAdminType = {
+  Code: string;
+  Reason: string;
+  userId: string;
+};
 
 export default function AddCourt({ navigation, route }) {
+  const theme = useTheme();
   const [showDropDown, setShowDropDown] = useState(false);
-  const [user, setuser] = React.useState("");
-  const [response, setResponse] = useState("");
-  const [responsePrefects, setResponsePrefects] = useState("");
-  const [court, setCourt] = useState({
-    Name: "",
-    status: true,
+  const [userSelected, setuser] = useState("");
+  const [court, setCourt] = useState<changeAdminType>({
+    Code: "",
+    Reason: "",
+    userId: "",
   });
 
-  const db = getDatabase();
+  const { data, callApi, isLoading, postError, postsuccess } = usePost();
 
-  const [users] = useGetUsers();
-  const [getPrefect, isPrefects] = useCheckPrefect();
 
   useEffect(() => {
     if (route.params) {
       const { item } = route.params;
       setCourt({
-        Name: item.Name,
-        status: item.status,
+        Code: item.Code,
+        Reason: item.Reason,
+        userId: item.userId,
       });
-      setuser(item.prefect);
     }
   }, [route.params]);
 
-  useEffect(() => {
-    if (response == "data created") createPrefect();
-  }, [response]);
 
-  useEffect(() => {
-    if (responsePrefects == "data created") {
-      setCourt({
-        Name: "",
-        status: true,
-      });
-      setuser("");
-
-      navigation.navigate("Courts");
-    }
-  }, [responsePrefects]);
-
-  useEffect(() => {
-    getPrefect(user);
-  }, [user]);
-
-  useEffect(() => {
-    if (isPrefects) setResponse("User is alread an admin on another court");
-  }, [isPrefects]);
-
-  const state = useMemo(() => {
-    if (route.params) {
-      return route.params.item.status;
-    }
-    return false;
-  }, [route.params]);
-
-  const usersData = useMemo(() => {
-    const newData = users.map((e: any) => {
-      if (e.status) {
-        return {
-          label: e.Name,
-          value: e.Phone,
-        };
-      }
-    });
-
-    return newData.filter((x) => x !== undefined);
-  }, [users]);
-
-  const addCourt = (e) => {
+  const addCourt = (e: { type: string; text: string }) => {
     setCourt({ ...court, [e.type]: e.text });
   };
 
   const submitUser = () => {
-    if (!isPrefects) {
-      if (court.Name.length > 0 && user.length > 0) {
-        const sendObj = {
-          Name: court.Name,
-          status: true,
-          prefect: user,
-        };
-        writeUserData(db, set, ref, "court", user, sendObj, setResponse);
-      } else {
-        setResponse("Text field is empty");
-      }
+    if (court.Code !== "" || court.Reason !== "" || userSelected !== "") {
+      callApi(court, "court/requestAdminChange");
     }
   };
-  const createPrefect = () => {
-    const sendObj = {
-      Name: court.Name,
-      status: true,
-    };
-    writeUserData(db, set, ref, "prefects", user, sendObj, setResponsePrefects);
-  };
 
-  const clear = () => {
-    setCourt({
-      Name: "",
-      status: true,
-    });
-    setuser("");
-  };
-
-  const changeUserStatus = () => {
-    set(ref(db, `court/${court.Name}`), {
-      Name: court.Name,
-      status: !state,
-    })
-      .then(function () {
-        setResponse("Court status changed");
-        navigation.navigate("Courts");
-      })
-      .catch(function (error) {
-        setResponse("Court not added to the system");
-      });
-  };
+  useEffect(() => {
+    if (postsuccess) {
+      navigation.navigate("Login");
+    }
+  }, [data, postError, postsuccess]);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
         <View style={styles.containerForm}>
-          <View style={{alignItems:"center"}}>
-            <Fontisto name="treehouse" size={98} color="black" />
-          </View>
           <View
             style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
           >
             <TextInput
               style={styles.input}
-              label="Enter court name"
+              label="Enter court code"
               mode="outlined"
               onChangeText={(newText) =>
-                addCourt({ type: "Name", text: newText })
+                addCourt({ type: "Code", text: newText })
               }
-              value={court.Name}
+              value={court.Code}
+              inputMode={"text"}
+              keyboardType={"default"}
+            />
+          </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <TextInput
+              style={styles.input}
+              label="Reason for change"
+              mode="outlined"
+              onChangeText={(newText) =>
+                addCourt({ type: "Reason", text: newText })
+              }
+              value={court.Reason}
               inputMode={"text"}
               keyboardType={"default"}
             />
@@ -166,52 +103,36 @@ export default function AddCourt({ navigation, route }) {
             <SelectSpecial
               showDropDown={showDropDown}
               setShowDropDown={setShowDropDown}
-              selectedData={user}
+              selectedData={userSelected}
               setData={setuser}
-              list={usersData}
-              label="Select prefect"
+              list={[]}
+              label="Select new Admin"
             />
           </View>
 
           <View style={styles.containerButtons}>
-            <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button
-                icon="plus"
-                mode="contained"
-                buttonColor="black"
-                onPress={submitUser}
-              >
-                {route.params ? "edit court" : "Add Court"}
-              </Button>
-            </View>
-
-            <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button
-                icon="backspace"
-                mode="contained"
-                buttonColor="black"
-                onPress={clear}
-              >
-                Clear
-              </Button>
-            </View>
+            <Button
+              mode="contained"
+              buttonColor={theme.colors.primary}
+              onPress={submitUser}
+              style={{ borderRadius: 0 }}
+            >
+              {"Change admin"}
+            </Button>
           </View>
 
-          {/* {route.params ? (
-            <View style={styles.containerButtons}>
-              <View style={{ width: "100%", padding: 4, height: 50 }}>
-                <Button
-                  mode="contained"
-                  onPress={changeUserStatus}
-                  buttonColor={"black"}
-                >
-                  {state ? "Deactivate Court" : "Activate Court"}
-                </Button>
-              </View>
-            </View>
-          ) : null} */}
-
-          <FAB label="Add Court Admin" style={styles.fab} />
+          <View style={styles.containerButtons}>
+            {postError && (
+              <Text
+                variant="bodyLarge"
+                style={{ color: theme.colors.error, textAlign: "center" }}
+              >
+                {
+                  "Admin change request failed raise an issue to get help from our team."
+                }
+              </Text>
+            )}
+          </View>
         </View>
       </View>
     </TouchableWithoutFeedback>
@@ -228,13 +149,13 @@ const styles = StyleSheet.create({
   containerForm: {
     width: "100%",
     height: "100%",
-    justifyContent:"center",
   },
   containerButtons: {
     flexDirection: "row",
     maxWidth: "100%",
     justifyContent: "center",
     alignItems: "center",
+    marginVertical: 10,
   },
   input: {
     width: "100%",

@@ -1,36 +1,17 @@
 import { StyleSheet, View } from "react-native";
 import React, { useState, useEffect, useMemo } from "react";
-import { app } from "../../firebaseConfig";
-import { getDatabase, ref, onValue } from "firebase/database";
-import { Divider, Searchbar, FAB, List } from "react-native-paper";
+import { Divider, Searchbar, List } from "react-native-paper";
 import { IconButton, MD3Colors } from "react-native-paper";
 
 export default function GetCourts({ editItem, openAddCourt }) {
   const [data, setData] = useState([]);
   const [filterData, setFilteredData] = useState([]);
 
-  const database = getDatabase(app);
-  const starCountRef = ref(database, `court/`);
 
   const [searchQuery, setSearchQuery] = React.useState("");
 
   const onChangeSearch = (query) => setSearchQuery(query);
 
-  useEffect(() => {
-    onValue(starCountRef, (snapshot) => {
-      const courtData = [];
-
-      if (snapshot.exists()) {
-        const data = snapshot.val();
-
-        for (const user in data) {
-          courtData.push(data[user]);
-        }
-      }
-
-      setData(courtData);
-    });
-  }, []);
 
   useEffect(() => {
     if (searchQuery.length > 0) {
@@ -54,7 +35,7 @@ export default function GetCourts({ editItem, openAddCourt }) {
       <View style={styles.containerList}>
         {dataArray.map((item, index) => (
           <>
-            <View style={{flexDirection:"row",alignItems:"stretch"}}>
+            <View style={{ flexDirection: "row", alignItems: "stretch" }}>
               <List.Item
                 title={item.Name}
                 right={(props) => (
@@ -62,12 +43,12 @@ export default function GetCourts({ editItem, openAddCourt }) {
                 )}
                 onPress={() => editItem(item)}
                 key={index}
-                style={{width:"90%"}}
+                style={{ width: "90%" }}
               />
               <IconButton
                 icon="delete"
                 iconColor={MD3Colors.error50}
-                style={{width:"10%"}}
+                style={{ width: "10%" }}
                 onPress={() => console.log(item)}
               />
             </View>
@@ -76,13 +57,6 @@ export default function GetCourts({ editItem, openAddCourt }) {
           </>
         ))}
       </View>
-
-      <FAB
-        icon="plus"
-        label="Create court"
-        style={styles.fab}
-        onPress={() => openAddCourt()}
-      />
     </View>
   );
 }

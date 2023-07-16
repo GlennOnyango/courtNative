@@ -18,8 +18,6 @@ import { AuthContextProvider } from "./context/AuthContext";
 import Login from "./pages/Login";
 import User from "./pages/User";
 import AddUser from "./components/users/AddUser";
-import AddBlock from "./components/block/AddBlock";
-import Courts from "./pages/Courts";
 import CustomNavigationBar from "./components/CustomNavigationBar";
 import AddCourt from "./components/courts/AddCourt";
 
@@ -35,6 +33,10 @@ import {
   SpaceMono_700Bold_Italic,
 } from "@expo-google-fonts/space-mono";
 import SignUp from "./pages/SignUp";
+import AddHouse from "./components/block/AddHouse";
+import HouseList from "./components/block/ListHouse";
+import CreateBill from "./components/bills/createBills";
+import BillsList from "./components/bills/listBills";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -74,7 +76,7 @@ export default function App() {
     },
   };
 
-  function Dashboard() {
+  function UsersTab() {
     return (
       <Tab.Navigator
         screenOptions={{
@@ -83,11 +85,58 @@ export default function App() {
           tabBarIndicatorStyle: { backgroundColor: "white" },
         }}
       >
+      <Tab.Screen name="Add user" component={AddUser} />
         <Tab.Screen name="User list" component={User} />
-        <Tab.Screen name="Add user" component={AddUser} />
       </Tab.Navigator>
     );
   }
+
+  function CourtsTab() {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: theme.colors.primary },
+          tabBarActiveTintColor: "white",
+          tabBarIndicatorStyle: { backgroundColor: "white" },
+        }}
+      >
+        {/* <Tab.Screen name="Courts list" component={Courts} /> */}
+        <Tab.Screen name="Request Admin Change" component={AddCourt} />
+      </Tab.Navigator>
+    );
+  }
+
+  //Create a house tab
+  function HouseTab() {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: theme.colors.primary },
+          tabBarActiveTintColor: "white",
+          tabBarIndicatorStyle: { backgroundColor: "white" },
+        }}
+      >
+        <Tab.Screen name="Add House" component={AddHouse} />
+        <Tab.Screen name="House list" component={HouseList} />
+      </Tab.Navigator>
+    );
+  }
+
+  function BillsTab() {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: theme.colors.primary },
+          tabBarActiveTintColor: "white",
+          tabBarIndicatorStyle: { backgroundColor: "white" },
+        }}
+      >
+        <Tab.Screen name="Create Bill" component={CreateBill} />
+        <Tab.Screen name="Bills list" component={BillsList} />
+      </Tab.Navigator>
+    );
+  }
+
   return (
     <NavigationContainer>
       <AuthContextProvider>
@@ -114,6 +163,7 @@ export default function App() {
               <stack.Screen name="Login" component={Login} />
 
               <stack.Screen name="SignUp" component={SignUp} />
+              <stack.Screen name="Add User" component={AddUser} />
               <stack.Screen
                 name="Home"
                 component={Home}
@@ -123,15 +173,32 @@ export default function App() {
               />
               <stack.Screen
                 name="User"
-                component={Dashboard}
+                component={UsersTab}
                 options={{
                   headerShown: true,
                 }}
               />
-              <stack.Screen name="Courts" component={Courts} />
-              <stack.Screen name="Add Courts" component={AddCourt} />
-              <stack.Screen name="Add User" component={AddUser} />
-              <stack.Screen name="Add Block" component={AddBlock} />
+              <stack.Screen
+                name="Courts"
+                component={CourtsTab}
+                options={{
+                  headerShown: true,
+                }}
+              />
+              <stack.Screen
+                name="Houses"
+                component={HouseTab}
+                options={{
+                  headerShown: true,
+                }}
+              />
+              <stack.Screen
+                name="Bills"
+                component={BillsTab}
+                options={{
+                  headerShown: true,
+                }}
+              />
             </stack.Group>
           </stack.Navigator>
 

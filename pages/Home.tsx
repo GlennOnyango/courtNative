@@ -200,8 +200,8 @@ export default function Admin({ navigation }) {
             />
 
             <CardOptions
-              firstText="Courts"
-              secondText="200"
+              firstText="Court"
+              secondText="1"
               Icon={<Fontisto name="treehouse" size={24} color="white" />}
               press={`Courts`}
               navigation={navigation}
@@ -217,10 +217,10 @@ export default function Admin({ navigation }) {
             }}
           >
             <CardOptions
-              firstText="Block"
+              firstText="Houses"
               secondText="200"
               Icon={<FontAwesome5 name="house-user" size={24} color="white" />}
-              press={`Block`}
+              press={`Houses`}
               navigation={navigation}
             />
 

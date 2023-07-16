@@ -5,7 +5,8 @@ import { useFetch } from "../customHooks/useFetch";
 import { useNavigation } from "@react-navigation/native";
 
 const auth = {
-  user: { Name: "", Phone: 0, token: "", expiry: 0 },
+  user: { Name: "", Phone: 0, token: "", expiry: 0, role: "" },
+  court: { Name: "", Code: "", courtId: "", status: false },
   login: () => {},
   logout: () => {},
 };
@@ -18,6 +19,7 @@ type User = {
   Phone: number;
   token: string;
   expiry: number;
+  role: string;
 };
 
 const AuthContext = React.createContext(auth);
@@ -25,13 +27,22 @@ const AuthContext = React.createContext(auth);
 export const AuthContextProvider = ({ children }: Props) => {
   const navigation = useNavigation();
 
-  const [data, callApi, isLoading] = useFetch();
+  const { data, callApi, isLoading } = useFetch();
+  const { data: courtData, callApi: callApiCourt } = useFetch();
 
   const [user, setUser] = useState<User>({
     Name: "",
     Phone: 0,
     token: "",
     expiry: 0,
+    role: "tenant",
+  });
+
+  const [court, setCourt] = useState({
+    Name: "",
+    Code: "",
+    courtId: "",
+    status: false,
   });
 
   const loginHandler = async () => {
@@ -40,7 +51,7 @@ export const AuthContextProvider = ({ children }: Props) => {
     if (result) {
       const resultData = JSON.parse(result);
       if (Date.now() < resultData.expiry) {
-        callApi("user/details", false, resultData.token);
+        callApi("user/details", resultData.token);
       }
     } else {
       // navigation.navigate("Login" as never);
@@ -63,6 +74,7 @@ export const AuthContextProvider = ({ children }: Props) => {
                 Phone: Number(data.phoneNumber),
                 token: resultData.token,
                 expiry: resultData.expiry,
+                role: data.role,
               };
               setUser(userSpread);
 
@@ -88,14 +100,33 @@ export const AuthContextProvider = ({ children }: Props) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (user.role === "Admin") {
+      callApiCourt("court/details", user.token);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (Object.keys(courtData)[0] !== "fetch") {
+      const courtSpread = {
+        Name: courtData.Name,
+        Code: courtData.Code,
+        courtId: courtData._id,
+        status: courtData.status,
+      };
+      setCourt(courtSpread);
+    }
+  }, [courtData]);
+
   const logoutHandler = () => {
-    setUser({ Name: "", Phone: 0, token: "", expiry: 0 });
+    setUser({ Name: "", Phone: 0, token: "", expiry: 0, role: "" });
   };
 
   return (
     <AuthContext.Provider
       value={{
         user: user,
+        court: court,
         login: loginHandler,
         logout: logoutHandler,
       }}
