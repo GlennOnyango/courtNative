@@ -7,12 +7,12 @@ import {
 } from "react-native";
 import { TextInput, Button, useTheme, Text } from "react-native-paper";
 
-
 //special components
 import SelectSpecial from "../selectSpecial";
 
 //database
 import { usePost } from "../../customHooks/usePost";
+import { StatusBar } from "expo-status-bar";
 
 type changeAdminType = {
   Code: string;
@@ -32,7 +32,6 @@ export default function AddCourt({ navigation, route }) {
 
   const { data, callApi, isLoading, postError, postsuccess } = usePost();
 
-
   useEffect(() => {
     if (route.params) {
       const { item } = route.params;
@@ -43,7 +42,6 @@ export default function AddCourt({ navigation, route }) {
       });
     }
   }, [route.params]);
-
 
   const addCourt = (e: { type: string; text: string }) => {
     setCourt({ ...court, [e.type]: e.text });
@@ -62,80 +60,83 @@ export default function AddCourt({ navigation, route }) {
   }, [data, postError, postsuccess]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <View style={styles.containerForm}>
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <TextInput
-              style={styles.input}
-              label="Enter court code"
-              mode="outlined"
-              onChangeText={(newText) =>
-                addCourt({ type: "Code", text: newText })
-              }
-              value={court.Code}
-              inputMode={"text"}
-              keyboardType={"default"}
-            />
-          </View>
-
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <TextInput
-              style={styles.input}
-              label="Reason for change"
-              mode="outlined"
-              onChangeText={(newText) =>
-                addCourt({ type: "Reason", text: newText })
-              }
-              value={court.Reason}
-              inputMode={"text"}
-              keyboardType={"default"}
-            />
-          </View>
-
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <SelectSpecial
-              showDropDown={showDropDown}
-              setShowDropDown={setShowDropDown}
-              selectedData={userSelected}
-              setData={setuser}
-              list={[]}
-              label="Select new Admin"
-            />
-          </View>
-
-          <View style={styles.containerButtons}>
-            <Button
-              mode="contained"
-              buttonColor={theme.colors.primary}
-              onPress={submitUser}
-              style={{ borderRadius: 0 }}
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <View style={styles.containerForm}>
+            <View
+              style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
             >
-              {"Change admin"}
-            </Button>
-          </View>
-
-          <View style={styles.containerButtons}>
-            {postError && (
-              <Text
-                variant="bodyLarge"
-                style={{ color: theme.colors.error, textAlign: "center" }}
-              >
-                {
-                  "Admin change request failed raise an issue to get help from our team."
+              <TextInput
+                style={styles.input}
+                label="Enter court code"
+                mode="outlined"
+                onChangeText={(newText) =>
+                  addCourt({ type: "Code", text: newText })
                 }
-              </Text>
-            )}
+                value={court.Code}
+                inputMode={"text"}
+                keyboardType={"default"}
+              />
+            </View>
+
+            <View
+              style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+            >
+              <TextInput
+                style={styles.input}
+                label="Reason for change"
+                mode="outlined"
+                onChangeText={(newText) =>
+                  addCourt({ type: "Reason", text: newText })
+                }
+                value={court.Reason}
+                inputMode={"text"}
+                keyboardType={"default"}
+              />
+            </View>
+
+            <View
+              style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+            >
+              <SelectSpecial
+                showDropDown={showDropDown}
+                setShowDropDown={setShowDropDown}
+                selectedData={userSelected}
+                setData={setuser}
+                list={[]}
+                label="Select new Admin"
+              />
+            </View>
+
+            <View style={styles.containerButtons}>
+              <Button
+                mode="contained"
+                buttonColor={theme.colors.primary}
+                onPress={submitUser}
+                style={{ borderRadius: 0 }}
+              >
+                {"Change admin"}
+              </Button>
+            </View>
+
+            <View style={styles.containerButtons}>
+              {postError && (
+                <Text
+                  variant="bodyLarge"
+                  style={{ color: theme.colors.error, textAlign: "center" }}
+                >
+                  {
+                    "Admin change request failed raise an issue to get help from our team."
+                  }
+                </Text>
+              )}
+            </View>
           </View>
         </View>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+      <StatusBar style="light" animated />
+    </>
   );
 }
 

@@ -6,6 +6,7 @@ import {
   ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
 import * as SMS from "expo-sms";
 import { TextInput, Button, Text, useTheme } from "react-native-paper";
 
@@ -57,64 +58,70 @@ export default function AddUser({ navigation, route }) {
   }
 
   return (
-    <ScrollView>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          <View
-            style={{
-              marginVertical: 10,
-              paddingHorizontal: 10,
-              paddingVertical: 20,
-              width: "96%",
-              backgroundColor: "white",
-            }}
-          >
-            <Text variant="titleLarge" style={{marginBottom:8}}>How it works</Text>
-            <Text variant="bodyLarge">
-              We use an internal court code and the phone number you provide to
-              create a text message which you will send to the user to register.
-              After their registration, they will be able to acess the court.
-              You can change their role to admin after registration.
-            </Text>
-          </View>
-          <View
-            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-          >
-            <TextInput
-              style={styles.input}
-              label="Phone number"
-              mode="outlined"
-              onChangeText={(newText) =>
-                addUser({ type: "Phone", text: newText })
-              }
-              value={user.Phone}
-              inputMode={"tel"}
-              keyboardType={"phone-pad"}
-              maxLength={10}
-            />
-          </View>
+    <>
+      <ScrollView>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
+            <View
+              style={{
+                marginVertical: 10,
+                paddingHorizontal: 10,
+                paddingVertical: 20,
+                width: "96%",
+                backgroundColor: "white",
+              }}
+            >
+              <Text variant="titleLarge" style={{ marginBottom: 8 }}>
+                How it works
+              </Text>
+              <Text variant="bodyLarge">
+                We use an internal court code and the phone number you provide
+                to create a text message which you will send to the user to
+                register. After their registration, they will be able to acess
+                the court. You can change their role to admin after
+                registration.
+              </Text>
+            </View>
+            <View
+              style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+            >
+              <TextInput
+                style={styles.input}
+                label="Phone number"
+                mode="outlined"
+                onChangeText={(newText) =>
+                  addUser({ type: "Phone", text: newText })
+                }
+                value={user.Phone}
+                inputMode={"tel"}
+                keyboardType={"phone-pad"}
+                maxLength={10}
+              />
+            </View>
 
-          <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
-            {response}
-          </Text>
-          <View style={styles.containerButtons}>
-            <View style={{ width: "50%", padding: 4, height: 50 }}>
-              <Button
-                mode="elevated"
-                buttonColor={theme.colors.secondary}
-                textColor={"white"}
-                onPress={submitUser}
-                style={{
-                  borderRadius: 1,
-                }}
-              >
-                Add User
-              </Button>
+            <Text variant="bodyLarge" style={{ color: theme.colors.error }}>
+              {response}
+            </Text>
+            <View style={styles.containerButtons}>
+              <View style={{ width: "50%", padding: 4, height: 50 }}>
+                <Button
+                  mode="elevated"
+                  buttonColor={theme.colors.secondary}
+                  textColor={"white"}
+                  onPress={submitUser}
+                  style={{
+                    borderRadius: 1,
+                  }}
+                >
+                  Add User
+                </Button>
+              </View>
             </View>
           </View>
-        </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+      <StatusBar style="light" animated />
+    </>
   );
 }
 

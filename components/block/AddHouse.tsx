@@ -9,6 +9,7 @@ import React, { useState, useContext, useEffect } from "react";
 import { TextInput, Text, Button, useTheme } from "react-native-paper";
 import AuthContext from "../../context/AuthContext";
 import { usePost } from "../../customHooks/usePost";
+import { StatusBar } from "expo-status-bar";
 
 export default function AddHouse() {
   const ctx = useContext(AuthContext);
@@ -64,73 +65,76 @@ export default function AddHouse() {
   }, [postsuccess, postError]);
 
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <TextInput
-            style={styles.input}
-            label="Court Name *"
-            mode="outlined"
-            disabled={true}
-            value={ctx.court.Name}
-            inputMode={"text"}
-            keyboardType={"default"}
-          />
-        </View>
-
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <TextInput
-            style={styles.input}
-            label="House Name *"
-            mode="outlined"
-            onChangeText={(newText) =>
-              addBlock({ type: "houseName", text: newText })
-            }
-            value={house.houseName}
-            inputMode={"text"}
-            keyboardType={"default"}
-          />
-        </View>
-
-        <View
-          style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
-        >
-          <TextInput
-            style={styles.input}
-            label="House proprietor"
-            mode="outlined"
-            onChangeText={(newText) =>
-              addBlock({ type: "houseOwner", text: newText })
-            }
-            value={house.houseOwner}
-            inputMode={"text"}
-            keyboardType={"default"}
-          />
-        </View>
-
-        <View style={styles.containerButtons}>
-          <View style={{ width: "50%", height: 50 }}>
-            <Button
-              mode="contained"
-              onPress={submitUser}
-              style={{ borderRadius: 0 }}
-            >
-              Add House
-            </Button>
+    <>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <TextInput
+              style={styles.input}
+              label="Court Name *"
+              mode="outlined"
+              disabled={true}
+              value={ctx.court.Name}
+              inputMode={"text"}
+              keyboardType={"default"}
+            />
           </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <TextInput
+              style={styles.input}
+              label="House Name *"
+              mode="outlined"
+              onChangeText={(newText) =>
+                addBlock({ type: "houseName", text: newText })
+              }
+              value={house.houseName}
+              inputMode={"text"}
+              keyboardType={"default"}
+            />
+          </View>
+
+          <View
+            style={{ marginVertical: 8, paddingHorizontal: 5, width: "100%" }}
+          >
+            <TextInput
+              style={styles.input}
+              label="House proprietor"
+              mode="outlined"
+              onChangeText={(newText) =>
+                addBlock({ type: "houseOwner", text: newText })
+              }
+              value={house.houseOwner}
+              inputMode={"text"}
+              keyboardType={"default"}
+            />
+          </View>
+
+          <View style={styles.containerButtons}>
+            <View style={{ width: "50%", height: 50 }}>
+              <Button
+                mode="contained"
+                onPress={submitUser}
+                style={{ borderRadius: 0 }}
+              >
+                Add House
+              </Button>
+            </View>
+          </View>
+          <Text
+            variant="bodyLarge"
+            style={{ color: response.color, textAlign: "center" }}
+          >
+            {response.message}
+          </Text>
         </View>
-        <Text
-          variant="bodyLarge"
-          style={{ color: response.color, textAlign: "center" }}
-        >
-          {response.message}
-        </Text>
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+      <StatusBar style="light" animated />
+    </>
   );
 }
 

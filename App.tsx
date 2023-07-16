@@ -202,7 +202,7 @@ export default function App() {
             </stack.Group>
           </stack.Navigator>
 
-          <StatusBar backgroundColor="transparent" animated hidden />
+          <StatusBar backgroundColor="transparent" style="dark" animated  />
         </PaperProvider>
       </AuthContextProvider>
     </NavigationContainer>

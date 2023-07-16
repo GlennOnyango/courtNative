@@ -4,6 +4,7 @@ import { TextInput, Button, Text, useTheme } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../../customHooks/usePost";
 import * as Network from "expo-network";
+import { StatusBar } from "expo-status-bar";
 
 type courtRegister = {
   courtName: string;
@@ -204,6 +205,8 @@ export default function CreateCourt({ navigation }) {
           }
         </Text>
       </View>
+      
+      <StatusBar style="light" animated />
     </>
   );
 }
