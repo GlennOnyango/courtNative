@@ -37,6 +37,7 @@ import AddHouse from "./components/block/AddHouse";
 import HouseList from "./components/block/ListHouse";
 import CreateBill from "./components/bills/createBills";
 import BillsList from "./components/bills/listBills";
+import MakePayment from "./components/payment/makePayment";
 
 export default function App() {
   const stack = createNativeStackNavigator();
@@ -85,7 +86,7 @@ export default function App() {
           tabBarIndicatorStyle: { backgroundColor: "white" },
         }}
       >
-      <Tab.Screen name="Add user" component={AddUser} />
+        <Tab.Screen name="Add user" component={AddUser} />
         <Tab.Screen name="User list" component={User} />
       </Tab.Navigator>
     );
@@ -133,6 +134,20 @@ export default function App() {
       >
         <Tab.Screen name="Create Bill" component={CreateBill} />
         <Tab.Screen name="Bills list" component={BillsList} />
+      </Tab.Navigator>
+    );
+  }
+
+  function PaymentsTab() {
+    return (
+      <Tab.Navigator
+        screenOptions={{
+          tabBarStyle: { backgroundColor: theme.colors.primary },
+          tabBarActiveTintColor: "white",
+          tabBarIndicatorStyle: { backgroundColor: "white" },
+        }}
+      >
+        <Tab.Screen name="Make Payment" component={MakePayment} />
       </Tab.Navigator>
     );
   }
@@ -199,10 +214,18 @@ export default function App() {
                   headerShown: true,
                 }}
               />
+
+              <stack.Screen
+                name="Payments"
+                component={PaymentsTab}
+                options={{
+                  headerShown: true,
+                }}
+              />
             </stack.Group>
           </stack.Navigator>
 
-          <StatusBar backgroundColor="transparent" style="dark" animated  />
+          <StatusBar backgroundColor="transparent" style="dark" animated />
         </PaperProvider>
       </AuthContextProvider>
     </NavigationContainer>

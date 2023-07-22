@@ -27,6 +27,7 @@ export default function SelectSpecial({
       value={selectedData}
       setValue={setData}
       list={list}
+      dropDownItemStyle={{ backgroundColor: "white" }}
     />
   );
 }

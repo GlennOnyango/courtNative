@@ -225,7 +225,7 @@ export default function Admin({ navigation }) {
             />
 
             <CardOptions
-              firstText="Bills"
+              firstText="Bill Items"
               secondText="2"
               Icon={
                 <FontAwesome5
@@ -248,7 +248,7 @@ export default function Admin({ navigation }) {
             }}
           >
             <CardOptions
-              firstText="Residents"
+              firstText="Payments"
               secondText="86"
               Icon={
                 <MaterialIcons
@@ -257,7 +257,7 @@ export default function Admin({ navigation }) {
                   color="white"
                 />
               }
-              press={`Residents`}
+              press={`Payments`}
               navigation={navigation}
             />
 
