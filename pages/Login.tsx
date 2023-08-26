@@ -200,7 +200,7 @@ export default function Login({ navigation }) {
                 <Text
                   variant="bodyLarge"
                   style={{ color: theme.colors.secondary }}
-                  onPress={() => navigation.navigate("Home")}
+                  onPress={() => login()}
                 >
                   Get help
                 </Text>

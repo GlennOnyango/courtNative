@@ -37,8 +37,7 @@ export const usePost = (token?: string, file?: boolean) => {
     fetch(url_send, extra)
       .then((res) => {
         if (!res.ok) {
-          console.log(res);
-          const error = new Error(res.statusText);
+          const error = new Error(`An error occurred while sending data! ${url}`);
           throw error;
         }
 
