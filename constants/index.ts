@@ -1,1 +1,3 @@
-export const main_url = "http://192.168.100.6:9000/api/v1/uaa/";
+
+export const auth_url = "https://msauthentication-production.up.railway.app";
+export const courts_url = "https://courts-production.up.railway.app";

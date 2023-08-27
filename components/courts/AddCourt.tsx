@@ -49,7 +49,7 @@ export default function AddCourt({ navigation, route }) {
 
   const submitUser = () => {
     if (court.Code !== "" || court.Reason !== "" || userSelected !== "") {
-      callApi(court, "court/requestAdminChange");
+      callApi(court, "/api/v1/courts/create",false);
     }
   };
 

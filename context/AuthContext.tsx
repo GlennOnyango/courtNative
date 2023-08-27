@@ -54,7 +54,7 @@ export const AuthContextProvider = ({ children }: Props) => {
         callApi("user/details", resultData.token);
       }
     } else {
-      // navigation.navigate("Login" as never);
+      navigation.navigate("Login" as never);
     }
   };
 
@@ -69,6 +69,7 @@ export const AuthContextProvider = ({ children }: Props) => {
           if (result) {
             const resultData = JSON.parse(result);
             if (Date.now() < resultData.expiry) {
+              console.log(data);
               const userSpread = {
                 Name: `${data.firstName} ${data.lastName}`,
                 Phone: Number(data.phoneNumber),
@@ -119,6 +120,7 @@ export const AuthContextProvider = ({ children }: Props) => {
   }, [courtData]);
 
   const logoutHandler = () => {
+    SecureStore.deleteItemAsync("token_exp");
     setUser({ Name: "", Phone: 0, token: "", expiry: 0, role: "" });
   };
 

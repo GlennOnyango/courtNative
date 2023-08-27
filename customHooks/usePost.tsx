@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-import { main_url } from "../constants";
+import { auth_url,courts_url } from "../constants";
 
 type Extra = {
   method: string;
@@ -17,10 +17,10 @@ export const usePost = (token?: string, file?: boolean) => {
   const [postError, setPostError] = useState<boolean>(false);
   const [postsuccess, setPostSuccess] = useState<boolean>(false);
 
-  const callApi = useCallback((formData: any, url: string) => {
+  const callApi = useCallback((formData: any, url: string,auth:boolean) => {
     reset();
     setIsLoading(true);
-    const url_send = formData ? `${main_url}${url}` : `${url}`;
+    const url_send = `${auth ? auth_url : courts_url}${url}`;
     const extra: Extra = {
       method: "POST",
       headers: token
@@ -37,7 +37,7 @@ export const usePost = (token?: string, file?: boolean) => {
     fetch(url_send, extra)
       .then((res) => {
         if (!res.ok) {
-          const error = new Error(`An error occurred while sending data! ${url}`);
+          const error = new Error(`An error occurred while sending data! ${url_send}`);
           throw error;
         }
 

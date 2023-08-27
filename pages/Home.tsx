@@ -20,6 +20,7 @@ import { Entypo } from "@expo/vector-icons";
 import AuthContext from "../context/AuthContext";
 import { Card, Text, useTheme, Chip } from "react-native-paper";
 import CardOptions from "../components/cardOptions";
+import Logout from "../components/logout";
 
 const { width, height } = Dimensions.get("window");
 
@@ -28,9 +29,11 @@ export default function Admin({ navigation }) {
   const theme = useTheme();
 
   //add duration to FadeInViewProps
-  
 
-  type FadeInViewProps = PropsWithChildren<{ style: ViewStyle,duration:number }>;
+  type FadeInViewProps = PropsWithChildren<{
+    style: ViewStyle;
+    duration: number;
+  }>;
 
   const FadeInView: React.FC<FadeInViewProps> = (props) => {
     const SlideInLeft = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
@@ -61,11 +64,6 @@ export default function Admin({ navigation }) {
       </Animated.View>
     );
   };
-
-  navigation.addListener("beforeRemove", (e) => {
-    // Prevent default behavior of leaving the screen
-    e.preventDefault();
-  });
 
   const imageDashboard = require("../assets/vectors/dashboard1.jpg");
 
@@ -136,7 +134,6 @@ export default function Admin({ navigation }) {
                 backgroundColor: "transparent",
               }}
               duration={2000}
-
             >
               <Chip
                 style={{
@@ -152,12 +149,6 @@ export default function Admin({ navigation }) {
                 10 Residents
               </Chip>
             </FadeInView>
-
-            {/* <CardHome firstText="10" secondText="Residents" />
-
-            <CardHome firstText="30" secondText="Homes" />
-
-            <CardHome firstText="20" secondText="Admins" /> */}
           </Card.Content>
         </ImageBackground>
       </Card>
@@ -271,6 +262,7 @@ export default function Admin({ navigation }) {
           </View>
         </ScrollView>
       </View>
+      <Logout navigation={navigation} />
     </ScrollView>
   );
 }

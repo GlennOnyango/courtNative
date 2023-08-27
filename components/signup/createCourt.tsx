@@ -41,7 +41,7 @@ export default function CreateCourt({ navigation }) {
 
   const login = () => {
     if (state) {
-      callApi(credentials, "register-court");
+      callApi(credentials, "/register-court",true);
     } else {
       setError("Empty input fields");
     }

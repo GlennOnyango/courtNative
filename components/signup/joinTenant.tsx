@@ -41,7 +41,7 @@ export default function CreateTenant({ navigation }) {
 
   const register = () => {
     if (state) {
-      callApi(credentials, "register-tenant");
+      callApi(credentials, "/register-tenant", true);
     } else {
       setError("Empty input fields");
     }

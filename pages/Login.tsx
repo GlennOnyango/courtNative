@@ -45,7 +45,7 @@ export default function Login({ navigation }) {
   useEffect(() => {
     if (data.token) {
       save("token_exp", JSON.stringify(data));
-
+      console.log("-login",data);
       ctx.login();
     } else if (postError) {
       setError("Invalid email or passowrd.Try again later or get help");
@@ -54,7 +54,7 @@ export default function Login({ navigation }) {
 
   const login = () => {
     if (state) {
-      callApi(credentials, "login");
+      callApi(credentials, "/api/v1/uaa/login",true);
     } else {
       setError("Empty input fields");
     }
