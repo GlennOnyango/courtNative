@@ -38,23 +38,17 @@ export default function Login({ navigation }) {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
-  async function save(key: string, value: string) {
-    await SecureStore.setItemAsync(key, value);
-  }
-
   useEffect(() => {
     if (data.token) {
-      save("token_exp", JSON.stringify(data));
-      console.log("-login",data);
-      ctx.login();
+      ctx.login(data);
     } else if (postError) {
       setError("Invalid email or passowrd.Try again later or get help");
     }
-  }, [data, postError, postsuccess]);
+  }, [data,postError]);
 
   const login = () => {
     if (state) {
-      callApi(credentials, "/api/v1/uaa/login",true);
+      callApi(credentials, "/api/v1/uaa/login", true);
     } else {
       setError("Empty input fields");
     }
@@ -73,6 +67,7 @@ export default function Login({ navigation }) {
       setConnected(false);
     }
   });
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

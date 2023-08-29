@@ -3,11 +3,10 @@ import React, { useEffect, useState } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useFetch } from "../customHooks/useFetch";
 import { useNavigation } from "@react-navigation/native";
-
 const auth = {
   user: { Name: "", Phone: 0, token: "", expiry: 0, role: "" },
   court: { Name: "", Code: "", courtId: "", status: false },
-  login: () => {},
+  login: (e: Record<string, unknown>) => {},
   logout: () => {},
 };
 type Props = {
@@ -25,17 +24,15 @@ type User = {
 const AuthContext = React.createContext(auth);
 
 export const AuthContextProvider = ({ children }: Props) => {
-  const navigation = useNavigation();
-
-  const { data, callApi, isLoading } = useFetch();
+  const { data, callApi } = useFetch();
   const { data: courtData, callApi: callApiCourt } = useFetch();
-
+  const navigator = useNavigation();
   const [user, setUser] = useState<User>({
     Name: "",
     Phone: 0,
     token: "",
     expiry: 0,
-    role: "tenant",
+    role: "",
   });
 
   const [court, setCourt] = useState({
@@ -45,17 +42,9 @@ export const AuthContextProvider = ({ children }: Props) => {
     status: false,
   });
 
-  const loginHandler = async () => {
-    const result = await SecureStore.getItemAsync("token_exp");
-
-    if (result) {
-      const resultData = JSON.parse(result);
-      if (Date.now() < resultData.expiry) {
-        callApi("user/details", resultData.token);
-      }
-    } else {
-      navigation.navigate("Login" as never);
-    }
+  const loginHandler = async (e: Record<string, unknown>) => {
+    save("token_exp", JSON.stringify(e));
+    callApi("/api/v1/uaa/user/details", true, String(e.token));
   };
 
   async function save(key: string, value: string) {
@@ -63,52 +52,51 @@ export const AuthContextProvider = ({ children }: Props) => {
   }
 
   useEffect(() => {
-    if (Object.keys(data)[0] !== "fetch") {
-      SecureStore.getItemAsync("token_exp")
-        .then((result) => {
-          if (result) {
-            const resultData = JSON.parse(result);
-            if (Date.now() < resultData.expiry) {
-              console.log(data);
-              const userSpread = {
-                Name: `${data.firstName} ${data.lastName}`,
-                Phone: Number(data.phoneNumber),
-                token: resultData.token,
-                expiry: resultData.expiry,
-                role: data.role,
-              };
-              setUser(userSpread);
-
-              save("user", JSON.stringify(userSpread));
-
-              navigation.navigate(`Home` as never);
-            }
-          }
-        })
-        .catch((err) => console.log("No user details found"));
-    } else {
+    if ("fetch" in data) {
       SecureStore.getItemAsync("user")
         .then((result) => {
           if (result) {
             const resultData = JSON.parse(result);
             if (Date.now() < resultData.expiry) {
               setUser(resultData);
-              navigation.navigate(`Home` as never);
             }
           }
         })
-        .catch((err) => navigation.navigate(`Login` as never));
+        .catch((err) => {
+          console.log("No user details found", err);
+        });
+    } else {
+      SecureStore.getItemAsync("token_exp")
+        .then((result) => {
+          if (result) {
+            const resultData = JSON.parse(result);
+            if (Date.now() < resultData.expiry) {
+              const userSpread = {
+                Name: `${data.firstName} ${data.lastName}`,
+                Phone: Number(data.phoneNumber),
+                token: resultData.token,
+                expiry: resultData.expiry,
+                role: data.roles[0],
+              };
+              save("user", JSON.stringify(userSpread));
+              setUser(userSpread);
+            }
+          }
+        })
+        .catch((err) => console.log("No user details found", err));
     }
   }, [data]);
 
   useEffect(() => {
-    if (user.role === "Admin") {
-      callApiCourt("court/details", user.token);
+    if (user.role === "admin") {
+      callApiCourt("/api/v1/courts", false, user.token);
+    }else if(user.role === "tenant"){
+      navigator.navigate("Home" as never);
     }
   }, [user]);
 
   useEffect(() => {
-    if (Object.keys(courtData)[0] !== "fetch") {
+    if (!("fetch" in courtData) && Object.keys(courtData).length > 0) {
       const courtSpread = {
         Name: courtData.Name,
         Code: courtData.Code,
@@ -119,9 +107,21 @@ export const AuthContextProvider = ({ children }: Props) => {
     }
   }, [courtData]);
 
+  useEffect(() => {
+    if (
+      user.role === "admin" &&
+      court.courtId !== undefined &&
+      court.courtId !== ""
+    ) {
+      navigator.navigate("Home" as never);
+    }
+  }, [court]);
+
   const logoutHandler = () => {
-    SecureStore.deleteItemAsync("token_exp");
     setUser({ Name: "", Phone: 0, token: "", expiry: 0, role: "" });
+    SecureStore.deleteItemAsync("token_exp");
+    SecureStore.deleteItemAsync("user");
+    navigator.navigate("Login" as never);
   };
 
   return (

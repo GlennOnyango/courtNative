@@ -1,20 +1,17 @@
 import { useState, useCallback } from "react";
-import { main_url } from "../constants";
+import { auth_url, courts_url } from "../constants";
 
-export const useFetch = (token?: string) => {
-  const [data, setData] = useState<any>({ fetch: 0 });
+export const useFetch = () => {
+  const [data, setData] = useState<any>({ fetch: true });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [fetchError, setFetchError] = useState<boolean>(false);
   const [fetchSuccess, setFetchSuccess] = useState<boolean>(false);
 
   const callApi = useCallback(
-    (url: string, formData?: any) => {
-      reset();
+    (url: string, auth: boolean, token?: string, formData?: any) => {
       setIsLoading(true);
-      const url_send = formData
-        ? `${main_url}${url}${formData}`
-        : `${main_url}${url}`;
-
+      const url_steup = `${auth ? auth_url : courts_url}${url}`;
+      const url_send = formData ? `${url_steup}${formData}` : `${url_steup}`;
       const extra = token
         ? {
             headers: {
@@ -26,7 +23,9 @@ export const useFetch = (token?: string) => {
       fetch(url_send, extra)
         .then((res) => {
           if (!res.ok) {
-            const error = new Error(res.statusText);
+            const error = new Error(
+              `An error occurred while sending data! ${url_send}`
+            );
             throw error;
           }
 
@@ -40,16 +39,11 @@ export const useFetch = (token?: string) => {
         .catch((err) => {
           setIsLoading(false);
           setFetchError(true);
+          console.log(err);
         });
     },
-    [token]
+    []
   );
-  const reset = useCallback(() => {
-    setData({});
-    setIsLoading(false);
-    setFetchError(false);
-    setFetchSuccess(false);
-  }, []);
 
-  return { data, callApi, isLoading, reset, fetchError, fetchSuccess };
+  return { data, callApi, isLoading, fetchError, fetchSuccess };
 };

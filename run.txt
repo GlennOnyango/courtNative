@@ -2,8 +2,14 @@ windows - PS
 cd C:\Users\GlennTedd\AppData\Local\Android\Sdk\emulator\ 
 .\emulator.exe -avd Pixel_XL_API_30
 
+./home/jenga/Android/Sdk/emulator/emulator -avd Pixel_3a_API_34_extension_level_7_x86_64
 
 build
 eas login    
 eas build:configure
 eas build -p android --profile preview
+
+
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
