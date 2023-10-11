@@ -23,8 +23,11 @@ import CardOptions from "../../components/cardOptions";
 import Logout from "../../components/logout";
 
 const { width, height } = Dimensions.get("window");
+type Props = {
+  navigation: any;
+}
 
-export default function HomeAdmin({ navigation }) {
+export default function HomeAdmin({ navigation }: Props) {
   const ctx = React.useContext(AuthContext);
   const theme = useTheme();
 

@@ -2,9 +2,16 @@ import { StyleSheet, View } from "react-native";
 import React from "react";
 
 import GetCourts from "../components/courts/GetCourts";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ParamListBase } from "@react-navigation/native";
 
-export default function Courts({ navigation }) {
-  const getEditItem = (item) => {
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+
+export default function Courts({ navigation }:Props) {
+  const getEditItem = (item:any) => {
     navigation.navigate("Add Courts", { item });
   };
 

@@ -1,5 +1,13 @@
 import { View, Pressable, StyleSheet, Text } from 'react-native';
-export default function CardButton({ onPress,name,childern }) {
+
+type Props = {
+  onPress: () => void;
+  name: string;
+
+  childern: any;
+}
+
+export default function CardButton({ onPress,name,childern }  : Props) {
   return (
     <View style={styles.circleButtonContainer}>
       <Pressable style={styles.circleButton} onPress={onPress}>

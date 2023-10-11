@@ -3,19 +3,24 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Divider, Searchbar, List } from "react-native-paper";
 import { IconButton, MD3Colors } from "react-native-paper";
 
-export default function GetCourts({ editItem, openAddCourt }) {
+type Props = {
+  editItem: any;
+  openAddCourt: any;
+}
+
+export default function GetCourts({ editItem, openAddCourt }:Props) {
   const [data, setData] = useState([]);
   const [filterData, setFilteredData] = useState([]);
 
 
   const [searchQuery, setSearchQuery] = React.useState("");
 
-  const onChangeSearch = (query) => setSearchQuery(query);
+  const onChangeSearch = (query:string) => setSearchQuery(query);
 
 
   useEffect(() => {
     if (searchQuery.length > 0) {
-      setFilteredData(data.filter((e) => e.Name.includes(searchQuery)));
+      setFilteredData(data.filter((e:any) => e.Name.includes(searchQuery)));
     }
   }, [searchQuery]);
 
@@ -33,7 +38,7 @@ export default function GetCourts({ editItem, openAddCourt }) {
         style={styles.searchBar}
       />
       <View style={styles.containerList}>
-        {dataArray.map((item, index) => (
+        {dataArray.map((item:any, index:number) => (
           <>
             <View style={{ flexDirection: "row", alignItems: "stretch" }}>
               <List.Item

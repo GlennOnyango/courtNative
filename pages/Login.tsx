@@ -15,6 +15,8 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../customHooks/usePost";
 import * as SecureStore from "expo-secure-store";
 import * as Network from "expo-network";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { ParamListBase } from "@react-navigation/native";
 
 type userCredntial = {
   phoneNumber: string;
@@ -22,9 +24,15 @@ type userCredntial = {
 };
 
 const { width, height } = Dimensions.get("window");
-export default function Login({ navigation }) {
+
+
+type Props = {
+  navigation: NativeStackNavigationProp<ParamListBase>;
+};
+
+export default function Login({ navigation }: Props) {
   const theme = useTheme();
-  const { data, callApi, isLoading, postError, postsuccess } = usePost();
+  const { data, callApi, isLoading, postError } = usePost();
   const [isConnected, setConnected] = useState(false);
   const [credentials, setCredentials] = useState<userCredntial>({
     phoneNumber: "",
@@ -34,7 +42,7 @@ export default function Login({ navigation }) {
   const ctx = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(true);
 
-  const updateCredentials = (e) => {
+  const updateCredentials = (e: { type: string; text: string }) => {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
@@ -44,7 +52,7 @@ export default function Login({ navigation }) {
     } else if (postError) {
       setError("Invalid email or passowrd.Try again later or get help");
     }
-  }, [data,postError]);
+  }, [data, postError]);
 
   const login = () => {
     if (state) {
@@ -67,7 +75,6 @@ export default function Login({ navigation }) {
       setConnected(false);
     }
   });
-
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

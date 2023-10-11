@@ -6,7 +6,8 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "ts:check": "tsc"
   },
   "dependencies": {
     "@expo-google-fonts/space-mono": "^0.2.3",
@@ -26,7 +27,7 @@
     "expo-splash-screen": "^0.18.2",
     "expo-status-bar": "^1.4.4",
     "react": "^18.2.0",
-    "react-native": "^0.71.2",
+    "react-native": "^0.71.8",
     "react-native-datepicker": "^1.7.2",
     "react-native-dropdown-select-list": "^2.0.4",
     "react-native-loading-spinner-overlay": "^3.0.1",

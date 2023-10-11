@@ -4,7 +4,11 @@ import AuthContext from "../context/AuthContext";
 import HomeAdmin from "./admin/HomeAdmin";
 import HomeTenant from "./tenant/HomeTenant";
 
-export default function Admin({ navigation }) {
+type Props = {
+  navigation: any;
+}
+
+export default function Admin({ navigation }: Props) {
   const ctx = React.useContext(AuthContext);
 
   const homeType = useMemo(() => {

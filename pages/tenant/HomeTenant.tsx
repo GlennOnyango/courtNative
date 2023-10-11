@@ -24,7 +24,11 @@ import Logout from "../../components/logout";
 
 const { width, height } = Dimensions.get("window");
 
-export default function HomeTenant({ navigation }) {
+type Props = {
+  navigation: any;
+}
+
+export default function HomeTenant({ navigation }: Props) {
   const ctx = React.useContext(AuthContext);
   const theme = useTheme();
 

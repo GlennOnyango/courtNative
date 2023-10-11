@@ -6,7 +6,12 @@ import CreateCourt from "../components/signup/createCourt";
 import CreateTenant from "../components/signup/joinTenant";
 import { StatusBar } from "expo-status-bar";
 const { height } = Dimensions.get("window");
-export default function SignUp({ navigation }) {
+
+type Props = {
+  navigation: any;
+}
+
+export default function SignUp({ navigation }: Props) {
   const theme = useTheme();
   const [court, setCourt] = useState("court");
 

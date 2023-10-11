@@ -1,8 +1,10 @@
+import { ParamListBase } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Appbar } from "react-native-paper";
 
 import { useTheme } from "react-native-paper";
 type Props = {
-  navigation: any;
+  navigation: NativeStackNavigationProp<ParamListBase>;
   back: any;
   route: any;
 };

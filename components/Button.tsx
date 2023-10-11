@@ -1,13 +1,21 @@
 import { StyleSheet, View, Pressable, Text } from "react-native";
 import { AntDesign } from '@expo/vector-icons';
 
+type Props = {
+  label: string;
+  theme: string;
+  onPress: () => void;
+  disbaled: boolean;
+  btnIcon: any;
+}
+
 export default function Button({
   label,
   /* @info The prop theme to detect the button variant. */ theme /* @end */,
   onPress,
   disbaled,
   btnIcon
-}) {
+}: Props) {
   if (theme === "primary") {
     return (
       <View style={styles.buttonContainer}>

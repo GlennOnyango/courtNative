@@ -14,7 +14,12 @@ type userCredntial = {
   Phone: string;
 };
 
-export default function AddUser({ navigation, route }) {
+type Props = {
+  navigation: any;
+  route: any;
+};
+
+export default function AddUser({ navigation, route }: Props) {
   const theme = useTheme();
   const [response, setResponse] = useState("");
   const [user, setUser] = React.useState<userCredntial>({
@@ -28,7 +33,7 @@ export default function AddUser({ navigation, route }) {
     }
   }, [route.params]);
 
-  const addUser = (e) => {
+  const addUser = (e: { type: string; text: string }) => {
     setUser({ ...user, [e.type]: e.text });
   };
 

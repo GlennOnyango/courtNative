@@ -5,8 +5,10 @@ import { StyleSheet } from "react-native";
 import { FAB } from "react-native-paper";
 
 import AuthContext from "../context/AuthContext";
-
-export default function Logout({ navigation }) {
+type Props = {
+  navigation: any;
+}
+export default function Logout({ navigation } : Props) {
   const ctx = React.useContext(AuthContext);
 
   useEffect(() => {
