@@ -20,7 +20,12 @@ type changeAdminType = {
   userId: string;
 };
 
-export default function AddCourt({ navigation, route }) {
+type Props = {
+  navigation: any;
+  route: any;
+};
+
+export default function AddCourt({ navigation, route }: Props) {
   const theme = useTheme();
   const [showDropDown, setShowDropDown] = useState(false);
   const [userSelected, setuser] = useState("");

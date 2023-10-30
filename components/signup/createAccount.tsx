@@ -5,29 +5,45 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../../customHooks/usePost";
 import * as Network from "expo-network";
 import { StatusBar } from "expo-status-bar";
+import SelectSpecial from "@components/selectSpecial";
 
-type courtRegister = {
-  courtName: string;
-  userName: string;
+type accountRegister = {
+  firstName: string;
+  lastName: string;
+  email: string;
   phoneNumber: string;
+  userType: string;
   password: string;
+  confirmPassword: string;
+};
+
+type Props = {
+  navigation: any;
 };
 
 const { width, height } = Dimensions.get("window");
-export default function CreateCourt({ navigation }) {
+export default function CreateAccount({ navigation }: Props) {
   const theme = useTheme();
   const { callApi, isLoading, postError, postsuccess } = usePost();
+  const [showDropDown, setShowDropDown] = useState(false);
+  const [userSelected, setuser] = useState("");
+
   const [isConnected, setConnected] = useState(false);
-  const [credentials, setCredentials] = useState<courtRegister>({
-    courtName: "",
-    userName: "",
+  const [credentials, setCredentials] = useState<accountRegister>({
+    firstName: "",
+    lastName: "",
+    email: "",
     phoneNumber: "",
+    userType: "",
     password: "",
+    confirmPassword: "",
   });
   const [errorText, setError] = useState("");
   const [showPassword, setShowPassword] = useState(true);
 
-  const updateCredentials = (e) => {
+  const [confirmPasswordShow, setConfirmPasswordShow] = useState(true);
+
+  const updateCredentials = (e: { type: string; text: string }) => {
     setCredentials({ ...credentials, [e.type]: e.text });
   };
 
@@ -41,7 +57,7 @@ export default function CreateCourt({ navigation }) {
 
   const login = () => {
     if (state) {
-      callApi(credentials, "/register-court",true);
+      callApi(credentials, "/register-court", true);
     } else {
       setError("Empty input fields");
     }
@@ -84,26 +100,25 @@ export default function CreateCourt({ navigation }) {
         <View style={styles.containerGroup}>
           <TextInput
             style={styles.input}
-            label="Court Name"
+            label="First Name"
             mode="outlined"
             onChangeText={(newText) =>
-              updateCredentials({ type: "courtName", text: newText })
+              updateCredentials({ type: "firstName", text: newText })
             }
-            value={credentials.courtName}
+            value={credentials.firstName}
             inputMode={"text"}
             keyboardType={"default"}
           />
         </View>
-
         <View style={styles.containerGroup}>
           <TextInput
             style={styles.input}
-            label="User Name"
+            label="Last Name"
             mode="outlined"
             onChangeText={(newText) =>
-              updateCredentials({ type: "userName", text: newText })
+              updateCredentials({ type: "lastName", text: newText })
             }
-            value={credentials.userName}
+            value={credentials.lastName}
             inputMode={"text"}
             keyboardType={"default"}
           />
@@ -127,6 +142,39 @@ export default function CreateCourt({ navigation }) {
         <View style={styles.containerGroup}>
           <TextInput
             style={styles.input}
+            label="Email"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "email", text: newText })
+            }
+            value={credentials.email}
+            inputMode={"email"}
+          />
+        </View>
+
+        <View style={styles.containerGroup}>
+          <SelectSpecial
+            showDropDown={showDropDown}
+            setShowDropDown={setShowDropDown}
+            selectedData={userSelected}
+            setData={setuser}
+            list={[
+              {
+                label: "tenant",
+                value: "tenant",
+              },
+              {
+                label: "admin",
+                value: "admin",
+              },
+            ]}
+            label="Select new Admin"
+          />
+        </View>
+
+        <View style={styles.containerGroup}>
+          <TextInput
+            style={styles.input}
             label="Password"
             mode="outlined"
             onChangeText={(newText) =>
@@ -139,6 +187,27 @@ export default function CreateCourt({ navigation }) {
               <TextInput.Icon
                 icon="eye"
                 onPress={(e) => setShowPassword(!showPassword)}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+        </View>
+
+        <View style={styles.containerGroup}>
+          <TextInput
+            style={styles.input}
+            label="Confirm Password"
+            mode="outlined"
+            onChangeText={(newText) =>
+              updateCredentials({ type: "confirmPassword", text: newText })
+            }
+            value={credentials.confirmPassword}
+            textContentType={"password"}
+            secureTextEntry={confirmPasswordShow}
+            right={
+              <TextInput.Icon
+                icon="eye"
+                onPress={(e) => setConfirmPasswordShow(!confirmPasswordShow)}
                 forceTextInputFocus={false}
               />
             }
@@ -205,7 +274,7 @@ export default function CreateCourt({ navigation }) {
           }
         </Text>
       </View>
-      
+
       <StatusBar style="light" animated />
     </>
   );
