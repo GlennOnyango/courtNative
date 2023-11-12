@@ -13,7 +13,6 @@ import AuthContext from "../context/AuthContext";
 import { TextInput, Button, Text, useTheme } from "react-native-paper";
 import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../customHooks/usePost";
-import * as SecureStore from "expo-secure-store";
 import * as Network from "expo-network";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ParamListBase } from "@react-navigation/native";
@@ -47,6 +46,7 @@ export default function Login({ navigation }: Props) {
   };
 
   useEffect(() => {
+    console.log(data);
     if (data.token) {
       ctx.login(data);
     } else if (postError) {

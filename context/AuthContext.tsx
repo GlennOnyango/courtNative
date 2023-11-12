@@ -19,6 +19,7 @@ type User = {
   token: string;
   expiry: number;
   role: string;
+  isAdmin?: boolean;
 };
 
 const AuthContext = React.createContext(auth);
@@ -33,6 +34,7 @@ export const AuthContextProvider = ({ children }: Props) => {
     token: "",
     expiry: 0,
     role: "",
+    isAdmin: false,
   });
 
   const [court, setCourt] = useState({
@@ -41,11 +43,6 @@ export const AuthContextProvider = ({ children }: Props) => {
     courtId: "",
     status: false,
   });
-
-  const loginHandler = async (e: Record<string, unknown>) => {
-    save("token_exp", JSON.stringify(e));
-    callApi("/api/v1/uaa/user/details", true, String(e.token));
-  };
 
   async function save(key: string, value: string) {
     await SecureStore.setItemAsync(key, value);
@@ -72,10 +69,11 @@ export const AuthContextProvider = ({ children }: Props) => {
             const resultData = JSON.parse(result);
             if (Date.now() < resultData.expiry) {
               const userSpread = {
-                Name: `${data.firstName} ${data.lastName}`,
+                Name: `${data.genericUsername}`,
                 Phone: Number(data.phoneNumber),
                 token: resultData.token,
                 expiry: resultData.expiry,
+                isAdmin: data.roles[0] === "admin" ? true : false,
                 role: data.roles[0],
               };
               save("user", JSON.stringify(userSpread));
@@ -89,33 +87,31 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (user.role === "admin") {
-      callApiCourt("/api/v1/courts", false, user.token);
-    }else if(user.role === "tenant"){
+      if ("fetch" in courtData) {
+        callApiCourt("/api/v1/courts", false, user.token);
+      } else {
+        if (Object.keys(courtData).length > 0) {
+          const courtSpread = {
+            Name: courtData.Name,
+            Code: courtData.Code,
+            courtId: courtData._id,
+            status: courtData.status,
+          };
+          setCourt(courtSpread);
+          navigator.navigate("Home" as never);
+        } else {
+          navigator.navigate("Create Court" as never);
+        }
+      }
+    } else if (user.role === "tenant") {
       navigator.navigate("Home" as never);
     }
-  }, [user]);
+  }, [courtData, user]);
 
-  useEffect(() => {
-    if (!("fetch" in courtData) && Object.keys(courtData).length > 0) {
-      const courtSpread = {
-        Name: courtData.Name,
-        Code: courtData.Code,
-        courtId: courtData._id,
-        status: courtData.status,
-      };
-      setCourt(courtSpread);
-    }
-  }, [courtData]);
-
-  useEffect(() => {
-    if (
-      user.role === "admin" &&
-      court.courtId !== undefined &&
-      court.courtId !== ""
-    ) {
-      navigator.navigate("Home" as never);
-    }
-  }, [court]);
+  const loginHandler = async (e: Record<string, unknown>) => {
+    save("token_exp", JSON.stringify(e));
+    callApi("/api/v1/uaa/user/details", true, String(e.token));
+  };
 
   const logoutHandler = () => {
     setUser({ Name: "", Phone: 0, token: "", expiry: 0, role: "" });

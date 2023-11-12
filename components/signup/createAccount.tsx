@@ -64,27 +64,22 @@ export default function CreateAccount({ navigation }: Props) {
       let userAccountCreation = {};
       if (userSelected === "admin") {
         userAccountCreation = {
-          firstName: credentials.firstName,
-          lastName: credentials.lastName,
+          username: `${credentials.firstName} ${credentials.lastName}`,
           email: credentials.email,
           phoneNumber: credentials.phoneNumber,
-          userType: "admin",
+          role: "admin",
           password: credentials.password,
-          confirmPassword: credentials.confirmPassword,
         };
       } else {
         userAccountCreation = {
-          firstName: credentials.firstName,
-          lastName: credentials.lastName,
+          username: `${credentials.firstName} ${credentials.lastName}`,
           email: credentials.email,
           phoneNumber: credentials.phoneNumber,
-          userType: "tenant",
-          courtCode: credentials.courtCode,
+          joiningCode: credentials.courtCode,
           password: credentials.password,
-          confirmPassword: credentials.confirmPassword,
         };
       }
-      callApi(userAccountCreation, "/register-court", true);
+      callApi(userAccountCreation, "/api/v1/uaa/create", true);
       navigation.navigate("Login");
     } else {
       setError("Empty input fields");

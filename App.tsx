@@ -177,6 +177,8 @@ export default function App() {
             >
               <stack.Screen name="Login" component={Login} />
 
+              <stack.Screen name="Create Court" component={AddCourt} />
+
               <stack.Screen name="SignUp" component={SignUp} />
               <stack.Screen name="Add User" component={AddUser} />
               <stack.Screen
