@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 
 import { StatusBar } from "expo-status-bar";
 
@@ -22,16 +21,8 @@ import CustomNavigationBar from "./components/CustomNavigationBar";
 import AddCourt from "./components/courts/AddCourt";
 
 import Home from "./pages/Home";
-import * as SplashScreen from "expo-splash-screen";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 
-import {
-  useFonts,
-  SpaceMono_400Regular,
-  SpaceMono_400Regular_Italic,
-  SpaceMono_700Bold,
-  SpaceMono_700Bold_Italic,
-} from "@expo-google-fonts/space-mono";
 import SignUp from "./pages/SignUp";
 import AddHouse from "./components/block/AddHouse";
 import HouseList from "./components/block/ListHouse";
@@ -41,31 +32,9 @@ import MakePayment from "./components/payment/makePayment";
 
 export default function App() {
   const stack = createNativeStackNavigator();
-  const [fontsLoaded] = useFonts({
-    SpaceMono_400Regular,
-    SpaceMono_400Regular_Italic,
-    SpaceMono_700Bold,
-    SpaceMono_700Bold_Italic,
-  });
 
   const Tab = createMaterialTopTabNavigator();
 
-  useEffect(() => {
-    async () => {
-      if (fontsLoaded) {
-        // This tells the splash screen to hide immediately! If we call this after
-        // `setAppIsReady`, then we may see a blank screen while the app is
-        // loading its initial state and rendering its first pixels. So instead,
-        // we hide the splash screen once we know the root view has already
-        // performed layout.
-        await SplashScreen.hideAsync();
-      }
-    };
-  }, [fontsLoaded]);
-
-  if (!fontsLoaded) {
-    return null;
-  }
 
   const theme = {
     ...DefaultTheme,

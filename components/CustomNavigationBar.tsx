@@ -19,22 +19,16 @@ function CustomNavigationBar({ navigation, back, route }: Props) {
   return (
     <>
       {presence ? null : (
-        <Appbar.Header style={{ backgroundColor: theme.colors.primary }}>
+        <Appbar.Header >
           {back ? (
             back.title != "Login" ? (
-              <Appbar.BackAction onPress={navigation.goBack} color={"white"} />
+              <Appbar.BackAction onPress={navigation.goBack} color={"black"} />
             ) : null
           ) : null}
           <Appbar.Content
             title={tit}
-            titleStyle={{ color: "white", fontFamily: "SpaceMono_700Bold" }}
+            titleStyle={{ color: "black", fontFamily: "SpaceMono_700Bold" }}
           />
-          {/* <Appbar.Action
-            icon="lifebuoy"
-            color="white"
-            size={32}
-            onPress={() => {}}
-          /> */}
         </Appbar.Header>
       )}
     </>

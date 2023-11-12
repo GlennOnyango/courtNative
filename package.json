@@ -10,7 +10,6 @@
     "ts:check": "tsc"
   },
   "dependencies": {
-    "@expo-google-fonts/space-mono": "^0.2.3",
     "@expo/vector-icons": "^13.0.0",
     "@react-native-community/datetimepicker": "^6.7.3",
     "@react-navigation/bottom-tabs": "^6.5.8",
