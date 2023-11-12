@@ -5,7 +5,7 @@ import Spinner from "react-native-loading-spinner-overlay";
 import { usePost } from "../../customHooks/usePost";
 import * as Network from "expo-network";
 import { StatusBar } from "expo-status-bar";
-import SelectSpecial from "@components/selectSpecial";
+import SelectSpecial from "../selectSpecial";
 
 type accountRegister = {
   firstName: string;
@@ -13,6 +13,7 @@ type accountRegister = {
   email: string;
   phoneNumber: string;
   userType: string;
+  courtCode: string;
   password: string;
   confirmPassword: string;
 };
@@ -24,7 +25,7 @@ type Props = {
 const { width, height } = Dimensions.get("window");
 export default function CreateAccount({ navigation }: Props) {
   const theme = useTheme();
-  const { callApi, isLoading, postError, postsuccess } = usePost();
+  const { callApi, data, isLoading, postError, postsuccess } = usePost();
   const [showDropDown, setShowDropDown] = useState(false);
   const [userSelected, setuser] = useState("");
 
@@ -34,7 +35,8 @@ export default function CreateAccount({ navigation }: Props) {
     lastName: "",
     email: "",
     phoneNumber: "",
-    userType: "",
+    userType: "tenant" || "admin",
+    courtCode: "",
     password: "",
     confirmPassword: "",
   });
@@ -52,20 +54,59 @@ export default function CreateAccount({ navigation }: Props) {
       navigation.navigate("Login");
     } else if (postError) {
       setError("There is an error.Try again later or get help.");
+    } else if (postsuccess) {
+      navigation.navigate("Login");
     }
   }, [postError, postsuccess]);
 
   const login = () => {
-    if (state) {
-      callApi(credentials, "/register-court", true);
+    if (passwordMatch && validinput) {
+      let userAccountCreation = {};
+      if (userSelected === "admin") {
+        userAccountCreation = {
+          firstName: credentials.firstName,
+          lastName: credentials.lastName,
+          email: credentials.email,
+          phoneNumber: credentials.phoneNumber,
+          userType: "admin",
+          password: credentials.password,
+          confirmPassword: credentials.confirmPassword,
+        };
+      } else {
+        userAccountCreation = {
+          firstName: credentials.firstName,
+          lastName: credentials.lastName,
+          email: credentials.email,
+          phoneNumber: credentials.phoneNumber,
+          userType: "tenant",
+          courtCode: credentials.courtCode,
+          password: credentials.password,
+          confirmPassword: credentials.confirmPassword,
+        };
+      }
+      callApi(userAccountCreation, "/register-court", true);
+      navigation.navigate("Login");
     } else {
       setError("Empty input fields");
     }
   };
 
-  const state = useMemo(() => {
+  const validinput = useMemo(() => {
+    //Check if all fields are filled
+    if (userSelected === "admin") {
+      return (
+        credentials.firstName.length > 0 &&
+        credentials.lastName.length > 0 &&
+        credentials.email.length > 0 &&
+        credentials.phoneNumber.length > 9
+      );
+    }
     return (
-      credentials.phoneNumber.length >= 10 && credentials.password.length > 0
+      credentials.firstName.length > 0 &&
+      credentials.lastName.length > 0 &&
+      credentials.email.length > 0 &&
+      credentials.phoneNumber.length > 9 &&
+      credentials.courtCode.length > 0
     );
   }, [credentials]);
 
@@ -76,6 +117,13 @@ export default function CreateAccount({ navigation }: Props) {
       setConnected(false);
     }
   });
+
+  const passwordMatch = useMemo(() => {
+    return credentials.password.length > 8 &&
+      credentials.confirmPassword.length > 8
+      ? credentials.password === credentials.confirmPassword
+      : false;
+  }, [credentials]);
 
   return (
     <>
@@ -94,7 +142,7 @@ export default function CreateAccount({ navigation }: Props) {
             marginBottom: 2,
           }}
         >
-          Create your court
+          Create account
         </Text>
 
         <View style={styles.containerGroup}>
@@ -168,9 +216,23 @@ export default function CreateAccount({ navigation }: Props) {
                 value: "admin",
               },
             ]}
-            label="Select new Admin"
+            label="Select user type"
           />
         </View>
+        {userSelected === "tenant" ? (
+          <View style={styles.containerGroup}>
+            <TextInput
+              style={styles.input}
+              label="court code"
+              mode="outlined"
+              onChangeText={(newText) =>
+                updateCredentials({ type: "courtCode", text: newText })
+              }
+              value={credentials.courtCode}
+              inputMode={"text"}
+            />
+          </View>
+        ) : null}
 
         <View style={styles.containerGroup}>
           <TextInput
@@ -235,41 +297,23 @@ export default function CreateAccount({ navigation }: Props) {
                 mode="elevated"
                 buttonColor={theme.colors.primary}
                 textColor={"white"}
+                style={{
+                  borderRadius: 1,
+                }}
+                disabled={!passwordMatch}
                 onPress={login}
-                style={{
-                  borderRadius: 1,
-                }}
-                disabled={!state || isLoading || !isConnected}
               >
-                Create Court
-              </Button>
-            </View>
-
-            <View
-              style={{
-                width: "48%",
-              }}
-            >
-              <Button
-                mode="elevated"
-                buttonColor={theme.colors.primary}
-                textColor={"white"}
-                style={{
-                  borderRadius: 1,
-                }}
-                onPress={() => navigation.navigate("Login")}
-              >
-                Login
+                {userSelected === "admin" ? "Next" : "Login"}
               </Button>
             </View>
           </View>
         </View>
 
         <Text variant="bodyLarge" style={{ marginTop: 8 }}>
-          Unable to access our services ?{" "}
+          I have an existing account{" "}
           {
-            <Text variant="bodyLarge" style={{ color: theme.colors.primary }}>
-              Get help
+            <Text variant="bodyLarge" onPress={()=>navigation.navigate("Login")} style={{ color: theme.colors.primary }}>
+              Sign in
             </Text>
           }
         </Text>
@@ -282,13 +326,14 @@ export default function CreateAccount({ navigation }: Props) {
 
 const styles = StyleSheet.create({
   containerInput: {
-    alignItems: "center",
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "transparent",
     zIndex: 1,
     width: width,
-    justifyContent: "center",
-    paddingHorizontal: 12,
+    padding: 12,
+    paddingTop: 50,
   },
   containerGroup: {
     marginVertical: 4,
