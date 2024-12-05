@@ -38,7 +38,10 @@ For instructions on how to build and deploy the app using Expo EAS, refer to the
 
 ![Screenshot (293)](https://github.com/user-attachments/assets/2af10527-1b45-4127-9287-94b621fac33d)
 
+
+
 # The latest build available.
+
 
 ![image](https://github.com/user-attachments/assets/22169b45-39b4-4e8d-80ad-6cd553e73751)
 
