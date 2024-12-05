@@ -56,7 +56,9 @@ export default function Login({ navigation }: Props) {
 
   const login = () => {
     if (state) {
-      callApi(credentials, "/api/v1/uaa/login", true);
+
+      ctx.login({token:"sdfsdfsdfsdfsdfsdf"});
+      //callApi(credentials, "/api/v1/uaa/login", true);
     } else {
       setError("Empty input fields");
     }

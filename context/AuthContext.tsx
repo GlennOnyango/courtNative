@@ -110,7 +110,29 @@ export const AuthContextProvider = ({ children }: Props) => {
 
   const loginHandler = async (e: Record<string, unknown>) => {
     save("token_exp", JSON.stringify(e));
-    callApi("/api/v1/uaa/user/details", true, String(e.token));
+    //callApi("/api/v1/uaa/user/details", true, String(e.token));
+
+    const userSpread = {
+      Name: `Glenn`,
+      Phone: 719458873,
+      token: "sadawehqew123213",
+      expiry: 213123213123,
+      isAdmin: true,
+      role: "admin",
+    };
+    save("user", JSON.stringify(userSpread));
+    setUser(userSpread);
+
+
+      const courtSpread = {
+        Name: "Glenn Court",
+        Code: "123123",
+        courtId: "2",
+        status: true,
+      };
+      setCourt(courtSpread);
+      navigator.navigate("Home" as never);
+
   };
 
   const logoutHandler = () => {
